@@ -1,0 +1,61 @@
+<div class="wrap">
+  <div class="ph">
+    <h1>Mi Historial de Compras</h1>
+    <p>Todas tus compras registradas</p>
+  </div>
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else if (ventas().length === 0) {
+    <div class="empty">
+      <div class="ei">🛒</div>
+      <h3>Aún no tienes compras</h3>
+      <p>Explora nuestro catálogo y haz tu primera compra.</p>
+    </div>
+  } @else {
+    <div class="lista">
+      @for (v of ventas(); track v.id) {
+        <div
+          class="vc"
+          [class.open]="abierta() === v.id"
+          (click)="toggle(v.id)"
+        >
+          <div class="vh">
+            <div class="vl">
+              <div class="vn">{{ v.numeroVenta }}</div>
+              <div class="vf">
+                {{ v.fechaVenta | date: "dd MMM yyyy, HH:mm" }}
+              </div>
+            </div>
+            <div class="vr">
+              <span class="vt">${{ v.total | number: "1.2-2" }}</span>
+              <span class="bk">{{ v.estado }}</span>
+              <span class="tg">{{ abierta() === v.id ? "▲" : "▼" }}</span>
+            </div>
+          </div>
+
+          @if (abierta() === v.id) {
+            <div class="vb">
+              @if (v.observacion) {
+                <div class="obs">📝 {{ v.observacion }}</div>
+              }
+              <div class="dets">
+                @for (d of v.detalles; track d.productoId) {
+                  <div class="dr">
+                    <span class="dn">{{ d.nombreProducto }}</span>
+                    <span class="dq"
+                      >{{ d.cantidad }}× ${{
+                        d.precioUnitario | number: "1.2-2"
+                      }}</span
+                    >
+                    <span class="ds">${{ d.subtotal | number: "1.2-2" }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

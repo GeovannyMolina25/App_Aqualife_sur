@@ -1,0 +1,68 @@
+<div class="wrap">
+  <div class="ph">
+    <h1>Reportes</h1>
+    <p>Genera y descarga reportes en PDF y Excel</p>
+  </div>
+
+  <div class="rg">
+    <!-- PDF Mensual -->
+    <div class="rc">
+      <div class="ri">📄</div>
+      <h3>Ventas Mensuales</h3>
+      <p class="rd">
+        Reporte PDF con todas las ventas del mes seleccionado, incluyendo
+        totales y detalle por colaborador.
+      </p>
+      <div class="fr">
+        <div class="fg">
+          <label>Anio</label>
+          <input type="number" [(ngModel)]="anio" min="2020" max="2030" />
+        </div>
+        <div class="fg">
+          <label>Mes</label>
+          <select [(ngModel)]="mes">
+            @for (m of meses; track m.num) {
+              <option [value]="m.num">{{ m.nombre }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <app-alert [mensaje]="exitoPdf()" tipo="success" />
+      <button
+        class="btn-pdf"
+        [disabled]="cargandoPdf()"
+        (click)="descargarPdf()"
+      >
+        {{ cargandoPdf() ? "⏳ Generando..." : "⬇️ Descargar PDF" }}
+      </button>
+    </div>
+
+    <!-- Excel Productos Vendidos -->
+    <div class="rc">
+      <div class="ri">📊</div>
+      <h3>Productos Vendidos</h3>
+      <p class="rd">
+        Excel con detalle de productos: cliente, precio, cantidad, fecha y hora
+        de cada venta.
+      </p>
+      <div class="fr">
+        <div class="fg">
+          <label>Desde</label>
+          <input type="date" [(ngModel)]="desde" />
+        </div>
+        <div class="fg">
+          <label>Hasta</label>
+          <input type="date" [(ngModel)]="hasta" />
+        </div>
+      </div>
+      <app-alert [mensaje]="exitoExcel()" tipo="success" />
+      <button
+        class="btn-xl"
+        [disabled]="cargandoExcel() || !desde || !hasta"
+        (click)="descargarExcel()"
+      >
+        {{ cargandoExcel() ? "⏳ Generando..." : "⬇️ Descargar Excel" }}
+      </button>
+    </div>
+  </div>
+</div>

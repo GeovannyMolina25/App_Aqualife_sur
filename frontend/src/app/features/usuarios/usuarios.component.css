@@ -1,0 +1,128 @@
+.wrap {
+  max-width: 1200px;
+}
+.ph {
+  margin-bottom: 24px;
+}
+h1 {
+  font-size: 1.6rem;
+  color: #1c2b35;
+  font-family: "Playfair Display", serif;
+}
+p {
+  font-size: 0.85rem;
+  color: #7a9aaa;
+  margin-top: 3px;
+}
+
+.tc {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #efe4cc;
+  overflow: hidden;
+}
+.tw {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+thead th {
+  background: #f8f3ea;
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #7a9aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid #f8f3ea;
+}
+tbody tr:hover {
+  background: #fdfbf7;
+}
+tbody td {
+  padding: 13px 16px;
+  font-size: 0.86rem;
+  color: #1c2b35;
+}
+
+.uc {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.av {
+  width: 34px;
+  height: 34px;
+  background: #1a6b8a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.un {
+  font-weight: 500;
+}
+.ud {
+  font-size: 0.72rem;
+  color: #7a9aaa;
+}
+
+.bk {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+.bk-admin {
+  background: rgba(26, 107, 138, 0.12);
+  color: #1a6b8a;
+}
+.bk-colab {
+  background: rgba(77, 184, 168, 0.15);
+  color: #2d8070;
+}
+.bk-cliente {
+  background: rgba(196, 168, 130, 0.2);
+  color: #b8956a;
+}
+.bk-ok {
+  background: rgba(60, 179, 113, 0.12);
+  color: #2a8c5a;
+}
+.bk-no {
+  background: rgba(224, 92, 92, 0.12);
+  color: #c44;
+}
+
+.rs {
+  padding: 5px 8px;
+  border: 1.5px solid #e2d0af;
+  border-radius: 7px;
+  font-size: 0.8rem;
+  background: #fff;
+  color: #1c2b35;
+  cursor: pointer;
+  outline: none;
+  font-family: "DM Sans", sans-serif;
+}
+.rs:focus {
+  border-color: #1a6b8a;
+}
+
+.em {
+  text-align: center;
+  color: #7a9aaa;
+  padding: 48px;
+}

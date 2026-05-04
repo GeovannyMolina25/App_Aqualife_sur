@@ -1,0 +1,45 @@
+using System.Security.Claims;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using rotter.Aplicacion.Ventas.Commands;
+using rotter.Aplicacion.Ventas.Queries;
+using rotter.Dominio.DTOs.Ventas;
+
+namespace rotter.API.Controllers.Ventas;
+
+[ApiController]
+[Route("api/[controller]")]
+[Authorize]
+public class VentasController : ControllerBase
+{
+    private readonly IMediator _mediator;
+    public VentasController(IMediator mediator) => _mediator = mediator;
+
+    [HttpGet]
+    [Authorize(Roles = "Administrador,Colaborador")]
+    public async Task<IActionResult> ObtenerTodas([FromQuery] int pagina = 1, [FromQuery] int tamano = 20,
+        [FromQuery] DateTime? desde = null, [FromQuery] DateTime? hasta = null)
+        => Ok(await _mediator.Send(new ObtenerVentasQuery(pagina, tamano, desde, hasta)));
+
+    [HttpGet("metricas")]
+    [Authorize(Roles = "Administrador")]
+    public async Task<IActionResult> Metricas()
+        => Ok(await _mediator.Send(new ObtenerMetricasQuery()));
+
+    [HttpGet("mi-historial")]
+    public async Task<IActionResult> MiHistorial([FromQuery] int pagina = 1, [FromQuery] int tamano = 20)
+    {
+        var clienteId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        return Ok(await _mediator.Send(new ObtenerHistorialClienteQuery(clienteId, pagina, tamano)));
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Administrador,Colaborador,Cliente")]
+    public async Task<IActionResult> Registrar([FromBody] CrearVentaDto dto)
+    {
+        var colaboradorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new RegistrarVentaCommand(dto, colaboradorId));
+        return StatusCode(r.StatusCode, r);
+    }
+}

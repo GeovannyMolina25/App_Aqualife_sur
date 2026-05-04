@@ -1,0 +1,137 @@
+<div class="wrap">
+  <div class="hr">
+    <div>
+      <h1>Catálogo de Productos</h1>
+      <p>{{ total() }} productos</p>
+    </div>
+    @if (auth.esAdmin() || auth.esColaborador()) {
+      <button class="btn-p" (click)="abrirModal()">+ Nuevo Producto</button>
+    }
+  </div>
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="grid">
+      @for (p of productos(); track p.id) {
+        <div class="card">
+          <div class="ci">
+            @if (p.imagenUrl) {
+              <img [src]="p.imagenUrl" [alt]="p.nombre" />
+            } @else {
+              <span>💧</span>
+            }
+            @if (p.esPromocion) {
+              <span class="pt">PROMO</span>
+            }
+          </div>
+          <div class="cb">
+            <div class="cn">{{ p.nombre }}</div>
+            <div class="cc">{{ p.categoria }}</div>
+            <div class="cp">
+              ${{
+                (p.esPromocion && p.precioPromocion
+                  ? p.precioPromocion
+                  : p.precio
+                ) | number: "1.2-2"
+              }}
+            </div>
+            @if (p.esPromocion && p.precioPromocion) {
+              <div class="co">${{ p.precio | number: "1.2-2" }}</div>
+            }
+            @if (p.caracteristicas) {
+              <div class="cch">{{ p.caracteristicas }}</div>
+            }
+            <div class="cs">Stock: {{ p.stock }} uds.</div>
+          </div>
+        </div>
+      } @empty {
+        <p class="em">No hay productos disponibles.</p>
+      }
+    </div>
+    <app-pagination
+      [p]="pagina()"
+      [totalPaginas]="totalPaginas()"
+      (paginaCambiada)="cambiarPagina($event)"
+    />
+  }
+</div>
+@if (modal()) {
+  <div class="ov" (click)="cerrarModal()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Nuevo Producto</span><button (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="mb">
+        <app-alert [mensaje]="errorModal()" tipo="error" />
+        <div class="g2">
+          <div class="fg">
+            <label>Nombre *</label
+            ><input
+              [(ngModel)]="nuevo.nombre"
+              placeholder="Agua Natural 500ml"
+            />
+          </div>
+          <div class="fg">
+            <label>Categoría *</label
+            ><select [(ngModel)]="nuevo.categoriaId">
+              <option [value]="0">Seleccionar</option>
+              @for (c of categorias; track c.id) {
+                <option [value]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Descripción</label
+          ><input [(ngModel)]="nuevo.descripcion" placeholder="Descripción" />
+        </div>
+        <div class="fg">
+          <label>Características</label
+          ><input
+            [(ngModel)]="nuevo.caracteristicas"
+            placeholder="Tamanio: 500ml | Sin gas"
+          />
+        </div>
+        <div class="g2">
+          <div class="fg">
+            <label>Precio *</label
+            ><input
+              type="number"
+              [(ngModel)]="nuevo.precio"
+              step="0.01"
+              min="0"
+            />
+          </div>
+          <div class="fg">
+            <label>Stock *</label
+            ><input type="number" [(ngModel)]="nuevo.stock" min="0" />
+          </div>
+        </div>
+        <div class="fg">
+          <label class="cl"
+            ><input type="checkbox" [(ngModel)]="nuevo.esPromocion" /><span
+              >Es promoción</span
+            ></label
+          >
+        </div>
+        @if (nuevo.esPromocion) {
+          <div class="fg">
+            <label>Precio promoción</label
+            ><input
+              type="number"
+              [(ngModel)]="nuevo.precioPromocion"
+              step="0.01"
+              min="0"
+            />
+          </div>
+        }
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarModal()">Cancelar</button
+        ><button class="btn-p" [disabled]="guardando()" (click)="crear()">
+          {{ guardando() ? "Guardando..." : "Crear Producto" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

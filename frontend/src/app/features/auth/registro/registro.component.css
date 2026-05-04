@@ -1,0 +1,146 @@
+.auth-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.auth-visual {
+  background: linear-gradient(145deg, #0f5470 0%, #1a6b8a 45%, #38a89a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.av-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 340px;
+}
+.logo-ring {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+}
+.logo-ring img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+.auth-visual h1 {
+  font-size: 2.2rem;
+  color: #fff;
+  margin-bottom: 12px;
+  font-family: "Playfair Display", serif;
+}
+.auth-visual p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+}
+.auth-form-panel {
+  background: #fdfbf7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 48px;
+  overflow-y: auto;
+}
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+}
+.auth-box h2 {
+  font-size: 1.8rem;
+  color: #1c2b35;
+  margin-bottom: 6px;
+  font-family: "Playfair Display", serif;
+}
+.sub {
+  color: #7a9aaa;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.fg {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.fg label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #4a6572;
+}
+.fg input,
+.fg select {
+  padding: 10px 14px;
+  border: 1.5px solid #e2d0af;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1c2b35;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.fg input:focus,
+.fg select:focus {
+  border-color: #3d8fa1;
+}
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: #1a6b8a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-submit:hover {
+  background: #0f5470;
+}
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.switch {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.87rem;
+  color: #7a9aaa;
+}
+.switch a {
+  color: #1a6b8a;
+  font-weight: 500;
+}
+@media (max-width: 768px) {
+  .auth-page {
+    grid-template-columns: 1fr;
+  }
+  .auth-visual {
+    display: none;
+  }
+  .auth-form-panel {
+    padding: 32px 20px;
+  }
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}

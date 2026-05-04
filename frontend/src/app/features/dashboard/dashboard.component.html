@@ -1,0 +1,143 @@
+<div class="dw">
+  <div class="dh">
+    <h1>Buenos días, {{ auth.usuario()?.nombre }} 👋</h1>
+    <p>
+      {{ hoy }} · <strong>{{ auth.getRol() }}</strong>
+    </p>
+  </div>
+  @if (auth.esAdmin() || auth.esColaborador()) {
+    <div class="mg">
+      <div class="mc">
+        <div class="mi">💰</div>
+        <div class="ml">Ventas hoy</div>
+        <div class="mv">
+          ${{ metricas()?.totalVentasHoy | number: "1.2-2" }}
+        </div>
+        <div class="ms">{{ metricas()?.ventasHoy }} transacciones</div>
+      </div>
+      <div class="mc">
+        <div class="mi">📊</div>
+        <div class="ml">Ventas del mes</div>
+        <div class="mv">
+          ${{ metricas()?.totalVentasMes | number: "1.2-2" }}
+        </div>
+        <div class="ms">Total acumulado</div>
+      </div>
+      <div class="mc">
+        <div class="mi">🛒</div>
+        <div class="ml">Transacciones hoy</div>
+        <div class="mv">{{ metricas()?.ventasHoy ?? 0 }}</div>
+        <div class="ms">Ventas completadas</div>
+      </div>
+      <div class="mc">
+        <div class="mi">📦</div>
+        <div class="ml">Productos activos</div>
+        <div class="mv">{{ metricas()?.productosActivos ?? 0 }}</div>
+        <div class="ms">En catálogo</div>
+      </div>
+    </div>
+  }
+  @if (auth.esAdmin() && metricas()?.topColaboradores?.length) {
+    <div class="card mb">
+      <div class="ch">🏆 Top Colaboradores del Mes</div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Ventas</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (
+            c of metricas()!.topColaboradores;
+            track c.nombre;
+            let i = $index
+          ) {
+            <tr>
+              <td>
+                <span class="rk" [class]="'r' + (i + 1)">{{ i + 1 }}</span>
+              </td>
+              <td>
+                <strong>{{ c.nombre }}</strong>
+              </td>
+              <td>{{ c.totalVentas }}</td>
+              <td class="ta">${{ c.montoTotal | number: "1.2-2" }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <h3 class="st">Acciones Rápidas</h3>
+  <div class="ag">
+    <a routerLink="/dashboard/productos" class="ac"
+      ><span>🛍️</span>
+      <div>
+        <div class="an">Ver Productos</div>
+        <div class="ad">Catálogo completo</div>
+      </div></a
+    >
+    @if (auth.esAdmin() || auth.esColaborador()) {
+      <a routerLink="/dashboard/ventas" class="ac"
+        ><span>📝</span>
+        <div>
+          <div class="an">Registrar Venta</div>
+          <div class="ad">Nueva transacción</div>
+        </div></a
+      >
+    }
+    @if (auth.esCliente()) {
+      <a routerLink="/dashboard/mi-historial" class="ac"
+        ><span>📋</span>
+        <div>
+          <div class="an">Mis Compras</div>
+          <div class="ad">Ver historial</div>
+        </div></a
+      >
+    }
+    @if (auth.esAdmin()) {
+      <a routerLink="/dashboard/usuarios" class="ac"
+        ><span>👥</span>
+        <div>
+          <div class="an">Usuarios</div>
+          <div class="ad">Gestionar cuentas</div>
+        </div></a
+      ><a routerLink="/dashboard/reportes" class="ac"
+        ><span>📄</span>
+        <div>
+          <div class="an">Reportes</div>
+          <div class="ad">PDF y Excel</div>
+        </div></a
+      >
+    }
+  </div>
+  @if (auth.esCliente()) {
+    <h3 class="st">🎁 Promociones Activas</h3>
+    @if (cargandoPromos()) {
+      <app-spinner [full]="true" />
+    } @else {
+      <div class="pg">
+        @for (p of promociones(); track p.id) {
+          <div class="pc2">
+            <div class="pi">💧<span class="pt">PROMO</span></div>
+            <div class="pb2">
+              <div class="pn">{{ p.nombre }}</div>
+              <div class="pca">{{ p.categoria }}</div>
+              <div class="pp">
+                ${{ p.precioPromocion ?? p.precio | number: "1.2-2" }}
+              </div>
+              @if (p.precioPromocion) {
+                <div class="po">${{ p.precio | number: "1.2-2" }}</div>
+              }
+              <div class="pst">Stock: {{ p.stock }}</div>
+            </div>
+          </div>
+        } @empty {
+          <p class="em">No hay promociones activas.</p>
+        }
+      </div>
+    }
+  }
+</div>

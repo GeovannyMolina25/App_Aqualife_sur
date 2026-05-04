@@ -1,0 +1,96 @@
+<div class="shell">
+  @if (open()) {
+    <div class="overlay" (click)="open.set(false)"></div>
+  }
+  <aside class="sidebar" [class.open]="open()">
+    <div class="sl">
+      <img
+        src="assets/logo.png"
+        alt="Logo"
+        (error)="$any($event.target).style.display = 'none'"
+      />
+      <div class="slt">Rotter</div>
+      <div class="sls">Sistema de Agua</div>
+    </div>
+    <nav class="sn">
+      <p class="sec">Principal</p>
+      <a
+        class="nl"
+        routerLink="/dashboard"
+        routerLinkActive="act"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="open.set(false)"
+        >🏠 Dashboard</a
+      >
+      <a
+        class="nl"
+        routerLink="/dashboard/productos"
+        routerLinkActive="act"
+        (click)="open.set(false)"
+        >📦 Productos</a
+      >
+      @if (auth.esAdmin() || auth.esColaborador()) {
+        <p class="sec">Ventas</p>
+        <a
+          class="nl"
+          routerLink="/dashboard/ventas"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          >💰 Registro de Ventas</a
+        >
+      }
+      @if (auth.esCliente()) {
+        <p class="sec">Mis Compras</p>
+        <a
+          class="nl"
+          routerLink="/dashboard/mi-historial"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          >📋 Mi Historial</a
+        >
+      }
+      @if (auth.esAdmin()) {
+        <p class="sec">Administración</p>
+        <a
+          class="nl"
+          routerLink="/dashboard/usuarios"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          >👥 Usuarios</a
+        ><a
+          class="nl"
+          routerLink="/dashboard/reportes"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          >📊 Reportes</a
+        >
+      }
+    </nav>
+    <div class="sf">
+      <div class="su">
+        <div class="av">{{ iniciales() }}</div>
+        <div>
+          <div class="un">
+            {{ auth.usuario()?.nombre }} {{ auth.usuario()?.apellido }}
+          </div>
+          <div class="ur">{{ auth.getRol() }}</div>
+        </div>
+      </div>
+      <button class="logout" (click)="logout()">⬅ Salir</button>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div class="tl">
+        <button class="hbg" (click)="open.set(!open())">☰</button
+        ><span class="brand">💧 Rotter</span>
+      </div>
+      <div class="tr">
+        <span class="rb" [class]="rolClass()">{{ auth.getRol() }}</span>
+        <div class="tav">{{ iniciales() }}</div>
+        <span class="tn">{{ auth.usuario()?.nombre }}</span>
+      </div>
+    </header>
+    <main class="pc"><router-outlet /></main>
+  </div>
+</div>

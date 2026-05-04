@@ -1,0 +1,116 @@
+<div class="wrap">
+  <div class="hr">
+    <div>
+      <h1>Registro de Ventas</h1>
+      <p>Historial y registro de transacciones</p>
+    </div>
+    <button class="btn-p" (click)="modal.set(true)">+ Nueva Venta</button>
+  </div>
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="tc">
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th># Venta</th>
+              <th>Cliente</th>
+              <th>Colaborador</th>
+              <th>Fecha</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of ventas(); track v.id) {
+              <tr>
+                <td>
+                  <strong>{{ v.numeroVenta }}</strong>
+                </td>
+                <td>{{ v.nombreCliente }}</td>
+                <td>{{ v.nombreColaborador }}</td>
+                <td>{{ v.fechaVenta | date: "dd/MM/yyyy HH:mm" }}</td>
+                <td class="ta">
+                  <strong>${{ v.total | number: "1.2-2" }}</strong>
+                </td>
+                <td>
+                  <span class="bk">{{ v.estado }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="em">No hay ventas registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+@if (modal()) {
+  <div class="ov" (click)="cerrarModal()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Registrar Nueva Venta</span
+        ><button (click)="cerrarModal()">✕</button>
+      </div>
+      <div class="mb">
+        <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert
+          [mensaje]="exitoModal()"
+          tipo="success"
+        />
+        <div class="fg">
+          <label>ID del Cliente *</label
+          ><input
+            type="number"
+            [(ngModel)]="dto.clienteId"
+            placeholder="ID del cliente"
+          /><span class="hint">El cliente debe estar registrado.</span>
+        </div>
+        <div class="fg">
+          <label>Observación</label
+          ><input
+            [(ngModel)]="dto.observacion"
+            placeholder="Notas adicionales (opcional)"
+          />
+        </div>
+        <label class="sl">Productos *</label>
+        <div class="ps">
+          @for (p of productosDisp(); track p.id) {
+            <div class="pr">
+              <div class="pi2">
+                <span class="pn">{{ p.nombre }}</span
+                ><span class="pp"
+                  >${{ p.precioPromocion ?? p.precio | number: "1.2-2" }}</span
+                >
+              </div>
+              <input
+                type="number"
+                class="qi"
+                min="0"
+                [max]="p.stock"
+                [value]="getCantidad(p.id)"
+                (change)="setCantidad(p.id, +$any($event.target).value, p)"
+                placeholder="0"
+              />
+            </div>
+          }
+        </div>
+        @if (totalEstimado() > 0) {
+          <div class="tb">
+            <span>Total estimado:</span
+            ><strong>${{ totalEstimado() | number: "1.2-2" }}</strong>
+          </div>
+        }
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarModal()">Cancelar</button
+        ><button class="btn-p" [disabled]="guardando()" (click)="registrar()">
+          {{ guardando() ? "Registrando..." : "Registrar Venta" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

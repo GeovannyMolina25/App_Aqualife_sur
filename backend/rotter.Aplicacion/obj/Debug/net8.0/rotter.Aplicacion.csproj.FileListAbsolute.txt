@@ -1,0 +1,17 @@
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Aplicacion.deps.json
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Aplicacion.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Aplicacion.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Dominio.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Infraestructura.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Dominio.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\bin\Debug\net8.0\rotter.Infraestructura.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.csproj.AssemblyReference.cache
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.AssemblyInfoInputs.cache
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.AssemblyInfo.cs
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.csproj.CoreCompileInputs.cache
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.A.54F1D6EE.Up2Date
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\refint\rotter.Aplicacion.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\rotter.Aplicacion.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Aplicacion\obj\Debug\net8.0\ref\rotter.Aplicacion.dll

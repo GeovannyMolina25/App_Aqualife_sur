@@ -1,0 +1,72 @@
+<div class="auth-page">
+  <div class="auth-visual">
+    <div class="av-content">
+      <div class="logo-ring">
+        <img
+          src="assets/logo.png"
+          alt="Logo"
+          (error)="$any($event.target).style.display = 'none'"
+        /><span>💧</span>
+      </div>
+      <h1>Rotter</h1>
+      <p>
+        Sistema integral de gestión de ventas para tu empresa de agua
+        purificada.
+      </p>
+      <ul>
+        <li><span>✓</span> Gestión de ventas en tiempo real</li>
+        <li><span>✓</span> Reportes PDF y Excel</li>
+        <li><span>✓</span> Control de inventario</li>
+      </ul>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-box">
+      <h2>Bienvenido</h2>
+      <p class="sub">Ingresa tus credenciales para continuar</p>
+      <app-alert [mensaje]="error()" tipo="error" />
+      <form (ngSubmit)="onLogin()">
+        <div class="fg">
+          <label>Correo electrónico</label
+          ><input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="correo@ejemplo.com"
+            required
+          />
+        </div>
+        <div class="fg">
+          <label>Contrasenia</label>
+          <div class="pw-wrap">
+            <input
+              [type]="verPass() ? 'text' : 'password'"
+              [(ngModel)]="password"
+              name="password"
+              placeholder="••••••••"
+              required
+            /><button type="button" (click)="verPass.set(!verPass())">
+              {{ verPass() ? "🙈" : "👁" }}
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" [disabled]="cargando()">
+          {{ cargando() ? "Ingresando..." : "Ingresar al sistema" }}
+        </button>
+      </form>
+      <p class="switch">
+        ¿No tienes cuenta? <a routerLink="/auth/registro">Regístrate gratis</a>
+      </p>
+      <div class="demo">
+        <p>Cuentas demo:</p>
+        <button (click)="demo('admin@rotter.com', 'Admin123!')">Admin</button>
+        <button (click)="demo('colab@rotter.com', 'Admin123!')">
+          Colaborador
+        </button>
+        <button (click)="demo('cliente@rotter.com', 'Admin123!')">
+          Cliente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

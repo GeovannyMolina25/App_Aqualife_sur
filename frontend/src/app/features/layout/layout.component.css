@@ -1,0 +1,236 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  background: #fdfbf7;
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+}
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #0f5470 0%, #1a6b8a 100%);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+.sl {
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.sl img {
+  height: 46px;
+  object-fit: contain;
+}
+.slt {
+  color: #fff;
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+.sls {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+.sn {
+  padding: 12px 0;
+  flex: 1;
+}
+.sec {
+  padding: 12px 20px 4px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+}
+.nl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.nl:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.nl.act {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-left-color: #4db8a8;
+  font-weight: 500;
+}
+.sf {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.su {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.av {
+  width: 36px;
+  height: 36px;
+  background: #38a89a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #fff;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+}
+.un {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #fff;
+}
+.ur {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+.logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  font-family: "DM Sans", sans-serif;
+}
+.logout:hover {
+  background: rgba(224, 92, 92, 0.2);
+  color: #fca5a5;
+}
+.main {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid #efe4cc;
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(26, 107, 138, 0.06);
+}
+.tl {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.hbg {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a6572;
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  display: none;
+}
+.brand {
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a6b8a;
+}
+.tr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.rb {
+  padding: 3px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.rb-administrador {
+  background: rgba(26, 107, 138, 0.1);
+  color: #1a6b8a;
+}
+.rb-colaborador {
+  background: rgba(77, 184, 168, 0.15);
+  color: #2d8070;
+}
+.rb-cliente {
+  background: rgba(196, 168, 130, 0.2);
+  color: #b8956a;
+}
+.tav {
+  width: 32px;
+  height: 32px;
+  background: #1a6b8a;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.tn {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1c2b35;
+}
+.pc {
+  padding: 28px 32px;
+  flex: 1;
+}
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main {
+    margin-left: 0;
+  }
+  .hbg {
+    display: flex !important;
+  }
+  .pc {
+    padding: 20px 16px;
+  }
+  .tn {
+    display: none;
+  }
+}

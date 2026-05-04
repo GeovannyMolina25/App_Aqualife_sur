@@ -1,0 +1,113 @@
+<div class="auth-page">
+  <div class="auth-visual">
+    <div class="av-content">
+      <div class="logo-ring">
+        <img
+          src="assets/logo.png"
+          alt="Logo"
+          (error)="$any($event.target).style.display = 'none'"
+        /><span>💧</span>
+      </div>
+      <h1>Únete a Rotter</h1>
+      <p>
+        Regístrate y disfruta de nuestros productos de agua de la más alta
+        calidad.
+      </p>
+    </div>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-box">
+      <h2>Crear cuenta</h2>
+      <p class="sub">Completa tus datos para registrarte</p>
+      <app-alert [mensaje]="error()" tipo="error" />
+      <app-alert [mensaje]="exito()" tipo="success" />
+      <form (ngSubmit)="onRegistro()">
+        <div class="grid2">
+          <div class="fg">
+            <label>Nombre *</label
+            ><input
+              [(ngModel)]="dto.nombre"
+              name="nombre"
+              placeholder="Juan"
+              required
+            />
+          </div>
+          <div class="fg">
+            <label>Apellido *</label
+            ><input
+              [(ngModel)]="dto.apellido"
+              name="apellido"
+              placeholder="Pérez"
+              required
+            />
+          </div>
+        </div>
+        <div class="fg">
+          <label>Correo *</label
+          ><input
+            type="email"
+            [(ngModel)]="dto.email"
+            name="email"
+            placeholder="correo@ejemplo.com"
+            required
+          />
+        </div>
+        <div class="grid2">
+          <div class="fg">
+            <label>Fecha de nacimiento *</label
+            ><input
+              type="date"
+              [(ngModel)]="dto.fechaNacimiento"
+              name="fn"
+              required
+            />
+          </div>
+          <div class="fg">
+            <label>Sexo *</label>
+            <select [(ngModel)]="dto.sexo" name="sexo" required>
+              <option value="">Seleccionar</option>
+              <option value="Masculino">Masculino</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Dirección *</label
+          ><input
+            [(ngModel)]="dto.direccion"
+            name="dir"
+            placeholder="Calle, Ciudad"
+            required
+          />
+        </div>
+        <div class="fg">
+          <label>Teléfono</label
+          ><input
+            type="tel"
+            [(ngModel)]="dto.telefono"
+            name="tel"
+            placeholder="+593 99 999 9999"
+          />
+        </div>
+        <div class="fg">
+          <label>Contrasenia *</label
+          ><input
+            type="password"
+            [(ngModel)]="dto.password"
+            name="pass"
+            placeholder="Mínimo 6 caracteres"
+            required
+            minlength="6"
+          />
+        </div>
+        <button type="submit" class="btn-submit" [disabled]="cargando()">
+          {{ cargando() ? "Registrando..." : "Crear mi cuenta" }}
+        </button>
+      </form>
+      <p class="switch">
+        ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a>
+      </p>
+    </div>
+  </div>
+</div>

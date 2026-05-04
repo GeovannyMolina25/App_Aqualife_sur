@@ -1,0 +1,11 @@
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\bin\Debug\net8.0\rotter.Dominio.deps.json
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\bin\Debug\net8.0\rotter.Dominio.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\bin\Debug\net8.0\rotter.Dominio.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.AssemblyInfoInputs.cache
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.AssemblyInfo.cs
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.csproj.CoreCompileInputs.cache
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\refint\rotter.Dominio.dll
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\rotter.Dominio.pdb
+C:\Users\geova\Desktop\rotter_Acqualife\rotter\backend\rotter.Dominio\obj\Debug\net8.0\ref\rotter.Dominio.dll

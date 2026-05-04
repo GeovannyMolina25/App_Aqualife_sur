@@ -1,0 +1,76 @@
+<div class="wrap">
+  <div class="ph">
+    <h1>Gestión de Usuarios</h1>
+    <p>Administra roles y accesos del sistema</p>
+  </div>
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="tc">
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Email</th>
+              <th>Sexo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Registro</th>
+              <th>Cambiar Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of usuarios(); track u.id) {
+              <tr>
+                <td>
+                  <div class="uc">
+                    <div class="av">{{ iniciales(u) }}</div>
+                    <div>
+                      <div class="un">{{ u.nombre }} {{ u.apellido }}</div>
+                      <div class="ud">{{ u.direccion }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.sexo }}</td>
+                <td>
+                  <span class="bk" [class]="'bk-' + rolClass(u.rol)">{{
+                    u.rol
+                  }}</span>
+                </td>
+                <td>
+                  <span class="bk" [class]="u.activo ? 'bk-ok' : 'bk-no'">{{
+                    u.activo ? "Activo" : "Inactivo"
+                  }}</span>
+                </td>
+                <td>{{ u.fechaCreacion | date: "dd/MM/yyyy" }}</td>
+                <td>
+                  <select
+                    class="rs"
+                    (change)="cambiarRol(u.id, +$any($event.target).value)"
+                  >
+                    <option [value]="1" [selected]="u.rol === 'Administrador'">
+                      Administrador
+                    </option>
+                    <option [value]="2" [selected]="u.rol === 'Colaborador'">
+                      Colaborador
+                    </option>
+                    <option [value]="3" [selected]="u.rol === 'Cliente'">
+                      Cliente
+                    </option>
+                  </select>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="em">No hay usuarios registrados.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
