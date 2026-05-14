@@ -7,6 +7,8 @@ import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
 import { Venta, CrearVentaDto } from "../../core/models/ventas/venta.model";
 import { Producto } from "../../core/models/productos/producto.model";
+import { Usuario } from "../../core/models/usuarios/usuario.model";
+import { UsuariosService } from "../../core/services/usuarios/usuarios.service";
 
 @Component({
   selector: "app-ventas",
@@ -17,6 +19,7 @@ import { Producto } from "../../core/models/productos/producto.model";
 })
 export class VentasComponent implements OnInit {
   ventas = signal<Venta[]>([]);
+  ClietnesDisp = signal<Usuario[]>([])
   productosDisp = signal<Producto[]>([]);
   cargando = signal(false);
   modal = signal(false);
@@ -24,19 +27,43 @@ export class VentasComponent implements OnInit {
   errorModal = signal("");
   exitoModal = signal("");
   totalEstimado = signal(0);
-  dto: CrearVentaDto = { clienteId: 0, items: [] };
+  dto: CrearVentaDto = { clienteId: 9, items: [] };
   private ctds = new Map<number, { cantidad: number; precio: number }>();
 
   constructor(
     private vs: VentasService,
     private ps: ProductosService,
+    private us: UsuariosService,
   ) {}
   ngOnInit() {
     this.cargar();
+    //productos
     this.ps.obtenerTodos(1, 100).subscribe((r) => {
       if (r.exito) this.productosDisp.set(r.datos.items);
     });
+    // clientes
+    this.us.obtenerTodos(1, 100).subscribe((r) => {
+      if (r.exito) {
+
+        const clientes = r.datos.items
+          .filter((u) => u.rol === "Cliente")
+          .sort((a, b) => {
+
+            if (a.id === 9) return -1;
+            if (b.id === 9) return 1;
+
+            return 0;
+          });
+
+        this.ClietnesDisp.set(clientes);
+      }
+    });
   }
+  obtenerClienteSeleccionado() {
+  return this.ClietnesDisp().find(
+    (u) => u.id === this.dto.clienteId
+  );
+}
   cargar() {
     this.cargando.set(true);
     this.vs.obtenerTodas().subscribe((r) => {

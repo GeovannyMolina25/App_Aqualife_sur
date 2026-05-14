@@ -157,7 +157,8 @@ tbody td {
   font-weight: 500;
   color: #4a6572;
 }
-.fg input {
+.fg input,
+.fg select {
   padding: 10px 14px;
   border: 1.5px solid #e2d0af;
   border-radius: 8px;
@@ -168,7 +169,23 @@ tbody td {
   outline: none;
   width: 100%;
 }
-.fg input:focus {
+.fg select {
+  padding: 10px 14px;
+  border: 1.5px solid #e2d0af;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1c2b35;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+}
+.fg input:focus,
+.fg select:focus {
+  border-color: #3d8fa1;
+}
+.fg select:focus {
   border-color: #3d8fa1;
 }
 .hint {
