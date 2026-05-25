@@ -8,7 +8,7 @@ public class Venta
     public int ColaboradorId { get; set; }
     public decimal Total { get; set; }
     public string? Observacion { get; set; }
-    public string Estado { get; set; } = "Completada";
+    public string Estado { get; set; } = "Pendiente";
     public DateTime FechaVenta { get; set; } = DateTime.UtcNow;
     public Usuario Cliente { get; set; } = null!;
     public Usuario Colaborador { get; set; } = null!;
