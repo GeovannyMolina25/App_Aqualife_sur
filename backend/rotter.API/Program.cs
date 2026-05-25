@@ -4,14 +4,21 @@ using rotter.API.Middleware;
 using rotter.Infraestructura.Data;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine("=================================");
+Console.WriteLine(
+    builder.Configuration.GetConnectionString("DefaultConnection"));
+Console.WriteLine("=================================");
 // 🔹 Servicios personalizados
 builder.Services.AddBaseDatos(builder.Configuration);
 builder.Services.AddRepositorios();
 builder.Services.AddServicios();
 builder.Services.AddJwtAuth(builder.Configuration);
 builder.Services.AddCorsAngular(); // 👈 TU MÉTODO
+
+
 
 // 🔹 Otros servicios
 builder.Services.AddSwagger();
@@ -20,8 +27,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("rotter.Aplicacion"))
 );
+Console.WriteLine(
+    builder.Configuration.GetConnectionString("DefaultConnection"));
 
 var app = builder.Build();
+
 
 // 🔹 Swagger
 app.UseSwagger();
