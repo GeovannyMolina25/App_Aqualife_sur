@@ -11,26 +11,26 @@ public record RegistrarVentaCommand(CrearVentaDto Dto, int ColaboradorId) : IReq
 
 public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, RespuestaDto<VentaDto>>
 {
-    private readonly IVentaRepositorio    _ventas;
+    private readonly IVentaRepositorio _ventas;
     private readonly IProductoRepositorio _productos;
-    private readonly IAuditoriaServicio   _auditoria;
+    private readonly IAuditoriaServicio _auditoria;
 
     public RegistrarVentaHandler(IVentaRepositorio ventas, IProductoRepositorio productos, IAuditoriaServicio auditoria)
     { _ventas = ventas; _productos = productos; _auditoria = auditoria; }
 
     public async Task<RespuestaDto<VentaDto>> Handle(RegistrarVentaCommand req, CancellationToken ct)
     {
-        var numero   = await _ventas.GenerarNumeroVentaAsync();
+        var numero = await _ventas.GenerarNumeroVentaAsync();
         var detalles = new List<DetalleVenta>();
         decimal total = 0;
 
         foreach (var item in req.Dto.Items)
         {
             var prod = await _productos.ObtenerPorIdAsync(item.ProductoId);
-            if (prod is null)    return RespuestaDto<VentaDto>.Fallo($"Producto {item.ProductoId} no encontrado.", 404);
+            if (prod is null) return RespuestaDto<VentaDto>.Fallo($"Producto {item.ProductoId} no encontrado.", 404);
             if (prod.Stock < item.Cantidad) return RespuestaDto<VentaDto>.Fallo($"Stock insuficiente: {prod.Nombre}.", 400);
 
-            var precio   = prod.EsPromocion && prod.PrecioPromocion.HasValue ? prod.PrecioPromocion.Value : prod.Precio;
+            var precio = prod.EsPromocion && prod.PrecioPromocion.HasValue ? prod.PrecioPromocion.Value : prod.Precio;
             var subtotal = precio * item.Cantidad;
             total += subtotal;
 
@@ -40,20 +40,36 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
 
         var venta = new Venta
         {
-            NumeroVenta = numero, ClienteId = req.Dto.ClienteId, ColaboradorId = req.ColaboradorId,
-            Total = total, Observacion = req.Dto.Observacion, FechaVenta = DateTime.UtcNow, Detalles = detalles
+            NumeroVenta = numero,
+            ClienteId = req.Dto.ClienteId,
+            ColaboradorId = req.ColaboradorId,
+            Total = total,
+            Observacion = req.Dto.Observacion,
+            Estado = "Pendiente",
+            FechaVenta = DateTime.Now,
+            Detalles = detalles
         };
 
         await _ventas.CrearAsync(venta);
         await _auditoria.RegistrarAsync("REGISTRAR_VENTA", "Ventas", venta.Id.ToString(),
-            datosNuevos: new { venta.NumeroVenta, venta.Total });
+            datosNuevos: new { 
+                venta.NumeroVenta, 
+                venta.Total 
+            });
 
         var creada = await _ventas.ObtenerPorIdAsync(venta.Id);
         return RespuestaDto<VentaDto>.Ok(Mapear(creada!), "Venta registrada exitosamente.");
     }
 
-    public static VentaDto Mapear(Venta v) => new(v.Id, v.NumeroVenta, v.FechaVenta, v.Total, v.Estado, v.Observacion,
-        $"{v.Cliente.Nombre} {v.Cliente.Apellido}", v.Cliente.Email,
+    public static VentaDto Mapear(Venta v) => new(
+        v.Id, 
+        v.NumeroVenta, 
+        v.FechaVenta, 
+        v.Total, 
+        v.Estado, 
+        v.Observacion,
+        $"{v.Cliente.Nombre} {v.Cliente.Apellido}", 
+        v.Cliente.Email,
         $"{v.Colaborador.Nombre} {v.Colaborador.Apellido}",
         v.Detalles.Select(d => new DetalleVentaDto(d.ProductoId, d.Producto.Nombre, d.Cantidad, d.PrecioUnitario, d.Subtotal)).ToList());
 }
