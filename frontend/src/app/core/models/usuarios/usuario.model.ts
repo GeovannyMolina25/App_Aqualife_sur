@@ -14,4 +14,8 @@ export interface Usuario {
 export interface CambiarRolDto {
   nuevoRolId: number;
 }
+export interface OlvidePasswordDto {
+  dato: string;
+}
 export const ROL_IDS = { ADMIN: 1, COLABORADOR: 2, CLIENTE: 3 } as const;
+

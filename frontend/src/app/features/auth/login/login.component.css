@@ -168,35 +168,25 @@
   color: #1a6b8a;
   font-weight: 500;
 }
-.demo {
-  margin-top: 28px;
-  padding: 16px;
-  background: #f8f3ea;
-  border-radius: 10px;
-}
-.demo p {
-  font-size: 0.73rem;
-  color: #7a9aaa;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 10px;
-}
-.demo button {
-  padding: 5px 14px;
-  border: 1.5px solid #e2d0af;
-  border-radius: 6px;
-  background: #fff;
-  font-size: 0.8rem;
-  cursor: pointer;
+.olvPass a {
   color: #1a6b8a;
-  margin-right: 8px;
-  font-family: "DM Sans", sans-serif;
-  transition: all 0.2s;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
-.demo button:hover {
-  background: #1a6b8a;
-  color: #fff;
+.oculto {
+  display: none;
 }
+.fallback-icon {
+  font-size: 3rem;
+  color: white;
+}
+.olvPass a:hover {
+  color: #0f5470;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .auth-page {
     grid-template-columns: 1fr;
@@ -207,4 +197,47 @@
   .auth-form-panel {
     padding: 40px 24px;
   }
+}
+.ov {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.mo {
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.mh {
+  padding: 18px 22px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mb {
+  padding: 24px;
+}
+
+.mf {
+  padding: 18px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-s {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 8px;
 }

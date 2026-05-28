@@ -3,6 +3,7 @@ export interface AuthResponse {
   refreshToken: string;
   usuario: UsuarioAuth;
   expiracion: string;
+  debeCambiarPassword: boolean;
 }
 export interface UsuarioAuth {
   id: number;

@@ -1,14 +1,21 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-export type AlertTipo = "error" | "success" | "info";
+export type AlertTipo = 
+| "error" 
+| "success" 
+| "info";
 
 @Component({
   selector: "app-alert",
   standalone: true,
   imports: [CommonModule],
   template: `@if (mensaje) {
-    <div class="al" [class]="'al-' + tipo">{{ mensaje }}</div>
-  }`,
+  <div class="al" [class]="'al-' + tipo">
+
+    <div [innerHTML]="mensaje"></div>
+
+  </div>
+}`,
   styles: [
     `
       .al {
