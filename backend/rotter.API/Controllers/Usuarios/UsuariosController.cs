@@ -16,7 +16,7 @@ public class UsuariosController : ControllerBase
     public UsuariosController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador,Colaborador")]
     public async Task<IActionResult> ObtenerTodos([FromQuery] int pagina = 1, [FromQuery] int tamano = 20)
     {
         var r = await _mediator.Send(new ObtenerUsuariosQuery(pagina, tamano));

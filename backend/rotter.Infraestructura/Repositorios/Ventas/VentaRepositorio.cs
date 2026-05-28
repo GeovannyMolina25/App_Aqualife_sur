@@ -46,15 +46,15 @@ public class VentaRepositorio : IVentaRepositorio
 
     public async Task<string> GenerarNumeroVentaAsync()
     {
-        var año = DateTime.UtcNow.Year;
+        var año = DateTime.Now.Year;
         var n = await _db.Ventas.CountAsync(v => v.FechaVenta.Year == año) + 1;
         return $"VTA-{año}-{n:D4}";
     }
 
     public async Task<MetricasVentaData> ObtenerMetricasAsync()
     {
-        var hoy = DateTime.UtcNow.Date;
-        var mes = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+        var hoy = DateTime.Now.Date;
+        var mes = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
         return new MetricasVentaData(
             await _db.Ventas.Where(v => v.FechaVenta.Date == hoy).SumAsync(v => (decimal?)v.Total) ?? 0,
             await _db.Ventas.Where(v => v.FechaVenta >= mes).SumAsync(v => (decimal?)v.Total) ?? 0,

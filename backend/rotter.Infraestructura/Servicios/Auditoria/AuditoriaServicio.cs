@@ -31,7 +31,7 @@ public class AuditoriaServicio : IAuditoriaServicio
             DatosNuevos     = datosNuevos     != null ? JsonSerializer.Serialize(datosNuevos)     : null,
             IpAddress       = ctx?.Connection?.RemoteIpAddress?.ToString(),
             UserAgent       = ctx?.Request?.Headers["User-Agent"].ToString(),
-            FechaAccion     = DateTime.UtcNow,
+            FechaAccion     = DateTime.Now,
             Exitoso         = exitoso,
             MensajeError    = mensajeError
         });

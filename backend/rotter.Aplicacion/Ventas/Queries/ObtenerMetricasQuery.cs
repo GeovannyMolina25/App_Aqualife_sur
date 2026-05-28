@@ -15,8 +15,8 @@ public class ObtenerMetricasHandler : IRequestHandler<ObtenerMetricasQuery, Resp
     public async Task<RespuestaDto<MetricasDto>> Handle(ObtenerMetricasQuery req, CancellationToken ct)
     {
         var data      = await _ventas.ObtenerMetricasAsync();
-        var inicioMes = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
-        var top       = await _ventas.ObtenerTopColaboradoresAsync(inicioMes, DateTime.UtcNow);
+        var inicioMes = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        var top       = await _ventas.ObtenerTopColaboradoresAsync(inicioMes, DateTime.Now);
 
         return RespuestaDto<MetricasDto>.Ok(new MetricasDto(
             data.TotalVentasHoy, data.TotalVentasMes, data.VentasHoy, data.ProductosActivos,

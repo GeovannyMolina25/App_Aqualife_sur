@@ -4,7 +4,8 @@ public record AuthResponseDto(
     string Token,
     string RefreshToken,
     UsuarioAuthDto Usuario,
-    DateTime Expiracion
+    DateTime Expiracion,
+    bool DebeCambiarPassword
 );
 
 public record UsuarioAuthDto(
