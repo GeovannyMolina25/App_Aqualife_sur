@@ -1,3 +1,4 @@
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using rotter.Dominio.Entidades;
 using rotter.Dominio.Interfaces.Repositorios;
@@ -13,6 +14,14 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     public async Task<Usuario?> ObtenerPorEmailAsync(string email) =>
         await _db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Email == email.ToLower());
 
+    public async Task<Usuario?> ObtenerPorTelefonoAsync(
+    string telefono
+)
+    {
+        return await _db.Usuarios
+            .Include(x => x.Rol)
+            .FirstOrDefaultAsync(x => x.Telefono == telefono);
+    }
     public async Task<Usuario?> ObtenerPorIdAsync(int id) =>
         await _db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
 
@@ -34,7 +43,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
 
     public async Task<Usuario> ActualizarAsync(Usuario usuario)
     {
-        usuario.FechaModificacion = DateTime.UtcNow;
+        usuario.FechaModificacion = DateTime.Now;
         _db.Usuarios.Update(usuario);
         await _db.SaveChangesAsync();
         return usuario;
@@ -48,7 +57,7 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         var usuario = await _db.Usuarios.FindAsync(usuarioId);
         if (usuario is null) return;
         usuario.RolId = nuevoRolId;
-        usuario.FechaModificacion = DateTime.UtcNow;
+        usuario.FechaModificacion = DateTime.Now;
         await _db.SaveChangesAsync();
     }
 }

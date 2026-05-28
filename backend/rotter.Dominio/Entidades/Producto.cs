@@ -16,7 +16,7 @@ public class Producto
     public DateTime? FechaFinPromocion { get; set; }
     public bool Activo { get; set; } = true;
     public int CreadoPorId { get; set; }
-    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public DateTime FechaCreacion { get; set; } = DateTime.Now;
     public DateTime? FechaModificacion { get; set; }
     public Categoria Categoria { get; set; } = null!;
     public Usuario CreadoPor { get; set; } = null!;

@@ -23,7 +23,7 @@ public class ProductoRepositorio : IProductoRepositorio
 
     public async Task<List<Producto>> ObtenerPromocionesAsync() =>
         await _db.Productos.Include(p => p.Categoria)
-            .Where(p => p.EsPromocion && p.Activo && (!p.FechaFinPromocion.HasValue || p.FechaFinPromocion > DateTime.UtcNow))
+            .Where(p => p.EsPromocion && p.Activo && (!p.FechaFinPromocion.HasValue || p.FechaFinPromocion > DateTime.Now))
             .ToListAsync();
 
     public async Task<int> TotalAsync(bool soloActivos = true)
@@ -37,7 +37,7 @@ public class ProductoRepositorio : IProductoRepositorio
     { _db.Productos.Add(producto); await _db.SaveChangesAsync(); return producto; }
 
     public async Task<Producto> ActualizarAsync(Producto producto)
-    { producto.FechaModificacion = DateTime.UtcNow; _db.Productos.Update(producto); await _db.SaveChangesAsync(); return producto; }
+    { producto.FechaModificacion = DateTime.Now; _db.Productos.Update(producto); await _db.SaveChangesAsync(); return producto; }
 
     public async Task ActualizarStockAsync(int productoId, int cantidad)
     {

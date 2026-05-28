@@ -13,7 +13,7 @@ public class Usuario
     public string? Telefono { get; set; }
     public int RolId { get; set; }
     public bool Activo { get; set; } = true;
-    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+    public DateTime FechaCreacion { get; set; } = DateTime.Now;
     public DateTime? FechaModificacion { get; set; }
     public DateTime? UltimoAcceso { get; set; }
     public Rol Rol { get; set; } = null!;

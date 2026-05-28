@@ -12,7 +12,7 @@ public class Auditoria
     public string? DatosNuevos { get; set; }
     public string? IpAddress { get; set; }
     public string? UserAgent { get; set; }
-    public DateTime FechaAccion { get; set; } = DateTime.UtcNow;
+    public DateTime FechaAccion { get; set; } = DateTime.Now;
     public bool Exitoso { get; set; } = true;
     public string? MensajeError { get; set; }
 }
