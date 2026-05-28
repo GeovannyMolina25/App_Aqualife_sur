@@ -37,4 +37,31 @@ public class AuthController : ControllerBase
         nombre = User.FindFirst(ClaimTypes.Name)?.Value,
         rol    = User.FindFirst(ClaimTypes.Role)?.Value
     });
+    [HttpPost("recuperar-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RecuperarPassword(
+    [FromBody] OlvidePasswordDto dto
+)
+    {
+        var r = await _mediator.Send(
+            new RecuperarPasswordCommand(dto.Dato)
+        );
+
+        return StatusCode(r.StatusCode, r);
+    }
+    [HttpPut("cambiar-password")]
+    [Authorize]
+    public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDto dto)
+    {
+        var usuarioId = int.Parse(
+            User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+        );
+        var r = await _mediator.Send(
+            new CambiarPasswordCommand(
+                usuarioId,
+                dto.NuevaPassword
+            )
+        );
+        return StatusCode(r.StatusCode, r);
+    }
 }

@@ -41,9 +41,21 @@ public class RegistrarUsuarioHandler : IRequestHandler<RegistrarUsuarioCommand, 
         await _auditoria.RegistrarAsync("REGISTRO", "Usuarios", usuario.Id.ToString(),
             datosNuevos: new { usuario.Email, usuario.Nombre });
 
-        return RespuestaDto<AuthResponseDto>.Ok(new AuthResponseDto(
-            token, _jwt.GenerarRefreshToken(),
-            new UsuarioAuthDto(completo!.Id, completo.Nombre, completo.Apellido, completo.Email, completo.Rol.Nombre),
-            DateTime.UtcNow.AddHours(24)), "Registro exitoso.");
+        return RespuestaDto<AuthResponseDto>.Ok(
+            new AuthResponseDto(
+                token,
+                _jwt.GenerarRefreshToken(),
+                new UsuarioAuthDto(
+                    completo!.Id,
+                    completo.Nombre,
+                    completo.Apellido,
+                    completo.Email,
+                    completo.Rol.Nombre
+                ),
+                DateTime.Now.AddHours(24),
+                false
+            ),
+            "Registro exitoso."
+        );
     }
 }

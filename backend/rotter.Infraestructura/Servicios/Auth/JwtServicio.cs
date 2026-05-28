@@ -18,7 +18,7 @@ public class JwtServicio : IJwtServicio
     {
         var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var exp   = DateTime.UtcNow.AddHours(int.Parse(_config["JWT:HorasExpiracion"] ?? "24"));
+        var exp   = DateTime.Now.AddHours(int.Parse(_config["JWT:HorasExpiracion"] ?? "24"));
 
         var claims = new[]
         {

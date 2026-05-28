@@ -30,13 +30,25 @@ public class LoginHandler : IRequestHandler<LoginCommand, RespuestaDto<AuthRespo
 
         if (!usuario.Activo) return RespuestaDto<AuthResponseDto>.Fallo("Usuario desactivado.", 403);
 
-        usuario.UltimoAcceso = DateTime.UtcNow;
+        var debeCambiarPassword = req.Dto.Password.StartsWith("Rotter");
+        usuario.UltimoAcceso = DateTime.Now;
         await _usuarios.ActualizarAsync(usuario);
         await _auditoria.RegistrarAsync("LOGIN", "Usuarios", usuario.Id.ToString());
 
-        return RespuestaDto<AuthResponseDto>.Ok(new AuthResponseDto(
-            _jwt.GenerarToken(usuario), _jwt.GenerarRefreshToken(),
-            new UsuarioAuthDto(usuario.Id, usuario.Nombre, usuario.Apellido, usuario.Email, usuario.Rol.Nombre),
-            DateTime.UtcNow.AddHours(24)));
+        return RespuestaDto<AuthResponseDto>
+            .Ok(new AuthResponseDto(
+            _jwt.GenerarToken(usuario), 
+            _jwt.GenerarRefreshToken(),
+
+            new UsuarioAuthDto(
+                usuario.Id, 
+                usuario.Nombre, 
+                usuario.Apellido, 
+                usuario.Email, 
+                usuario.Rol.Nombre
+                ),
+            DateTime.Now.AddHours(24),
+            debeCambiarPassword
+            ));
     }
 }
