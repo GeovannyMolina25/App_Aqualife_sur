@@ -4,6 +4,6 @@ public record PagedResult<T>(
     List<T> Items,
     int Total,
     int Pagina,
-    int TamañoPagina,
+    int TamanioPagina,
     int TotalPaginas
 );
