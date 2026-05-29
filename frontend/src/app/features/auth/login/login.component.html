@@ -5,13 +5,17 @@
         <img
           src="assets/logo.png"
           alt="Logo"
-          (error)="$any($event.target).style.display = 'none'"
-        /><span>💧</span>
+          [class.oculto]="errorLogo()"
+          (error)="errorLogo.set(true)"
+        />
+
+        @if (errorLogo()) {
+          <span class="fallback-icon">💧</span>
+        }
       </div>
-      <h1>Rotter</h1>
+      <h1>ACQUALIFE</h1>
       <p>
-        Sistema integral de gestión de ventas para tu empresa de agua
-        purificada.
+        Sistema integral de gestión de productos yventas de la emprasa ACQUALIFE.
       </p>
       <ul>
         <li><span>✓</span> Gestión de ventas en tiempo real</li>
@@ -25,6 +29,7 @@
       <h2>Bienvenido</h2>
       <p class="sub">Ingresa tus credenciales para continuar</p>
       <app-alert [mensaje]="error()" tipo="error" />
+      <app-alert [mensaje]="exito()" tipo="success" />
       <form (ngSubmit)="onLogin()">
         <div class="fg">
           <label>Correo electrónico</label
@@ -57,16 +62,81 @@
       <p class="switch">
         ¿No tienes cuenta? <a routerLink="/auth/registro">Regístrate gratis</a>
       </p>
-      <div class="demo">
-        <p>Cuentas demo:</p>
-        <button (click)="demo('admin@rotter.com', 'Admin123!')">Admin</button>
-        <button (click)="demo('colab@rotter.com', 'Admin123!')">
-          Colaborador
-        </button>
-        <button (click)="demo('cliente@rotter.com', 'Admin123!')">
-          Cliente
-        </button>
+      <div class="olvPass">
+        <p class="switch">
+          ¿Olvidaste tu contraseña?
+          <a (click)="olvideModal.set(true)">Recuperar contraseña</a>
+        </p>
       </div>
     </div>
   </div>
 </div>
+
+@if (olvideModal()) {
+  <div class="ov" (click)="olvideModal.set(false)">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Recuperar contraseña</span>
+        <button (click)="olvideModal.set(false)">✕</button>
+      </div>
+
+      <div class="mb">
+        <app-alert
+          [mensaje]="mensajeRecuperacion()"
+          [tipo]="tipoMensajeRecuperacion()"
+        />
+
+        <div class="fg">
+          <label>Correo o teléfono</label>
+          <input
+            [(ngModel)]="datoRecuperacion"
+            placeholder="correo@ejemplo.com o 0987654321"
+          />
+        </div>
+      </div>
+
+      <div class="mf">
+        <button class="btn-s" (click)="olvideModal.set(false)">Cancelar</button>
+
+        <button class="btn-submit" (click)="recuperarPassword()">
+          {{ cargandoRecuperacion() ? "Enviando..." : "Enviar recuperación" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalCambiarPassword()) {
+  <div class="ov">
+    <div class="mo">
+      <div class="mh">
+        <span>Cambiar contraseña</span>
+      </div>
+
+      <div class="mb">
+        <app-alert
+          [mensaje]="mensajeCambioPassword()"
+          [tipo]="tipoCambioPassword()"
+        />
+
+        <div class="fg">
+          <label>Nueva contraseña</label>
+
+          <input type="password" [(ngModel)]="nuevaPassword" />
+        </div>
+
+        <div class="fg">
+          <label>Confirmar contraseña</label>
+
+          <input type="password" [(ngModel)]="confirmarPassword" />
+        </div>
+      </div>
+
+      <div class="mf">
+        <button class="btn-submit" (click)="cambiarPassword()">
+          Cambiar contraseña
+        </button>
+      </div>
+    </div>
+  </div>
+}

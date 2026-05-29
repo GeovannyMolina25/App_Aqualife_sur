@@ -4,7 +4,15 @@ import { adminGuard } from "./core/guards/admin.guard";
 import { colaboradorGuard } from "./core/guards/colaborador.guard";
 
 export const routes: Routes = [
-  { path: "", redirectTo: "/auth/login", pathMatch: "full" },
+
+  // INICIO
+  {
+    path: "",
+    redirectTo: "/auth/login",
+    pathMatch: "full",
+  },
+
+  // AUTH
   {
     path: "auth",
     children: [
@@ -24,6 +32,8 @@ export const routes: Routes = [
       },
     ],
   },
+
+  // DASHBOARD
   {
     path: "dashboard",
     canActivate: [authGuard],
@@ -31,6 +41,7 @@ export const routes: Routes = [
       import("./features/layout/layout.component").then(
         (m) => m.LayoutComponent,
       ),
+
     children: [
       {
         path: "",
@@ -39,6 +50,7 @@ export const routes: Routes = [
             (m) => m.DashboardComponent,
           ),
       },
+
       {
         path: "productos",
         loadComponent: () =>
@@ -46,6 +58,7 @@ export const routes: Routes = [
             (m) => m.ProductosComponent,
           ),
       },
+
       {
         path: "ventas",
         canActivate: [colaboradorGuard],
@@ -54,6 +67,7 @@ export const routes: Routes = [
             (m) => m.VentasComponent,
           ),
       },
+
       {
         path: "mi-historial",
         loadComponent: () =>
@@ -61,6 +75,7 @@ export const routes: Routes = [
             (m) => m.HistorialComponent,
           ),
       },
+
       {
         path: "usuarios",
         canActivate: [adminGuard],
@@ -69,6 +84,7 @@ export const routes: Routes = [
             (m) => m.UsuariosComponent,
           ),
       },
+
       {
         path: "reportes",
         canActivate: [adminGuard],
@@ -79,5 +95,9 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: "**", redirectTo: "/auth/login" },
+
+  {
+    path: "**",
+    redirectTo: "/auth/login",
+  },
 ];

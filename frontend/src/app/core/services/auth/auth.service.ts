@@ -10,6 +10,7 @@ import {
 import { LoginDto } from "../../models/auth/login.model";
 import { RegistroDto } from "../../models/auth/registro.model";
 import { RespuestaDto } from "../../models/comun/respuesta.model";
+import { OlvidePasswordDto } from "../../models/usuarios/usuario.model";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -44,6 +45,20 @@ export class AuthService {
         }),
       );
   }
+
+  recuperarPassword(dto: OlvidePasswordDto) {
+  return this.http.post<RespuestaDto<string>>(
+    `${environment.apiUrl}/auth/recuperar-password`,
+    dto
+  );
+}
+
+cambiarPassword(nuevaPassword: string) {
+  return this.http.put<RespuestaDto<boolean>>(
+    `${environment.apiUrl}/auth/cambiar-password`,
+    { nuevaPassword }
+  );
+}
 
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
