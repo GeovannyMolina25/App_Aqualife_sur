@@ -8,7 +8,7 @@ public interface IVentaRepositorio
     Task<List<Venta>> ObtenerTodasAsync(int pagina, int tamano, DateTime? desde = null, DateTime? hasta = null);
     Task<List<Venta>> ObtenerPorClienteAsync(int clienteId, int pagina, int tamano);
     Task<List<Venta>> ObtenerPorColaboradorAsync(int colaboradorId, int pagina, int tamano);
-    Task<List<Venta>> ObtenerPorMesAsync(int año, int mes);
+    Task<List<Venta>> ObtenerPorMesAsync(int Anio, int mes);
     Task<List<Venta>> ObtenerPorColaboradorYPeriodoAsync(int colaboradorId, DateTime desde, DateTime hasta);
     Task<Venta> CrearAsync(Venta venta);
     Task<string> GenerarNumeroVentaAsync();

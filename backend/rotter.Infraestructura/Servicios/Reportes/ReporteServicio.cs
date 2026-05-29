@@ -4,6 +4,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using rotter.Dominio.Entidades;
 using rotter.Dominio.Interfaces.Servicios;
+using System.Globalization;
 
 namespace rotter.Infraestructura.Servicios.Reportes;
 
@@ -12,10 +13,12 @@ public class ReporteServicio : IReporteServicio
     private const string Azul   = "#1a6b8a";
     private const string Blanco = "#FFFFFF";
 
-    public byte[] GenerarPdfVentasMensuales(List<Venta> ventas, int año, int mes)
+    public byte[] GenerarPdfVentasMensuales(List<Venta> ventas, int anio, int mes)
     {
         QuestPDF.Settings.License = LicenseType.Community;
-        var nombreMes = new System.Globalization.CultureInfo("es-ES").DateTimeFormat.GetMonthName(mes);
+        var nombreMes = new CultureInfo("es-ES")
+        .DateTimeFormat
+        .GetMonthName(mes);
         var total = ventas.Sum(v => v.Total);
 
         return Document.Create(c => c.Page(page =>
@@ -23,7 +26,7 @@ public class ReporteServicio : IReporteServicio
             page.Size(PageSizes.A4); page.Margin(40);
             page.Header().Column(col =>
             {
-                col.Item().Text($"ROTTER — Ventas {nombreMes} {año}").FontSize(20).Bold().FontColor(Azul);
+                col.Item().Text($"ROTTER — Ventas {nombreMes} {anio}").FontSize(20).Bold().FontColor(Azul);
                 col.Item().Text($"Generado: {DateTime.Now:dd/MM/yyyy HH:mm}").FontSize(10).FontColor("#666");
                 col.Item().LineHorizontal(1).LineColor(Azul);
             });

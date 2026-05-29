@@ -8,9 +8,12 @@ export class ReportesService {
   constructor(private http: HttpClient) {}
 
   pdfMensual(anio: number, mes: number) {
-    return this.http.get(`${this.url}/pdf-mensual?anio=${anio}&mes=${mes}`, {
-      responseType: "blob",
-    });
+    return this.http.get(
+      `${this.url}/pdf-mensual?anio=${anio}&mes=${mes}`,
+      {
+        responseType: "blob",
+      }
+    );
   }
   pdfColaborador(id: number, d: string, h: string) {
     return this.http.get(

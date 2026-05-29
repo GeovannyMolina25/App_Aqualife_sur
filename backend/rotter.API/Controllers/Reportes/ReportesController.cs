@@ -14,11 +14,23 @@ public class ReportesController : ControllerBase
     public ReportesController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet("pdf-mensual")]
-    public async Task<IActionResult> PdfMensual([FromQuery] int año, [FromQuery] int mes)
+    public async Task<IActionResult> PdfMensual(
+    [FromQuery(Name = "anio")] int anio,
+    [FromQuery(Name = "mes")] int mes)
     {
-        var r = await _mediator.Send(new GenerarPdfMensualQuery(año, mes));
-        if (!r.Exito) return BadRequest(r);
-        return File(r.Datos!, "application/pdf", $"ventas-{año}-{mes:D2}.pdf");
+        Console.WriteLine($"ANIO: {anio}");
+        Console.WriteLine($"MES: {mes}");
+
+        var r = await _mediator.Send(
+            new GenerarPdfMensualQuery(anio, mes));
+
+        if (!r.Exito)
+            return BadRequest(r);
+
+        return File(
+            r.Datos!,
+            "application/pdf",
+            $"ventas-{anio}-{mes:D2}.pdf");
     }
 
     [HttpGet("pdf-colaborador")]
