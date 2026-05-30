@@ -33,9 +33,13 @@ public class VentaRepositorio : IVentaRepositorio
         await ConIncludes().Where(v => v.ColaboradorId == colaboradorId)
             .OrderByDescending(v => v.FechaVenta).Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
 
-    public async Task<List<Venta>> ObtenerPorMesAsync(int año, int mes) =>
-        await ConIncludes().Where(v => v.FechaVenta.Year == año && v.FechaVenta.Month == mes)
-            .OrderByDescending(v => v.FechaVenta).ToListAsync();
+    public async Task<List<Venta>> ObtenerPorMesAsync(int anio, int mes) =>
+    await ConIncludes()
+        .Where(v =>
+            v.FechaVenta.Year == anio &&
+            v.FechaVenta.Month == mes)
+        .OrderByDescending(v => v.FechaVenta)
+        .ToListAsync();
 
     public async Task<List<Venta>> ObtenerPorColaboradorYPeriodoAsync(int colaboradorId, DateTime desde, DateTime hasta) =>
         await ConIncludes().Where(v => v.ColaboradorId == colaboradorId && v.FechaVenta >= desde && v.FechaVenta <= hasta)
@@ -46,9 +50,9 @@ public class VentaRepositorio : IVentaRepositorio
 
     public async Task<string> GenerarNumeroVentaAsync()
     {
-        var año = DateTime.Now.Year;
-        var n = await _db.Ventas.CountAsync(v => v.FechaVenta.Year == año) + 1;
-        return $"VTA-{año}-{n:D4}";
+        var Anio = DateTime.Now.Year;
+        var n = await _db.Ventas.CountAsync(v => v.FechaVenta.Year == Anio) + 1;
+        return $"VTA-{Anio}-{n:D4}";
     }
 
     public async Task<MetricasVentaData> ObtenerMetricasAsync()
@@ -62,9 +66,29 @@ public class VentaRepositorio : IVentaRepositorio
             await _db.Productos.CountAsync(p => p.Activo));
     }
 
-    public async Task<List<TopColaboradorData>> ObtenerTopColaboradoresAsync(DateTime desde, DateTime hasta) =>
-        await _db.Ventas.Where(v => v.FechaVenta >= desde && v.FechaVenta <= hasta)
-            .GroupBy(v => new { v.ColaboradorId, v.Colaborador.Nombre, v.Colaborador.Apellido })
-            .Select(g => new TopColaboradorData(g.Key.Nombre + " " + g.Key.Apellido, g.Count(), g.Sum(v => v.Total)))
-            .OrderByDescending(t => t.MontoTotal).Take(10).ToListAsync();
+    public async Task<List<TopColaboradorData>>ObtenerTopColaboradoresAsync(DateTime desde, DateTime hasta)
+    {
+        var ventas = await _db.Ventas
+            .Include(v => v.Colaborador)
+            .Where(v =>
+                v.FechaVenta >= desde &&
+                v.FechaVenta <= hasta)
+            .ToListAsync();
+
+        return ventas
+            .GroupBy(v => new
+            {
+                v.ColaboradorId,
+                Nombre = v.Colaborador?.Nombre ?? "",
+                Apellido = v.Colaborador?.Apellido ?? ""
+            })
+            .Select(g => new TopColaboradorData(
+                $"{g.Key.Nombre} {g.Key.Apellido}",
+                g.Count(),
+                g.Sum(v => v.Total)
+            ))
+            .OrderByDescending(x => x.MontoTotal)
+            .Take(10)
+            .ToList();
+    }
 }
