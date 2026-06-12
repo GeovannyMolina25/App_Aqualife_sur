@@ -61,9 +61,26 @@ tbody td {
   padding: 3px 10px;
   border-radius: 100px;
   font-size: 0.72rem;
-  font-weight: 500;
+  font-weight: 600;
+}
+.bk-verde {
   background: rgba(60, 179, 113, 0.12);
   color: #2a8c5a;
+}
+
+.bk-rojo {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
+
+.bk-amarillo {
+  background: rgba(251, 191, 36, 0.15);
+  color: #dab309;
+}
+
+.bk-azul {
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
 }
 .em {
   text-align: center;
