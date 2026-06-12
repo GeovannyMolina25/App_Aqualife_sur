@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -10,9 +9,11 @@ using rotter.Infraestructura.Repositorios.Auditoria;
 using rotter.Infraestructura.Repositorios.Productos;
 using rotter.Infraestructura.Repositorios.Usuarios;
 using rotter.Infraestructura.Repositorios.Ventas;
-using rotter.Infraestructura.Servicios.Auth;
 using rotter.Infraestructura.Servicios.Auditoria;
+using rotter.Infraestructura.Servicios.Auth;
+using rotter.Infraestructura.Servicios.Pdf;
 using rotter.Infraestructura.Servicios.Reportes;
+using System.Text;
 
 namespace rotter.API.Extensions;
 
@@ -45,9 +46,13 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddServicios(this IServiceCollection s)
     {
-        s.AddScoped<IJwtServicio,       JwtServicio>();
+        s.AddScoped<IJwtServicio, JwtServicio>();
         s.AddScoped<IAuditoriaServicio, AuditoriaServicio>();
-        s.AddScoped<IReporteServicio,   ReporteServicio>();
+        s.AddScoped<IReporteServicio, ReporteServicio>();
+
+        s.AddScoped<
+            IFacturaPdfService,
+            FacturaPdfService>();
         s.AddHttpContextAccessor();
         return s;
     }

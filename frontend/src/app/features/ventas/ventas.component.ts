@@ -5,7 +5,7 @@ import { VentasService } from "../../core/services/ventas/ventas.service";
 import { ProductosService } from "../../core/services/productos/productos.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
-import { Venta, CrearVentaDto } from "../../core/models/ventas/venta.model";
+import { Venta, CrearVentaDto } from '../../core/models/ventas/venta.model';
 import { Producto } from "../../core/models/productos/producto.model";
 import { Usuario } from "../../core/models/usuarios/usuario.model";
 import { UsuariosService } from "../../core/services/usuarios/usuarios.service";
@@ -28,6 +28,8 @@ export class VentasComponent implements OnInit {
   exitoModal = signal("");
   totalEstimado = signal(0);
   dto: CrearVentaDto = { clienteId: 9, items: [] };
+  modalFactura = signal(false);
+  ventaSeleccionada = signal<Venta | null>(null);
   private ctds = new Map<number, { cantidad: number; precio: number }>();
 
   constructor(
@@ -44,17 +46,13 @@ export class VentasComponent implements OnInit {
     // clientes
     this.us.obtenerTodos(1, 100).subscribe((r) => {
       if (r.exito) {
-
         const clientes = r.datos.items
           .filter((u) => u.rol === "Cliente")
           .sort((a, b) => {
-
             if (a.id === 9) return -1;
             if (b.id === 9) return 1;
-
             return 0;
           });
-
         this.ClietnesDisp.set(clientes);
       }
     });
@@ -99,6 +97,37 @@ export class VentasComponent implements OnInit {
     this.ctds.clear();
     this.totalEstimado.set(0);
     this.dto = { clienteId: 0, items: [] };
+  }
+  abrirFactura(Venta: Venta) {
+    this.ventaSeleccionada.set(Venta);
+    this.modalFactura.set(true);
+  }
+  cerrarFactura(){
+    this.modalFactura.set(false);
+    this.ventaSeleccionada.set(null);
+  }
+  descargarPdf() {
+    const venta = this.ventaSeleccionada();
+    if (!venta) return;
+    this.vs.descargarFacturaPdf(venta.id)
+      .subscribe({
+        next: (pdf) => {
+          const blob = new Blob(
+            [pdf],
+            { type: 'application/pdf' }
+          );
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Factura_${venta.numeroVenta}.pdf`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error al descargar PDF');
+        }
+      });
   }
   registrar() {
     if (!this.dto.clienteId || this.dto.items.length === 0) {

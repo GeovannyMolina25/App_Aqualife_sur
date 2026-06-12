@@ -20,6 +20,7 @@
               <th>Fecha</th>
               <th>Total</th>
               <th>Estado</th>
+              <th>Factura</th>
             </tr>
           </thead>
           <tbody>
@@ -35,7 +36,26 @@
                   <strong>${{ v.total | number: "1.2-2" }}</strong>
                 </td>
                 <td>
-                  <span class="bk">{{ v.estado }}</span>
+                  <span
+                    class="bk"
+                    [ngClass]="{
+                      'bk-verde': v.estado === 'Completada',
+                      'bk-rojo': v.estado === 'Anulada',
+                      'bk-amarillo': v.estado === 'Pendiente',
+                      'bk-azul': v.estado === 'Ingresada'
+                    }"
+                  >
+                    {{ v.estado }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    class="btn-factura"
+                    (click)="abrirFactura(v)"
+                    title="Ver Factura"
+                  >
+                    🧾
+                  </button>
                 </td>
               </tr>
             } @empty {
@@ -65,30 +85,22 @@
           <label>Cliente *</label>
 
           <select [(ngModel)]="dto.clienteId">
-
             <option
               *ngFor="let usuario of ClietnesDisp()"
               [ngValue]="usuario.id"
             >
               {{ usuario.nombre }} {{ usuario.apellido }}
             </option>
-
           </select>
 
           <span class="hint">
             Cliente seleccionado:
-            {{
-              obtenerClienteSeleccionado()?.nombre
-            }}
-            {{
-              obtenerClienteSeleccionado()?.apellido
-            }}
+            {{ obtenerClienteSeleccionado()?.nombre }}
+            {{ obtenerClienteSeleccionado()?.apellido }}
           </span>
 
           <span class="hint">
-            {{
-              obtenerClienteSeleccionado()?.direccion
-            }}
+            {{ obtenerClienteSeleccionado()?.direccion }}
           </span>
         </div>
         <div class="fg">
@@ -131,6 +143,42 @@
         <button class="btn-s" (click)="cerrarModal()">Cancelar</button
         ><button class="btn-p" [disabled]="guardando()" (click)="registrar()">
           {{ guardando() ? "Registrando..." : "Registrar Venta" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalFactura()) {
+  <div class="ov" (click)="cerrarFactura()">
+    <div class="mo factura-modal" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Factura</span>
+        <button (click)="cerrarFactura()">✕</button>
+      </div>
+      <div class="mb">
+        <h3>Venta #{{ ventaSeleccionada()?.numeroVenta }}</h3>
+        <p>
+          Cliente:
+          {{ ventaSeleccionada()?.nombreCliente }}
+        </p>
+        <p>
+          Colaborador:
+          {{ ventaSeleccionada()?.nombreColaborador }}
+        </p>
+        <p>
+          Fecha:
+          {{ ventaSeleccionada()?.fechaVenta | date: "dd/MM/yyyy HH:mm" }}
+        </p>
+        <h2>Total: ${{ ventaSeleccionada()?.total }}</h2>
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarFactura()">Cerrar</button>
+        <button
+          class="btn-p"
+          (click)="descargarPdf()"
+        >
+          Descargar PDF
         </button>
       </div>
     </div>

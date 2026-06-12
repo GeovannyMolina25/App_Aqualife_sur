@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using rotter.Dominio.Entidades;
 using rotter.Dominio.Interfaces.Repositorios;
 using rotter.Infraestructura.Data;
+using rotter.Dominio.DTOs.Ventas;
+using rotter.Dominio.Constantes;
 
 namespace rotter.Infraestructura.Repositorios.Ventas;
 
@@ -90,5 +92,56 @@ public class VentaRepositorio : IVentaRepositorio
             .OrderByDescending(x => x.MontoTotal)
             .Take(10)
             .ToList();
+    }
+    public async Task<FacturaDto?> ObtenerFacturaPorIdAsync(int ventaId)
+    {
+        var venta = await ConIncludes()
+            .FirstOrDefaultAsync(v => v.Id == ventaId);
+
+        if (venta == null)
+            return null;
+
+        var subtotal = Math.Round(
+            venta.Total / (1 + EmpresaConstantes.Iva),
+            2
+        );
+
+        var iva = Math.Round(
+            venta.Total - subtotal,
+            2
+        );
+
+        return new FacturaDto
+        {
+            NumeroFactura = venta.NumeroVenta,
+
+            Fecha = venta.FechaVenta,
+
+            Cliente =
+                $"{venta.Cliente.Nombre} {venta.Cliente.Apellido}",
+
+            CedulaCliente = "",
+
+            EmailCliente = venta.Cliente.Email,
+
+            DireccionCliente =
+                venta.Cliente.Direccion,
+
+            Subtotal = subtotal,
+
+            Iva = iva,
+
+            Total = venta.Total,
+
+            Detalles = venta.Detalles.Select(d =>
+                new FacturaDetalleDto(
+                    d.Producto.Nombre,
+                    d.Producto.Caracteristicas,
+                    d.Cantidad,
+                    d.PrecioUnitario,
+                    d.Subtotal
+                )
+            ).ToList()
+        };
     }
 }

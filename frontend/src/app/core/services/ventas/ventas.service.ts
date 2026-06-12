@@ -34,4 +34,12 @@ export class VentasService {
   registrar(dto: CrearVentaDto) {
     return this.http.post<RespuestaDto<Venta>>(this.url, dto);
   }
+  descargarFacturaPdf(id: number) {
+    return this.http.get(
+      `${this.url}/${id}/factura-pdf`,
+      {
+        responseType: "blob"
+      }
+    );
+  }
 }
