@@ -33,7 +33,33 @@ public class VentasController : ControllerBase
         var clienteId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         return Ok(await _mediator.Send(new ObtenerHistorialClienteQuery(clienteId, pagina, tamano)));
     }
+    [HttpGet("{id}/factura")]
+    [Authorize(Roles = "Administrador,Colaborador")]
+    public async Task<IActionResult> ObtenerFactura(int id)
+    {
+        var resultado =
+            await _mediator.Send(
+                new ObtenerFacturaQuery(id)
+            );
 
+        return StatusCode(
+            resultado.StatusCode,
+            resultado
+        );
+    }
+    [HttpGet("{id}/factura-pdf")]
+    [Authorize(Roles = "Administrador,Colaborador")]
+    public async Task<IActionResult> DescargarFacturaPdf(int id)
+    {
+        var pdf =
+            await _mediator.Send(
+                new DescargarFacturaPdfQuery(id));
+
+        return File(
+            pdf,
+            "application/pdf",
+            $"Factura_{id}.pdf");
+    }
     [HttpPost]
     [Authorize(Roles = "Administrador,Colaborador,Cliente")]
     public async Task<IActionResult> Registrar([FromBody] CrearVentaDto dto)

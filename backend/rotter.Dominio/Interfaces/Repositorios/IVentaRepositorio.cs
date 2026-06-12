@@ -1,3 +1,4 @@
+using rotter.Dominio.DTOs.Ventas;
 using rotter.Dominio.Entidades;
 
 namespace rotter.Dominio.Interfaces.Repositorios;
@@ -13,6 +14,7 @@ public interface IVentaRepositorio
     Task<Venta> CrearAsync(Venta venta);
     Task<string> GenerarNumeroVentaAsync();
     Task<MetricasVentaData> ObtenerMetricasAsync();
+    Task<FacturaDto?> ObtenerFacturaPorIdAsync(int ventaId);
     Task<List<TopColaboradorData>> ObtenerTopColaboradoresAsync(DateTime desde, DateTime hasta);
 }
 
