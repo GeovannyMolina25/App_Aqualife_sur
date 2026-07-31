@@ -193,6 +193,10 @@
   background: rgba(196, 168, 130, 0.2);
   color: #b8956a;
 }
+.rb-superadministrador {
+  background: rgba(155, 89, 182, 0.15);
+  color: #8e44ad;
+}
 .tav {
   width: 32px;
   height: 32px;

@@ -16,15 +16,15 @@ public class ProductosController : ControllerBase
     public ProductosController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> ObtenerTodos([FromQuery] int pagina = 1, [FromQuery] int tamano = 20)
-        => Ok(await _mediator.Send(new ObtenerProductosQuery(pagina, tamano)));
+    public async Task<IActionResult> ObtenerTodos([FromQuery] int pagina = 1, [FromQuery] int tamano = 20, [FromQuery] string? busqueda = null)
+        => Ok(await _mediator.Send(new ObtenerProductosQuery(pagina, tamano, Busqueda: busqueda)));
 
     [HttpGet("promociones")]
     public async Task<IActionResult> ObtenerPromociones()
         => Ok(await _mediator.Send(new ObtenerPromocionesQuery()));
 
     [HttpPost]
-    [Authorize(Roles = "Administrador,Colaborador")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
     public async Task<IActionResult> Crear([FromBody] CrearProductoDto dto)
     {
         var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

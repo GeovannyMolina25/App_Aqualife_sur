@@ -1,0 +1,268 @@
+<div class="wrap">
+  <div class="ph">
+    <h1>Caja</h1>
+    <p>Control de ingresos y salidas de dinero</p>
+  </div>
+
+  @if (cargandoSaldo()) {
+    <app-spinner [full]="true" />
+  } @else if (saldo()) {
+    <div class="cards">
+      <div class="card">
+        <div class="cl">Total Ingresado</div>
+        <div class="cv cv-ok">${{ saldo()!.totalIngresos | number: "1.2-2" }}</div>
+      </div>
+      <div class="card">
+        <div class="cl">Total Retirado</div>
+        <div class="cv cv-no">${{ saldo()!.totalSalidas | number: "1.2-2" }}</div>
+      </div>
+      <div class="card main">
+        <div class="cl">Saldo en Caja</div>
+        <div class="cv">${{ saldo()!.saldo | number: "1.2-2" }}</div>
+      </div>
+    </div>
+  }
+
+  @if (auth.esSuperAdmin()) {
+    <div class="acciones">
+      <button class="btn-p" (click)="abrirModalIngreso()">+ Registrar Ingreso</button>
+      <button class="btn-s" (click)="abrirModalSalida()">− Registrar Salida</button>
+    </div>
+
+    <h2 class="sub">Historial de Movimientos</h2>
+    <div class="sb">
+      <input
+        type="text"
+        class="si"
+        placeholder="Buscar por # movimiento, tipo, usuario o detalle..."
+        [ngModel]="busquedaHistorial()"
+        (ngModelChange)="buscarHistorial($event)"
+      />
+    </div>
+    @if (cargandoHistorial()) {
+      <app-spinner [full]="true" />
+    } @else {
+      <div class="tc">
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th># Movimiento</th>
+                <th>Fecha</th>
+                <th>Valor</th>
+                <th>Usuario</th>
+                <th>Detalle</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of historial(); track m.tipo + m.id) {
+                <tr>
+                  <td>
+                    <span
+                      class="bk"
+                      [ngClass]="{
+                        'bk-verde': m.tipo === 'Ingreso',
+                        'bk-rojo': m.tipo === 'Salida'
+                      }"
+                    >
+                      {{ m.tipo }}
+                    </span>
+                  </td>
+                  <td><strong>{{ m.numero }}</strong></td>
+                  <td>{{ m.fecha | date: "dd/MM/yyyy HH:mm" }}</td>
+                  <td [class]="m.tipo === 'Ingreso' ? 'ta' : 'tr'">
+                    {{ m.tipo === "Ingreso" ? "+" : "−" }}${{ m.valor | number: "1.2-2" }}
+                  </td>
+                  <td>{{ m.nombreUsuario }}</td>
+                  <td>{{ m.detalle }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="em">No hay movimientos registrados.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <app-pagination
+        [p]="pagina()"
+        [totalPaginas]="totalPaginas()"
+        (paginaCambiada)="cambiarPagina($event)"
+      />
+    }
+  }
+</div>
+
+@if (modalIngreso()) {
+  <div class="ov" (click)="cerrarModalIngreso()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Registrar Ingreso a Caja</span
+        ><button (click)="cerrarModalIngreso()">✕</button>
+      </div>
+      <div class="mb">
+        <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert
+          [mensaje]="exitoModal()"
+          tipo="success"
+        />
+        <div class="g2">
+          <div class="fg">
+            <label>Banco *</label>
+            <select [ngModel]="bancoIngresoSel()" (ngModelChange)="bancoIngresoSel.set($event)">
+              <option value="" disabled>Seleccionar banco</option>
+              @for (b of bancos; track b) {
+                <option [value]="b">{{ b }}</option>
+              }
+            </select>
+            @if (bancoIngresoSel() === "Otro") {
+              <input
+                [ngModel]="bancoIngresoOtro()"
+                (ngModelChange)="bancoIngresoOtro.set($event)"
+                placeholder="Especifica el banco"
+              />
+            }
+          </div>
+          <div class="fg">
+            <label>N° Transacción *</label
+            ><input
+              [(ngModel)]="ingresoDto.numeroTransaccion"
+              placeholder="TRX-0001"
+            />
+          </div>
+        </div>
+        <div class="fg">
+          <label>Total a Ingresar *</label
+          ><input
+            type="number"
+            [(ngModel)]="ingresoDto.totalIngresado"
+            [readonly]="totalBloqueado()"
+            step="0.01"
+            min="0"
+          />
+          @if (totalBloqueado()) {
+            <span class="hint"
+              >Se fija automáticamente según las ventas seleccionadas.</span
+            >
+          }
+        </div>
+        <div class="fg">
+          <label>Observación</label
+          ><input
+            [(ngModel)]="ingresoDto.observacion"
+            placeholder="Notas (opcional)"
+          />
+        </div>
+
+        @if (ventasPendientes().length > 0) {
+          <div class="fg">
+            <label>Ventas a marcar como Ingresadas (opcional)</label>
+            <input
+              class="vbuscar"
+              type="text"
+              placeholder="Buscar por # venta o cliente..."
+              [ngModel]="busquedaVentasPendientes()"
+              (ngModelChange)="busquedaVentasPendientes.set($event)"
+            />
+            <div class="vp">
+              @for (v of ventasPendientesFiltradas(); track v.id) {
+                <label class="vi">
+                  <input
+                    type="checkbox"
+                    [checked]="ventasSeleccionadas().has(v.id)"
+                    (change)="toggleVenta(v.id)"
+                  />
+                  <span
+                    >{{ v.numeroVenta }} — {{ v.nombreCliente }} — ${{
+                      v.total | number: "1.2-2"
+                    }}</span
+                  >
+                </label>
+              } @empty {
+                <div class="vi vi-empty">Sin coincidencias</div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarModalIngreso()">Cancelar</button
+        ><button
+          class="btn-p"
+          [disabled]="guardando()"
+          (click)="registrarIngreso()"
+        >
+          {{ guardando() ? "Guardando..." : "Registrar Ingreso" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalSalida()) {
+  <div class="ov" (click)="cerrarModalSalida()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Registrar Salida de Caja</span
+        ><button (click)="cerrarModalSalida()">✕</button>
+      </div>
+      <div class="mb">
+        <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert
+          [mensaje]="exitoModal()"
+          tipo="success"
+        />
+        <div class="fg">
+          <label>Valor a Retirar *</label
+          ><input type="number" [(ngModel)]="salidaDto.valor" step="0.01" min="0" />
+        </div>
+        <div class="fg">
+          <label>Motivo *</label
+          ><input [(ngModel)]="salidaDto.motivo" placeholder="Pago a proveedor" />
+        </div>
+        <div class="fg">
+          <label>Descripción</label
+          ><input
+            [(ngModel)]="salidaDto.descripcion"
+            placeholder="Detalle (opcional)"
+          />
+        </div>
+        <div class="g2">
+          <div class="fg">
+            <label>Banco</label>
+            <select [ngModel]="bancoSalidaSel()" (ngModelChange)="bancoSalidaSel.set($event)">
+              <option value="">No aplica</option>
+              @for (b of bancos; track b) {
+                <option [value]="b">{{ b }}</option>
+              }
+            </select>
+            @if (bancoSalidaSel() === "Otro") {
+              <input
+                [ngModel]="bancoSalidaOtro()"
+                (ngModelChange)="bancoSalidaOtro.set($event)"
+                placeholder="Especifica el banco"
+              />
+            }
+          </div>
+          <div class="fg">
+            <label>N° Transacción</label
+            ><input
+              [(ngModel)]="salidaDto.numeroTransaccion"
+              placeholder="Opcional"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarModalSalida()">Cancelar</button
+        ><button
+          class="btn-p"
+          [disabled]="guardando()"
+          (click)="registrarSalida()"
+        >
+          {{ guardando() ? "Guardando..." : "Registrar Salida" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

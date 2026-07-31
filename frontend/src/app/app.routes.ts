@@ -69,6 +69,15 @@ export const routes: Routes = [
       },
 
       {
+        path: "caja",
+        canActivate: [colaboradorGuard],
+        loadComponent: () =>
+          import("./features/caja/caja.component").then(
+            (m) => m.CajaComponent,
+          ),
+      },
+
+      {
         path: "mi-historial",
         loadComponent: () =>
           import("./features/historial/historial.component").then(

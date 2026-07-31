@@ -1,19 +1,21 @@
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, OnInit, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { VentasService } from "../../core/services/ventas/ventas.service";
 import { ProductosService } from "../../core/services/productos/productos.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
-import { Venta, CrearVentaDto } from '../../core/models/ventas/venta.model';
+import { PaginationComponent } from "../../shared/components/pagination/pagination.component";
+import { Venta, CrearVentaDto, ESTADOS_VENTA } from '../../core/models/ventas/venta.model';
 import { Producto } from "../../core/models/productos/producto.model";
 import { Usuario } from "../../core/models/usuarios/usuario.model";
 import { UsuariosService } from "../../core/services/usuarios/usuarios.service";
+import { AuthService } from "../../core/services/auth/auth.service";
 
 @Component({
   selector: "app-ventas",
   standalone: true,
-  imports: [CommonModule, FormsModule, AlertComponent, SpinnerComponent],
+  imports: [CommonModule, FormsModule, AlertComponent, SpinnerComponent, PaginationComponent],
   templateUrl: "./ventas.component.html",
   styleUrls: ["./ventas.component.css"],
 })
@@ -30,12 +32,32 @@ export class VentasComponent implements OnInit {
   dto: CrearVentaDto = { clienteId: 9, items: [] };
   modalFactura = signal(false);
   ventaSeleccionada = signal<Venta | null>(null);
+  clienteBusqueda = signal("");
+  mostrarListaClientes = signal(false);
+  busquedaVentas = signal("");
+  pagina = signal(1);
+  total = signal(0);
+  totalPaginas = signal(1);
+  private debounceVentasId?: ReturnType<typeof setTimeout>;
   private ctds = new Map<number, { cantidad: number; precio: number }>();
+
+  clientesFiltrados = computed(() => {
+    const texto = this.clienteBusqueda().trim().toLowerCase();
+    if (!texto) return this.ClietnesDisp();
+    return this.ClietnesDisp().filter((u) =>
+      `${u.nombre} ${u.apellido} ${u.email} ${u.direccion}`
+        .toLowerCase()
+        .includes(texto),
+    );
+  });
+
+  estadosVenta = ESTADOS_VENTA;
 
   constructor(
     private vs: VentasService,
     private ps: ProductosService,
     private us: UsuariosService,
+    public auth: AuthService,
   ) {}
   ngOnInit() {
     this.cargar();
@@ -54,6 +76,8 @@ export class VentasComponent implements OnInit {
             return 0;
           });
         this.ClietnesDisp.set(clientes);
+        const actual = clientes.find((u) => u.id === this.dto.clienteId);
+        if (actual) this.clienteBusqueda.set(`${actual.nombre} ${actual.apellido}`);
       }
     });
   }
@@ -62,12 +86,45 @@ export class VentasComponent implements OnInit {
     (u) => u.id === this.dto.clienteId
   );
 }
+  seleccionarCliente(u: Usuario) {
+    this.dto.clienteId = u.id;
+    this.clienteBusqueda.set(`${u.nombre} ${u.apellido}`);
+    this.mostrarListaClientes.set(false);
+  }
+  ocultarListaClientes() {
+    setTimeout(() => this.mostrarListaClientes.set(false), 150);
+  }
+  cambiarEstado(v: Venta, nuevoEstado: string) {
+    if (nuevoEstado === v.estado) return;
+    this.vs.cambiarEstado(v.id, { nuevoEstado }).subscribe((r) => {
+      if (r.exito) v.estado = nuevoEstado;
+    });
+  }
+
+  buscarVentas(texto: string) {
+    this.busquedaVentas.set(texto);
+    this.pagina.set(1);
+    clearTimeout(this.debounceVentasId);
+    this.debounceVentasId = setTimeout(() => this.cargar(), 350);
+  }
+
+  cambiarPagina(p: number) {
+    this.pagina.set(p);
+    this.cargar();
+  }
+
   cargar() {
     this.cargando.set(true);
-    this.vs.obtenerTodas().subscribe((r) => {
-      this.cargando.set(false);
-      if (r.exito) this.ventas.set(r.datos.items);
-    });
+    this.vs
+      .obtenerTodas(this.pagina(), 20, undefined, undefined, this.busquedaVentas())
+      .subscribe((r) => {
+        this.cargando.set(false);
+        if (r.exito) {
+          this.ventas.set(r.datos.items);
+          this.total.set(r.datos.total);
+          this.totalPaginas.set(r.datos.totalPaginas);
+        }
+      });
   }
   getCantidad(id: number) {
     return this.ctds.get(id)?.cantidad ?? 0;
@@ -97,6 +154,8 @@ export class VentasComponent implements OnInit {
     this.ctds.clear();
     this.totalEstimado.set(0);
     this.dto = { clienteId: 0, items: [] };
+    this.clienteBusqueda.set("");
+    this.mostrarListaClientes.set(false);
   }
   abrirFactura(Venta: Venta) {
     this.ventaSeleccionada.set(Venta);

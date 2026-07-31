@@ -29,7 +29,7 @@
         (click)="open.set(false)"
         >📦 Productos</a
       >
-      @if (auth.esAdmin() || auth.esColaborador()) {
+      @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
         <p class="sec">Ventas</p>
         <a
           class="nl"
@@ -37,6 +37,13 @@
           routerLinkActive="act"
           (click)="open.set(false)"
           >💰 Registro de Ventas</a
+        >
+        <a
+          class="nl"
+          routerLink="/dashboard/caja"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          >🏦 Caja</a
         >
       }
       @if (auth.esCliente()) {
@@ -49,7 +56,7 @@
           >📋 Mi Historial</a
         >
       }
-      @if (auth.esAdmin()) {
+      @if (auth.esAdmin() || auth.esSuperAdmin()) {
         <p class="sec">Administración</p>
         <a
           class="nl"
