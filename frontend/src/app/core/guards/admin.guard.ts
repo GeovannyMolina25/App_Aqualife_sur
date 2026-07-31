@@ -5,7 +5,7 @@ import { AuthService } from "../services/auth/auth.service";
 export const adminGuard = () => {
   const auth = inject(AuthService),
     router = inject(Router);
-  return auth.estaAutenticado() && auth.esAdmin()
+  return auth.estaAutenticado() && (auth.esAdmin() || auth.esSuperAdmin())
     ? true
     : router.navigate(["/dashboard"]);
 };

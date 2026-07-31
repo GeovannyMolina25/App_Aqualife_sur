@@ -5,7 +5,7 @@ using rotter.Dominio.Interfaces.Repositorios;
 
 namespace rotter.Aplicacion.Usuarios.Queries;
 
-public record ObtenerUsuariosQuery(int Pagina = 1, int Tamano = 20) : IRequest<RespuestaDto<PagedResult<UsuarioDto>>>;
+public record ObtenerUsuariosQuery(int Pagina = 1, int Tamano = 20, string? Busqueda = null) : IRequest<RespuestaDto<PagedResult<UsuarioDto>>>;
 
 public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, RespuestaDto<PagedResult<UsuarioDto>>>
 {
@@ -14,8 +14,8 @@ public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, Resp
 
     public async Task<RespuestaDto<PagedResult<UsuarioDto>>> Handle(ObtenerUsuariosQuery req, CancellationToken ct)
     {
-        var lista   = await _usuarios.ObtenerTodosAsync(req.Pagina, req.Tamano);
-        var total   = await _usuarios.TotalAsync();
+        var lista   = await _usuarios.ObtenerTodosAsync(req.Pagina, req.Tamano, req.Busqueda);
+        var total   = await _usuarios.TotalAsync(req.Busqueda);
         var paginas = (int)Math.Ceiling(total / (double)req.Tamano);
         var dtos    = lista.Select(u => new UsuarioDto(u.Id, u.Nombre, u.Apellido, u.Email,
             u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion)).ToList();

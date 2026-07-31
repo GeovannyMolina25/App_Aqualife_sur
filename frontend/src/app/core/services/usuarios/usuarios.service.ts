@@ -9,8 +9,9 @@ export class UsuariosService {
   private url = `${environment.apiUrl}/usuarios`;
   constructor(private http: HttpClient) {}
 
-  obtenerTodos(pagina = 1, tamano = 20) {
-    const p = new HttpParams().set("pagina", pagina).set("tamano", tamano);
+  obtenerTodos(pagina = 1, tamano = 20, busqueda?: string) {
+    let p = new HttpParams().set("pagina", pagina).set("tamano", tamano);
+    if (busqueda?.trim()) p = p.set("busqueda", busqueda.trim());
     return this.http.get<RespuestaDto<PagedResult<Usuario>>>(this.url, {
       params: p,
     });

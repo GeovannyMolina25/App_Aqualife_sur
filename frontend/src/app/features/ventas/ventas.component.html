@@ -6,6 +6,17 @@
     </div>
     <button class="btn-p" (click)="modal.set(true)">+ Nueva Venta</button>
   </div>
+
+  <div class="sb">
+    <input
+      type="text"
+      class="si"
+      placeholder="Buscar por # venta, cliente o email..."
+      [ngModel]="busquedaVentas()"
+      (ngModelChange)="buscarVentas($event)"
+    />
+  </div>
+
   @if (cargando()) {
     <app-spinner [full]="true" />
   } @else {
@@ -36,17 +47,29 @@
                   <strong>${{ v.total | number: "1.2-2" }}</strong>
                 </td>
                 <td>
-                  <span
-                    class="bk"
-                    [ngClass]="{
-                      'bk-verde': v.estado === 'Completada',
-                      'bk-rojo': v.estado === 'Anulada',
-                      'bk-amarillo': v.estado === 'Pendiente',
-                      'bk-azul': v.estado === 'Ingresada'
-                    }"
-                  >
-                    {{ v.estado }}
-                  </span>
+                  @if (auth.esSuperAdmin()) {
+                    <select
+                      class="es"
+                      [ngModel]="v.estado"
+                      (ngModelChange)="cambiarEstado(v, $event)"
+                    >
+                      @for (e of estadosVenta; track e) {
+                        <option [value]="e">{{ e }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <span
+                      class="bk"
+                      [ngClass]="{
+                        'bk-verde': v.estado === 'Completada',
+                        'bk-rojo': v.estado === 'Anulada',
+                        'bk-amarillo': v.estado === 'Pendiente',
+                        'bk-azul': v.estado === 'Ingresada'
+                      }"
+                    >
+                      {{ v.estado }}
+                    </span>
+                  }
                 </td>
                 <td>
                   <button
@@ -67,6 +90,11 @@
         </table>
       </div>
     </div>
+    <app-pagination
+      [p]="pagina()"
+      [totalPaginas]="totalPaginas()"
+      (paginaCambiada)="cambiarPagina($event)"
+    />
   }
 </div>
 @if (modal()) {
@@ -81,17 +109,35 @@
           [mensaje]="exitoModal()"
           tipo="success"
         />
-        <div class="fg">
+        <div class="fg cl-search">
           <label>Cliente *</label>
 
-          <select [(ngModel)]="dto.clienteId">
-            <option
-              *ngFor="let usuario of ClietnesDisp()"
-              [ngValue]="usuario.id"
-            >
-              {{ usuario.nombre }} {{ usuario.apellido }}
-            </option>
-          </select>
+          <input
+            type="text"
+            placeholder="Buscar cliente por nombre, email o dirección..."
+            [ngModel]="clienteBusqueda()"
+            (ngModelChange)="clienteBusqueda.set($event)"
+            (focus)="mostrarListaClientes.set(true)"
+            (blur)="ocultarListaClientes()"
+          />
+
+          @if (mostrarListaClientes()) {
+            <div class="cl-dropdown">
+              @for (usuario of clientesFiltrados(); track usuario.id) {
+                <div
+                  class="cl-item"
+                  (mousedown)="seleccionarCliente(usuario)"
+                >
+                  <div class="cl-nombre">
+                    {{ usuario.nombre }} {{ usuario.apellido }}
+                  </div>
+                  <div class="cl-detalle">{{ usuario.email }} — {{ usuario.direccion }}</div>
+                </div>
+              } @empty {
+                <div class="cl-item cl-empty">Sin coincidencias</div>
+              }
+            </div>
+          }
 
           <span class="hint">
             Cliente seleccionado:

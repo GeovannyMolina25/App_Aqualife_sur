@@ -94,6 +94,9 @@ cambiarPassword(nuevaPassword: string) {
   esCliente(): boolean {
     return this.getRol() === "Cliente";
   }
+  esSuperAdmin(): boolean {
+    return this.getRol() === "SuperAdministrador";
+  }
 
   private guardar(datos: AuthResponse) {
     localStorage.setItem(this.TOKEN_KEY, datos.token);

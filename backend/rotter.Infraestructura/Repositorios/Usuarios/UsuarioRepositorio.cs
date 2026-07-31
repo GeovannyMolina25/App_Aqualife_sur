@@ -25,13 +25,25 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     public async Task<Usuario?> ObtenerPorIdAsync(int id) =>
         await _db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
 
-    public async Task<List<Usuario>> ObtenerTodosAsync(int pagina, int tamano) =>
-        await _db.Usuarios.Include(u => u.Rol)
+    public async Task<List<Usuario>> ObtenerTodosAsync(int pagina, int tamano, string? busqueda = null) =>
+        await FiltrarPorBusqueda(_db.Usuarios.Include(u => u.Rol), busqueda)
             .OrderBy(u => u.Nombre)
             .Skip((pagina - 1) * tamano).Take(tamano)
             .ToListAsync();
 
-    public async Task<int> TotalAsync() => await _db.Usuarios.CountAsync();
+    public async Task<int> TotalAsync(string? busqueda = null) =>
+        await FiltrarPorBusqueda(_db.Usuarios, busqueda).CountAsync();
+
+    private static IQueryable<Usuario> FiltrarPorBusqueda(IQueryable<Usuario> query, string? busqueda)
+    {
+        if (string.IsNullOrWhiteSpace(busqueda)) return query;
+        var texto = busqueda.Trim();
+        return query.Where(u =>
+            EF.Functions.Like(u.Nombre, $"%{texto}%") ||
+            EF.Functions.Like(u.Apellido, $"%{texto}%") ||
+            EF.Functions.Like(u.Email, $"%{texto}%") ||
+            EF.Functions.Like(u.Direccion, $"%{texto}%"));
+    }
 
     public async Task<Usuario> CrearAsync(Usuario usuario)
     {

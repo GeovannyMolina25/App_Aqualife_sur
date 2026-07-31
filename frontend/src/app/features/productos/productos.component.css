@@ -19,6 +19,27 @@ p {
   color: #7a9aaa;
   margin-top: 3px;
 }
+.sb {
+  margin-bottom: 18px;
+}
+.si {
+  width: 100%;
+  max-width: 420px;
+  padding: 9px 14px;
+  border: 1.5px solid #e2d0af;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  color: #1c2b35;
+  background: #fff;
+  outline: none;
+  font-family: "DM Sans", sans-serif;
+}
+.si:focus {
+  border-color: #1a6b8a;
+}
+.si::placeholder {
+  color: #a9bcc6;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

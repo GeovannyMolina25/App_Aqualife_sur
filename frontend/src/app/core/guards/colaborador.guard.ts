@@ -5,7 +5,8 @@ import { AuthService } from "../services/auth/auth.service";
 export const colaboradorGuard = () => {
   const auth = inject(AuthService),
     router = inject(Router);
-  return auth.estaAutenticado() && (auth.esAdmin() || auth.esColaborador())
+  return auth.estaAutenticado() &&
+    (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin())
     ? true
     : router.navigate(["/dashboard"]);
 };

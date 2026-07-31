@@ -14,6 +14,9 @@ public class RotterDbContext : DbContext
     public DbSet<Venta> Ventas => Set<Venta>();
     public DbSet<DetalleVenta> DetalleVentas => Set<DetalleVenta>();
     public DbSet<Auditoria> Auditorias => Set<Auditoria>();
+    public DbSet<IngresoCaja> IngresoCaja => Set<IngresoCaja>();
+    public DbSet<DetalleIngresoCaja> DetalleIngresoCaja => Set<DetalleIngresoCaja>();
+    public DbSet<SalidaCaja> SalidaCaja => Set<SalidaCaja>();
 
     protected override void OnModelCreating(ModelBuilder m)
     {
@@ -66,6 +69,31 @@ public class RotterDbContext : DbContext
             e.Property(a => a.Entidad).HasMaxLength(100).IsRequired();
             e.Property(a => a.DatosAnteriores).HasColumnType("nvarchar(max)");
             e.Property(a => a.DatosNuevos).HasColumnType("nvarchar(max)");
+        });
+
+        m.Entity<IngresoCaja>(e => {
+            e.ToTable("IngresoCaja");
+            e.Property(i => i.NumeroIngreso).HasMaxLength(30).IsRequired();
+            e.HasIndex(i => i.NumeroIngreso).IsUnique();
+            e.Property(i => i.Banco).HasMaxLength(100).IsRequired();
+            e.Property(i => i.NumeroTransaccion).HasMaxLength(100).IsRequired();
+            e.Property(i => i.TotalIngresado).HasColumnType("decimal(18,2)");
+            e.HasOne(i => i.Usuario).WithMany().HasForeignKey(i => i.UsuarioId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        m.Entity<DetalleIngresoCaja>(e => {
+            e.ToTable("DetalleIngresoCaja");
+            e.HasOne(d => d.IngresoCaja).WithMany(i => i.Detalles).HasForeignKey(d => d.IngresoCajaId);
+            e.HasOne(d => d.Venta).WithMany().HasForeignKey(d => d.VentaId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        m.Entity<SalidaCaja>(e => {
+            e.ToTable("SalidaCaja");
+            e.Property(s => s.NumeroSalida).HasMaxLength(30).IsRequired();
+            e.HasIndex(s => s.NumeroSalida).IsUnique();
+            e.Property(s => s.Valor).HasColumnType("decimal(18,2)");
+            e.Property(s => s.Motivo).HasMaxLength(200).IsRequired();
+            e.HasOne(s => s.Usuario).WithMany().HasForeignKey(s => s.UsuarioId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

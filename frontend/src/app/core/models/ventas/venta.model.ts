@@ -26,3 +26,7 @@ export interface ItemVentaDto {
   productoId: number;
   cantidad: number;
 }
+export interface CambiarEstadoVentaDto {
+  nuevoEstado: string;
+}
+export const ESTADOS_VENTA = ["Pendiente", "Completada", "Ingresada", "Anulada"] as const;

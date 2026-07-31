@@ -12,8 +12,9 @@ export class ProductosService {
   private url = `${environment.apiUrl}/productos`;
   constructor(private http: HttpClient) {}
 
-  obtenerTodos(pagina = 1, tamano = 20) {
-    const params = new HttpParams().set("pagina", pagina).set("tamano", tamano);
+  obtenerTodos(pagina = 1, tamano = 20, busqueda?: string) {
+    let params = new HttpParams().set("pagina", pagina).set("tamano", tamano);
+    if (busqueda?.trim()) params = params.set("busqueda", busqueda.trim());
     return this.http.get<RespuestaDto<PagedResult<Producto>>>(this.url, {
       params,
     });

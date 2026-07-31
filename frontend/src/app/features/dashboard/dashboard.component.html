@@ -5,7 +5,7 @@
       {{ hoy }} · <strong>{{ auth.getRol() }}</strong>
     </p>
   </div>
-  @if (auth.esAdmin() || auth.esColaborador()) {
+  @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
     <div class="mg">
       <div class="mc">
         <div class="mi">💰</div>
@@ -37,7 +37,22 @@
       </div>
     </div>
   }
-  @if (auth.esAdmin() && metricas()?.topColaboradores?.length) {
+  @if (
+    (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) &&
+    saldoCaja()
+  ) {
+    <div class="mg-caja">
+      <div class="mc mc-caja">
+        <div class="mi">🏦</div>
+        <div class="ml">Saldo en Caja</div>
+        <div class="mv">${{ saldoCaja()!.saldo | number: "1.2-2" }}</div>
+        <div class="ms">
+          Ingresado: ${{ saldoCaja()!.totalIngresos | number: "1.2-2" }}
+        </div>
+      </div>
+    </div>
+  }
+  @if ((auth.esAdmin() || auth.esSuperAdmin()) && metricas()?.topColaboradores?.length) {
     <div class="card mb">
       <div class="ch">🏆 Top Colaboradores del Mes</div>
       <table>
@@ -79,12 +94,18 @@
         <div class="ad">Catálogo completo</div>
       </div></a
     >
-    @if (auth.esAdmin() || auth.esColaborador()) {
+    @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
       <a routerLink="/dashboard/ventas" class="ac"
         ><span>📝</span>
         <div>
           <div class="an">Registrar Venta</div>
           <div class="ad">Nueva transacción</div>
+        </div></a
+      ><a routerLink="/dashboard/caja" class="ac"
+        ><span>🏦</span>
+        <div>
+          <div class="an">Caja</div>
+          <div class="ad">Ingresos y salidas</div>
         </div></a
       >
     }
@@ -97,7 +118,7 @@
         </div></a
       >
     }
-    @if (auth.esAdmin()) {
+    @if (auth.esAdmin() || auth.esSuperAdmin()) {
       <a routerLink="/dashboard/usuarios" class="ac"
         ><span>👥</span>
         <div>
