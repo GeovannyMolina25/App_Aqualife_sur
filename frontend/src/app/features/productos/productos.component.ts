@@ -31,10 +31,12 @@ export class ProductosComponent implements OnInit {
   total = signal(0);
   pagina = signal(1);
   totalPaginas = signal(1);
+  busqueda = signal("");
   modal = signal(false);
   guardando = signal(false);
   errorModal = signal("");
   categorias = CATEGORIAS;
+  private debounceId?: ReturnType<typeof setTimeout>;
   nuevo: CrearProductoDto = {
     nombre: "",
     categoriaId: 0,
@@ -53,7 +55,7 @@ export class ProductosComponent implements OnInit {
 
   cargar() {
     this.cargando.set(true);
-    this.svc.obtenerTodos(this.pagina(), 12).subscribe((r) => {
+    this.svc.obtenerTodos(this.pagina(), 12, this.busqueda()).subscribe((r) => {
       this.cargando.set(false);
       if (r.exito) {
         this.productos.set(r.datos.items);
@@ -61,6 +63,13 @@ export class ProductosComponent implements OnInit {
         this.totalPaginas.set(r.datos.totalPaginas);
       }
     });
+  }
+
+  buscar(texto: string) {
+    this.busqueda.set(texto);
+    this.pagina.set(1);
+    clearTimeout(this.debounceId);
+    this.debounceId = setTimeout(() => this.cargar(), 350);
   }
 
   cambiarPagina(p: number) {

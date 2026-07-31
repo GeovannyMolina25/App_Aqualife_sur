@@ -17,13 +17,13 @@ public class VentasController : ControllerBase
     public VentasController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    [Authorize(Roles = "Administrador,Colaborador")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
     public async Task<IActionResult> ObtenerTodas([FromQuery] int pagina = 1, [FromQuery] int tamano = 20,
-        [FromQuery] DateTime? desde = null, [FromQuery] DateTime? hasta = null)
-        => Ok(await _mediator.Send(new ObtenerVentasQuery(pagina, tamano, desde, hasta)));
+        [FromQuery] DateTime? desde = null, [FromQuery] DateTime? hasta = null, [FromQuery] string? busqueda = null)
+        => Ok(await _mediator.Send(new ObtenerVentasQuery(pagina, tamano, desde, hasta, busqueda)));
 
     [HttpGet("metricas")]
-    [Authorize(Roles = "Administrador")]
+    [Authorize(Roles = "Administrador,SuperAdministrador")]
     public async Task<IActionResult> Metricas()
         => Ok(await _mediator.Send(new ObtenerMetricasQuery()));
 
@@ -34,7 +34,7 @@ public class VentasController : ControllerBase
         return Ok(await _mediator.Send(new ObtenerHistorialClienteQuery(clienteId, pagina, tamano)));
     }
     [HttpGet("{id}/factura")]
-    [Authorize(Roles = "Administrador,Colaborador")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
     public async Task<IActionResult> ObtenerFactura(int id)
     {
         var resultado =
@@ -48,7 +48,7 @@ public class VentasController : ControllerBase
         );
     }
     [HttpGet("{id}/factura-pdf")]
-    [Authorize(Roles = "Administrador,Colaborador")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
     public async Task<IActionResult> DescargarFacturaPdf(int id)
     {
         var pdf =
@@ -61,11 +61,19 @@ public class VentasController : ControllerBase
             $"Factura_{id}.pdf");
     }
     [HttpPost]
-    [Authorize(Roles = "Administrador,Colaborador,Cliente")]
+    [Authorize(Roles = "Administrador,Colaborador,Cliente,SuperAdministrador")]
     public async Task<IActionResult> Registrar([FromBody] CrearVentaDto dto)
     {
         var colaboradorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var r = await _mediator.Send(new RegistrarVentaCommand(dto, colaboradorId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPut("{id}/estado")]
+    [Authorize(Roles = "SuperAdministrador")]
+    public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoVentaDto dto)
+    {
+        var r = await _mediator.Send(new CambiarEstadoVentaCommand(id, dto.NuevoEstado));
         return StatusCode(r.StatusCode, r);
     }
 }

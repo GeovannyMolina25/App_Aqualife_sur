@@ -4,10 +4,21 @@
       <h1>Catálogo de Productos</h1>
       <p>{{ total() }} productos</p>
     </div>
-    @if (auth.esAdmin() || auth.esColaborador()) {
+    @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
       <button class="btn-p" (click)="abrirModal()">+ Nuevo Producto</button>
     }
   </div>
+
+  <div class="sb">
+    <input
+      type="text"
+      class="si"
+      placeholder="Buscar por nombre o descripción..."
+      [ngModel]="busqueda()"
+      (ngModelChange)="buscar($event)"
+    />
+  </div>
+
   @if (cargando()) {
     <app-spinner [full]="true" />
   } @else {

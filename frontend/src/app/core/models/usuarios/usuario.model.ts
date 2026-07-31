@@ -17,5 +17,5 @@ export interface CambiarRolDto {
 export interface OlvidePasswordDto {
   dato: string;
 }
-export const ROL_IDS = { ADMIN: 1, COLABORADOR: 2, CLIENTE: 3 } as const;
+export const ROL_IDS = { ADMIN: 1, COLABORADOR: 2, CLIENTE: 3, SUPER_ADMIN: 4 } as const;
 

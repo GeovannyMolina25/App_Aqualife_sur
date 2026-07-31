@@ -19,12 +19,29 @@ public class VentaRepositorio : IVentaRepositorio
     public async Task<Venta?> ObtenerPorIdAsync(int id) =>
         await ConIncludes().FirstOrDefaultAsync(v => v.Id == id);
 
-    public async Task<List<Venta>> ObtenerTodasAsync(int pagina, int tamano, DateTime? desde = null, DateTime? hasta = null)
+    public async Task<List<Venta>> ObtenerTodasAsync(int pagina, int tamano, DateTime? desde = null, DateTime? hasta = null, string? busqueda = null)
     {
-        var q = ConIncludes().AsQueryable();
-        if (desde.HasValue) q = q.Where(v => v.FechaVenta >= desde.Value);
-        if (hasta.HasValue) q = q.Where(v => v.FechaVenta <= hasta.Value);
+        var q = FiltrarVentas(ConIncludes(), desde, hasta, busqueda);
         return await q.OrderByDescending(v => v.FechaVenta).Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
+    }
+
+    public async Task<int> TotalAsync(DateTime? desde = null, DateTime? hasta = null, string? busqueda = null) =>
+        await FiltrarVentas(_db.Ventas.Include(v => v.Cliente), desde, hasta, busqueda).CountAsync();
+
+    private static IQueryable<Venta> FiltrarVentas(IQueryable<Venta> query, DateTime? desde, DateTime? hasta, string? busqueda)
+    {
+        if (desde.HasValue) query = query.Where(v => v.FechaVenta >= desde.Value);
+        if (hasta.HasValue) query = query.Where(v => v.FechaVenta <= hasta.Value);
+        if (!string.IsNullOrWhiteSpace(busqueda))
+        {
+            var texto = busqueda.Trim();
+            query = query.Where(v =>
+                EF.Functions.Like(v.NumeroVenta, $"%{texto}%") ||
+                EF.Functions.Like(v.Cliente.Nombre, $"%{texto}%") ||
+                EF.Functions.Like(v.Cliente.Apellido, $"%{texto}%") ||
+                EF.Functions.Like(v.Cliente.Email, $"%{texto}%"));
+        }
+        return query;
     }
 
     public async Task<List<Venta>> ObtenerPorClienteAsync(int clienteId, int pagina, int tamano) =>
@@ -49,6 +66,15 @@ public class VentaRepositorio : IVentaRepositorio
 
     public async Task<Venta> CrearAsync(Venta venta)
     { _db.Ventas.Add(venta); await _db.SaveChangesAsync(); return venta; }
+
+    public async Task<bool> ActualizarEstadoAsync(int ventaId, string nuevoEstado)
+    {
+        var venta = await _db.Ventas.FindAsync(ventaId);
+        if (venta is null) return false;
+        venta.Estado = nuevoEstado;
+        await _db.SaveChangesAsync();
+        return true;
+    }
 
     public async Task<string> GenerarNumeroVentaAsync()
     {

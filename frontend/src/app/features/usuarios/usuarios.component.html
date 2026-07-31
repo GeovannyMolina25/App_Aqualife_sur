@@ -4,6 +4,16 @@
     <p>Administra roles y accesos del sistema</p>
   </div>
 
+  <div class="sb">
+    <input
+      type="text"
+      class="si"
+      placeholder="Buscar por nombre, apellido, email o dirección..."
+      [ngModel]="busqueda()"
+      (ngModelChange)="buscar($event)"
+    />
+  </div>
+
   @if (cargando()) {
     <app-spinner [full]="true" />
   } @else {
@@ -72,5 +82,10 @@
         </table>
       </div>
     </div>
+    <app-pagination
+      [p]="pagina()"
+      [totalPaginas]="totalPaginas()"
+      (paginaCambiada)="cambiarPagina($event)"
+    />
   }
 </div>

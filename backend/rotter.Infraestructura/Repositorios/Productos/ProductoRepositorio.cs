@@ -14,10 +14,11 @@ public class ProductoRepositorio : IProductoRepositorio
         await _db.Productos.Include(p => p.Categoria).Include(p => p.CreadoPor)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-    public async Task<List<Producto>> ObtenerTodosAsync(int pagina, int tamano, bool soloActivos = true)
+    public async Task<List<Producto>> ObtenerTodosAsync(int pagina, int tamano, bool soloActivos = true, string? busqueda = null)
     {
         var q = _db.Productos.Include(p => p.Categoria).AsQueryable();
         if (soloActivos) q = q.Where(p => p.Activo);
+        q = FiltrarPorBusqueda(q, busqueda);
         return await q.OrderBy(p => p.Nombre).Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
     }
 
@@ -26,11 +27,21 @@ public class ProductoRepositorio : IProductoRepositorio
             .Where(p => p.EsPromocion && p.Activo && (!p.FechaFinPromocion.HasValue || p.FechaFinPromocion > DateTime.Now))
             .ToListAsync();
 
-    public async Task<int> TotalAsync(bool soloActivos = true)
+    public async Task<int> TotalAsync(bool soloActivos = true, string? busqueda = null)
     {
         var q = _db.Productos.AsQueryable();
         if (soloActivos) q = q.Where(p => p.Activo);
+        q = FiltrarPorBusqueda(q, busqueda);
         return await q.CountAsync();
+    }
+
+    private static IQueryable<Producto> FiltrarPorBusqueda(IQueryable<Producto> query, string? busqueda)
+    {
+        if (string.IsNullOrWhiteSpace(busqueda)) return query;
+        var texto = busqueda.Trim();
+        return query.Where(p =>
+            EF.Functions.Like(p.Nombre, $"%{texto}%") ||
+            (p.Descripcion != null && EF.Functions.Like(p.Descripcion, $"%{texto}%")));
     }
 
     public async Task<Producto> CrearAsync(Producto producto)

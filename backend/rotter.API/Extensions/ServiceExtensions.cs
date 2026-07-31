@@ -6,6 +6,7 @@ using rotter.Dominio.Interfaces.Repositorios;
 using rotter.Dominio.Interfaces.Servicios;
 using rotter.Infraestructura.Data;
 using rotter.Infraestructura.Repositorios.Auditoria;
+using rotter.Infraestructura.Repositorios.Caja;
 using rotter.Infraestructura.Repositorios.Productos;
 using rotter.Infraestructura.Repositorios.Usuarios;
 using rotter.Infraestructura.Repositorios.Ventas;
@@ -41,6 +42,7 @@ public static class ServiceExtensions
         s.AddScoped<IProductoRepositorio,  ProductoRepositorio>();
         s.AddScoped<IVentaRepositorio,     VentaRepositorio>();
         s.AddScoped<IAuditoriaRepositorio, AuditoriaRepositorio>();
+        s.AddScoped<ICajaRepositorio,      CajaRepositorio>();
         return s;
     }
 

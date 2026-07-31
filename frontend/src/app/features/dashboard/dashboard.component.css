@@ -55,6 +55,20 @@
   border: 1px solid #efe4cc;
   overflow: hidden;
 }
+.mg-caja {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.mc-caja {
+  width: 50%;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .mc-caja {
+    width: 100%;
+  }
+}
 .ch {
   padding: 16px 20px;
   font-size: 0.95rem;
