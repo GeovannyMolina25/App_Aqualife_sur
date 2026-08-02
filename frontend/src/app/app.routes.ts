@@ -8,8 +8,34 @@ export const routes: Routes = [
   // INICIO
   {
     path: "",
-    redirectTo: "/auth/login",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("./features/landing/landing.component").then(
+        (m) => m.LandingComponent,
+      ),
+  },
+
+  // CATALOGO / CARRITO / CHECKOUT (publico, checkout requiere login)
+  {
+    path: "catalogo",
+    loadComponent: () =>
+      import("./features/catalogo/catalogo.component").then(
+        (m) => m.CatalogoComponent,
+      ),
+  },
+  {
+    path: "carrito",
+    loadComponent: () =>
+      import("./features/carrito/carrito.component").then(
+        (m) => m.CarritoComponent,
+      ),
+  },
+  {
+    path: "checkout",
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import("./features/checkout/checkout.component").then(
+        (m) => m.CheckoutComponent,
+      ),
   },
 
   // AUTH
@@ -86,6 +112,14 @@ export const routes: Routes = [
       },
 
       {
+        path: "mi-perfil",
+        loadComponent: () =>
+          import("./features/mi-perfil/mi-perfil.component").then(
+            (m) => m.MiPerfilComponent,
+          ),
+      },
+
+      {
         path: "usuarios",
         canActivate: [adminGuard],
         loadComponent: () =>
@@ -107,6 +141,6 @@ export const routes: Routes = [
 
   {
     path: "**",
-    redirectTo: "/auth/login",
+    redirectTo: "/",
   },
 ];

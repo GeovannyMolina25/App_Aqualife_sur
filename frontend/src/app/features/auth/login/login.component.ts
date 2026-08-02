@@ -1,7 +1,7 @@
 import { Component, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 
@@ -14,6 +14,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 })
 export class LoginComponent {
   errorLogo = signal(false);
+  returnUrl: string;
   modalCambiarPassword = signal(false);
   nuevaPassword = "";
   confirmarPassword = "";
@@ -33,7 +34,14 @@ export class LoginComponent {
   constructor(
     private auth: AuthService,
     private router: Router,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get("returnUrl") || "/dashboard";
+
+    const motivo = this.auth.consumirMotivoSesionExpirada();
+    if (motivo === "inactividad") this.error.set("Tu sesión se cerró por inactividad. Vuelve a iniciar sesión.");
+    else if (motivo === "token") this.error.set("Tu sesión expiró. Vuelve a iniciar sesión.");
+  }
   demo(e: string, p: string) {
     this.email = e;
     this.password = p;
@@ -52,7 +60,7 @@ export class LoginComponent {
             if (r.datos.debeCambiarPassword) {
               this.modalCambiarPassword.set(true);
             } else {
-              this.router.navigate(["/dashboard"]);
+              this.router.navigateByUrl(this.returnUrl);
             }
           } else {
             this.error.set(r.mensaje);

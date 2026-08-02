@@ -23,8 +23,13 @@
   transition: transform 0.3s ease;
 }
 .sl {
+  display: block;
   padding: 28px 20px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: opacity 0.2s;
+}
+.sl:hover {
+  opacity: 0.85;
 }
 .sl img {
   height: 46px;
@@ -181,6 +186,36 @@
   font-size: 0.75rem;
   font-weight: 500;
 }
+.carrito-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+}
+.carrito-link:hover {
+  background: #f8f3ea;
+}
+.carrito-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #b8956a;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
 .rb-administrador {
   background: rgba(26, 107, 138, 0.1);
   color: #1a6b8a;
@@ -213,6 +248,78 @@
   font-size: 0.88rem;
   font-weight: 500;
   color: #1c2b35;
+}
+.user-menu {
+  position: relative;
+}
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 30px;
+  transition: background 0.2s;
+}
+.user-btn:hover {
+  background: #f8f3ea;
+}
+.chevron {
+  font-size: 0.7rem;
+  color: #7a9aaa;
+  transition: transform 0.2s;
+}
+.chevron.up {
+  transform: rotate(180deg);
+}
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(15, 84, 112, 0.18);
+  min-width: 200px;
+  padding: 8px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.user-dropdown a,
+.user-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1c2b35;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: "DM Sans", sans-serif;
+}
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+  background: #f8f3ea;
+}
+.dropdown-logout {
+  color: #c0392b !important;
+  border-top: 1px solid #efe4cc;
+  margin-top: 4px;
+  padding-top: 12px !important;
+}
+.user-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 45; /* debajo de .topbar (50): el dropdown vive dentro del topbar y debe quedar clicable por encima */
+  background: transparent;
 }
 .pc {
   padding: 28px 32px;

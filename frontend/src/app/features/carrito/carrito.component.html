@@ -1,0 +1,65 @@
+<app-public-header />
+
+<div class="carrito-page">
+  <h1>Tu carrito</h1>
+
+  @if (carrito.itemsCarrito().length === 0) {
+    <div class="carrito-vacio">
+      <span>🛒</span>
+      <p>Tu carrito está vacío.</p>
+      <a routerLink="/catalogo" class="btn-primary">Ver catálogo</a>
+    </div>
+  } @else {
+    <div class="carrito-grid">
+      <div class="carrito-items">
+        @for (item of carrito.itemsCarrito(); track item.producto.id) {
+          <div class="item-carrito">
+            <div class="item-imagen">
+              @if (item.producto.imagenUrl) {
+                <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" />
+              } @else {
+                <span>💧</span>
+              }
+            </div>
+
+            <div class="item-info">
+              <h3>{{ item.producto.nombre }}</h3>
+              <span class="item-precio-unit">${{ precioUnitario(item).toFixed(2) }} c/u</span>
+            </div>
+
+            <div class="selector-cantidad">
+              <button type="button" (click)="decrementar(item)">−</button>
+              <input
+                type="number"
+                min="1"
+                [max]="item.producto.stock"
+                [ngModel]="item.cantidad"
+                (ngModelChange)="onCantidadInput(item, $event)"
+              />
+              <button type="button" (click)="incrementar(item)">+</button>
+            </div>
+
+            <span class="item-subtotal">${{ subtotalItem(item).toFixed(2) }}</span>
+
+            <button type="button" class="btn-quitar" (click)="quitar(item.producto.id)" aria-label="Quitar">
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+
+      <aside class="carrito-resumen">
+        <h2>Resumen</h2>
+        <div class="resumen-fila">
+          <span>Productos ({{ carrito.cantidadTotal() }})</span>
+          <span>${{ carrito.subtotal().toFixed(2) }}</span>
+        </div>
+        <p class="resumen-nota">Los impuestos se calculan en el siguiente paso.</p>
+        <button type="button" class="btn-primary btn-pagar" (click)="procederAlPago()">
+          Proceder al pago
+        </button>
+        <a routerLink="/catalogo" class="seguir-comprando">← Seguir comprando</a>
+      </aside>
+    </div>
+  }
+</div>

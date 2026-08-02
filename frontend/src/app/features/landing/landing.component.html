@@ -1,0 +1,236 @@
+<div class="landing">
+  <app-public-header />
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="inicio">
+    <div class="hero-text fade-in">
+      <span class="eyebrow">Agua &amp; salud para tu hogar</span>
+      <h1>Cuida tu salud, <span>un vaso de agua a la vez</span></h1>
+      <p>
+        En ACQUALIFE gestionamos y entregamos productos de agua purificada y
+        sistemas de hidratación pensados para tu bienestar y el de tu
+        familia. Simple, rápido y confiable.
+      </p>
+      <div class="hero-actions">
+        <a routerLink="/catalogo" class="btn-primary">Ver catálogo</a>
+        <a (click)="irASeccion('quienes-somos')" class="btn-secondary">Conócenos</a>
+      </div>
+      <ul class="hero-checks">
+        <li><span>✓</span> Agua 100% purificada</li>
+        <li><span>✓</span> Entrega a domicilio</li>
+        <li><span>✓</span> Pago seguro</li>
+      </ul>
+    </div>
+
+    <div class="hero-visual fade-in">
+      <div class="blob"></div>
+      <div class="hero-card main-card">
+        <img src="assets/logo.png" alt="Acqualife" />
+      </div>
+      <div class="hero-card float-card fc-1">
+        <span class="fc-icon">🚚</span>
+        <div>
+          <strong>Entrega rápida</strong>
+          <p>Directo a tu puerta</p>
+        </div>
+      </div>
+      <div class="hero-card float-card fc-2">
+        <span class="fc-icon">💧</span>
+        <div>
+          <strong>Agua pura</strong>
+          <p>Calidad garantizada</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== QUIENES SOMOS ===== -->
+  <section class="section quienes-somos" id="quienes-somos">
+    <div class="section-head">
+      <span class="eyebrow">Quiénes somos</span>
+      <h2>Comprometidos con tu bienestar</h2>
+      <p>
+        Somos ACQUALIFE, una empresa dedicada a la comercialización y
+        distribución de agua purificada y soluciones de hidratación.
+        Trabajamos cada día para llevar productos de calidad a tu hogar o
+        negocio, con un servicio cercano, rápido y confiable.
+      </p>
+    </div>
+
+    <div class="valores-grid">
+      <div class="valor-card">
+        <span class="valor-icon">💧</span>
+        <h3>Calidad</h3>
+        <p>Procesos de purificación controlados en cada etapa.</p>
+      </div>
+      <div class="valor-card">
+        <span class="valor-icon">🚚</span>
+        <h3>Entrega puntual</h3>
+        <p>Llevamos tu pedido a tiempo, donde lo necesites.</p>
+      </div>
+      <div class="valor-card">
+        <span class="valor-icon">🤝</span>
+        <h3>Confianza</h3>
+        <p>Cercanía y transparencia con cada uno de nuestros clientes.</p>
+      </div>
+      <div class="valor-card">
+        <span class="valor-icon">🌱</span>
+        <h3>Compromiso</h3>
+        <p>Cuidamos el recurso hídrico y tu salud a largo plazo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROMOCIONES ===== -->
+  <section class="section promos" id="promociones">
+    <div class="section-head">
+      <span class="eyebrow">Promociones</span>
+      <h2>Ofertas pensadas para ti</h2>
+      <p>Ingresa al sistema y descubre nuestras promociones vigentes.</p>
+    </div>
+
+    <div class="promos-grid">
+      <div class="promo-card">
+        <span class="promo-badge">Nuevo cliente</span>
+        <h3>Bienvenida especial</h3>
+        <p>Descuento exclusivo en tu primer pedido al registrarte.</p>
+      </div>
+      <div class="promo-card">
+        <span class="promo-badge">Plan mensual</span>
+        <h3>Suministro programado</h3>
+        <p>Ahorra con la entrega recurrente de tus productos favoritos.</p>
+      </div>
+      <div class="promo-card">
+        <span class="promo-badge">Por volumen</span>
+        <h3>Compras al por mayor</h3>
+        <p>Precios preferenciales para pedidos de mayor cantidad.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PEDIDOS ===== -->
+  <section class="section pedidos" id="pedidos">
+    <div class="section-head">
+      <span class="eyebrow">Pedidos</span>
+      <h2>Pedir tu agua nunca fue tan fácil</h2>
+      <p>Sigue estos pasos y recibe tu pedido sin complicaciones.</p>
+    </div>
+
+    <div class="pasos-grid">
+      <div class="paso-card">
+        <span class="paso-num">1</span>
+        <h3>Accede al sistema</h3>
+        <p>Ingresa con tu cuenta o regístrate en un par de minutos.</p>
+      </div>
+      <div class="paso-card">
+        <span class="paso-num">2</span>
+        <h3>Elige tus productos</h3>
+        <p>Explora el catálogo y arma tu pedido a tu medida.</p>
+      </div>
+      <div class="paso-card">
+        <span class="paso-num">3</span>
+        <h3>Confirma y paga</h3>
+        <p>Selecciona el método de pago que prefieras.</p>
+      </div>
+      <div class="paso-card">
+        <span class="paso-num">4</span>
+        <h3>Recibe en casa</h3>
+        <p>Nosotros nos encargamos de la entrega hasta tu puerta.</p>
+      </div>
+    </div>
+
+    <div class="pedidos-cta">
+      <a routerLink="/catalogo" class="btn-primary">Iniciar mi pedido</a>
+    </div>
+  </section>
+
+  <!-- ===== METODOS DE PAGO ===== -->
+  <section class="section metodos-pago" id="metodos-pago">
+    <div class="section-head">
+      <span class="eyebrow">Métodos de pago</span>
+      <h2>Paga como prefieras</h2>
+      <p>Contamos con distintas opciones para que elijas la más cómoda.</p>
+    </div>
+
+    <div class="pagos-grid">
+      <div class="pago-card">
+        <span class="pago-icon">💵</span>
+        <span>Efectivo</span>
+      </div>
+      <div class="pago-card">
+        <span class="pago-icon">🏦</span>
+        <span>Transferencia bancaria</span>
+      </div>
+      <div class="pago-card">
+        <span class="pago-icon">💳</span>
+        <span>Tarjeta de crédito/débito</span>
+      </div>
+      <div class="pago-card">
+        <span class="pago-icon">📱</span>
+        <span>Pago móvil</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACTO ===== -->
+  <section class="section contacto" id="contacto">
+    <div class="section-head">
+      <span class="eyebrow">Contáctanos</span>
+      <h2>Estamos para ayudarte</h2>
+      <p>Escríbenos o llámanos, con gusto atenderemos tus consultas.</p>
+    </div>
+
+    <div class="contacto-grid">
+      <a href="tel:+593997724788" class="contacto-card">
+        <span class="contacto-icon">📞</span>
+        <div>
+          <strong>Teléfono</strong>
+          <p>+593997724788</p>
+        </div>
+      </a>
+      <a href="mailto:contacto@acqualife.com" class="contacto-card">
+        <span class="contacto-icon">✉️</span>
+        <div>
+          <strong>Correo</strong>
+          <p>acqualifesur&#64;gmail.com</p>
+        </div>
+      </a>
+      <div class="contacto-card">
+        <span class="contacto-icon">📍</span>
+        <div>
+          <strong>Ubicación</strong>
+          <p>Ecuador - Pichincha - Quito</p>
+        </div>
+      </div>
+      <div class="contacto-card">
+        <span class="contacto-icon">🕒</span>
+        <div>
+          <strong>Horario</strong>
+          <p>Lun - Sáb: 08:00 - 18:00</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Acqualife" />
+        <div>
+          <strong>ACQUALIFE</strong>
+          <p>Cuida tu salud</p>
+        </div>
+      </div>
+
+      <nav class="footer-links">
+        <a routerLink="/catalogo">Catálogo</a>
+        <a (click)="irASeccion('quienes-somos')">Quiénes somos</a>
+        <a (click)="irASeccion('promociones')">Promociones</a>
+        <a (click)="irASeccion('pedidos')">Pedidos</a>
+        <a (click)="irASeccion('metodos-pago')">Métodos de pago</a>
+        <a (click)="irASeccion('contacto')">Contáctanos</a>
+      </nav>
+    </div>
+    <p class="footer-copy">© {{ anioActual }} Acqualife. Todos los derechos reservados.</p>
+  </footer>
+</div>

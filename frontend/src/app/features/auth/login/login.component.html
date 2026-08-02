@@ -26,6 +26,7 @@
   </div>
   <div class="auth-form-panel">
     <div class="auth-box">
+      <a routerLink="/" class="btn-volver">← Volver al inicio</a>
       <h2>Bienvenido</h2>
       <p class="sub">Ingresa tus credenciales para continuar</p>
       <app-alert [mensaje]="error()" tipo="error" />
@@ -60,7 +61,8 @@
         </button>
       </form>
       <p class="switch">
-        ¿No tienes cuenta? <a routerLink="/auth/registro">Regístrate gratis</a>
+        ¿No tienes cuenta?
+        <a routerLink="/auth/registro" [queryParams]="{ returnUrl: returnUrl }">Regístrate gratis</a>
       </p>
       <div class="olvPass">
         <p class="switch">

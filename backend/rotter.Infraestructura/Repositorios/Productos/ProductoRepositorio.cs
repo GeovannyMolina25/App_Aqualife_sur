@@ -50,11 +50,10 @@ public class ProductoRepositorio : IProductoRepositorio
     public async Task<Producto> ActualizarAsync(Producto producto)
     { producto.FechaModificacion = DateTime.Now; _db.Productos.Update(producto); await _db.SaveChangesAsync(); return producto; }
 
-    public async Task ActualizarStockAsync(int productoId, int cantidad)
+    public async Task<bool> ActualizarStockAsync(int productoId, int cantidad)
     {
-        var p = await _db.Productos.FindAsync(productoId);
-        if (p is null) return;
-        p.Stock -= cantidad;
-        await _db.SaveChangesAsync();
+        var filas = await _db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE Productos SET Stock = Stock - {cantidad} WHERE Id = {productoId} AND Stock >= {cantidad}");
+        return filas > 0;
     }
 }

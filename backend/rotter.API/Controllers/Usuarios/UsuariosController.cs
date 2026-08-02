@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,22 @@ public class UsuariosController : ControllerBase
     {
         var r = await _mediator.Send(new ObtenerUsuariosQuery(pagina, tamano, busqueda));
         return Ok(r);
+    }
+
+    [HttpGet("perfil")]
+    public async Task<IActionResult> ObtenerPerfil()
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new ObtenerPerfilQuery(usuarioId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPut("perfil")]
+    public async Task<IActionResult> ActualizarPerfil([FromBody] ActualizarPerfilDto dto)
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new ActualizarPerfilCommand(usuarioId, dto));
+        return StatusCode(r.StatusCode, r);
     }
 
     [HttpPut("{id}/rol")]

@@ -7,6 +7,7 @@ import {
   RouterOutlet,
 } from "@angular/router";
 import { AuthService } from "../../core/services/auth/auth.service";
+import { CarritoService } from "../../core/services/carrito/carrito.service";
 
 @Component({
   selector: "app-layout",
@@ -17,6 +18,7 @@ import { AuthService } from "../../core/services/auth/auth.service";
 })
 export class LayoutComponent {
   open = signal(false);
+  menuUsuarioAbierto = signal(false);
   iniciales = computed(() => {
     const u = this.auth.usuario();
     return u ? (u.nombre[0] + (u.apellido?.[0] ?? "")).toUpperCase() : "?";
@@ -26,8 +28,15 @@ export class LayoutComponent {
   );
   constructor(
     public auth: AuthService,
+    public carrito: CarritoService,
     private router: Router,
   ) {}
+  toggleMenuUsuario() {
+    this.menuUsuarioAbierto.set(!this.menuUsuarioAbierto());
+  }
+  cerrarMenuUsuario() {
+    this.menuUsuarioAbierto.set(false);
+  }
   logout() {
     this.auth.logout();
   }

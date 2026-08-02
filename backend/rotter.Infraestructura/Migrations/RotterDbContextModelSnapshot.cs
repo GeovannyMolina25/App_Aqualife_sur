@@ -102,6 +102,29 @@ namespace rotter.Infraestructura.Migrations
                     b.ToTable("Categorias", (string)null);
                 });
 
+            modelBuilder.Entity("rotter.Dominio.Entidades.DetalleIngresoCaja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IngresoCajaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VentaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IngresoCajaId");
+
+                    b.HasIndex("VentaId");
+
+                    b.ToTable("DetalleIngresoCaja", (string)null);
+                });
+
             modelBuilder.Entity("rotter.Dominio.Entidades.DetalleVenta", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +155,60 @@ namespace rotter.Infraestructura.Migrations
                     b.HasIndex("VentaId");
 
                     b.ToTable("DetalleVentas", (string)null);
+                });
+
+            modelBuilder.Entity("rotter.Dominio.Entidades.IngresoCaja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Banco")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ComprobanteUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaIngreso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NumeroIngreso")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("NumeroTransaccion")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Observacion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalIngresado")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NumeroIngreso")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("IngresoCaja", (string)null);
                 });
 
             modelBuilder.Entity("rotter.Dominio.Entidades.Producto", b =>
@@ -225,6 +302,61 @@ namespace rotter.Infraestructura.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
+            modelBuilder.Entity("rotter.Dominio.Entidades.SalidaCaja", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Banco")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ComprobanteUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaSalida")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("NumeroSalida")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("NumeroTransaccion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NumeroSalida")
+                        .IsUnique();
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("SalidaCaja", (string)null);
+                });
+
             modelBuilder.Entity("rotter.Dominio.Entidades.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -308,13 +440,36 @@ namespace rotter.Infraestructura.Migrations
                     b.Property<int>("ColaboradorId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ComprobanteUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("DireccionEnvio")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("EstadoPago")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<DateTime>("FechaVenta")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Impuestos")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MetodoPago")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NombreReceptor")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("NumeroVenta")
                         .IsRequired()
@@ -323,6 +478,20 @@ namespace rotter.Infraestructura.Migrations
 
                     b.Property<string>("Observacion")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Origen")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Presencial");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TelefonoContacto")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)");
@@ -337,6 +506,25 @@ namespace rotter.Infraestructura.Migrations
                         .IsUnique();
 
                     b.ToTable("Ventas", (string)null);
+                });
+
+            modelBuilder.Entity("rotter.Dominio.Entidades.DetalleIngresoCaja", b =>
+                {
+                    b.HasOne("rotter.Dominio.Entidades.IngresoCaja", "IngresoCaja")
+                        .WithMany("Detalles")
+                        .HasForeignKey("IngresoCajaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("rotter.Dominio.Entidades.Venta", "Venta")
+                        .WithMany()
+                        .HasForeignKey("VentaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("IngresoCaja");
+
+                    b.Navigation("Venta");
                 });
 
             modelBuilder.Entity("rotter.Dominio.Entidades.DetalleVenta", b =>
@@ -358,6 +546,17 @@ namespace rotter.Infraestructura.Migrations
                     b.Navigation("Venta");
                 });
 
+            modelBuilder.Entity("rotter.Dominio.Entidades.IngresoCaja", b =>
+                {
+                    b.HasOne("rotter.Dominio.Entidades.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("rotter.Dominio.Entidades.Producto", b =>
                 {
                     b.HasOne("rotter.Dominio.Entidades.Categoria", "Categoria")
@@ -375,6 +574,17 @@ namespace rotter.Infraestructura.Migrations
                     b.Navigation("Categoria");
 
                     b.Navigation("CreadoPor");
+                });
+
+            modelBuilder.Entity("rotter.Dominio.Entidades.SalidaCaja", b =>
+                {
+                    b.HasOne("rotter.Dominio.Entidades.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("rotter.Dominio.Entidades.Usuario", b =>
@@ -410,6 +620,11 @@ namespace rotter.Infraestructura.Migrations
             modelBuilder.Entity("rotter.Dominio.Entidades.Categoria", b =>
                 {
                     b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("rotter.Dominio.Entidades.IngresoCaja", b =>
+                {
+                    b.Navigation("Detalles");
                 });
 
             modelBuilder.Entity("rotter.Dominio.Entidades.Producto", b =>

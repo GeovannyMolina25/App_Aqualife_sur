@@ -3,7 +3,7 @@
     <div class="overlay" (click)="open.set(false)"></div>
   }
   <aside class="sidebar" [class.open]="open()">
-    <div class="sl">
+    <a routerLink="/" class="sl" title="Ir a la página principal">
       <img
         src="assets/logo.png"
         alt="Logo"
@@ -11,7 +11,7 @@
       />
       <div class="slt">Rotter</div>
       <div class="sls">Sistema de Agua</div>
-    </div>
+    </a>
     <nav class="sn">
       <p class="sec">Principal</p>
       <a
@@ -46,16 +46,20 @@
           >🏦 Caja</a
         >
       }
-      @if (auth.esCliente()) {
-        <p class="sec">Mis Compras</p>
-        <a
-          class="nl"
-          routerLink="/dashboard/mi-historial"
-          routerLinkActive="act"
-          (click)="open.set(false)"
-          >📋 Mi Historial</a
-        >
-      }
+      <p class="sec">Mis Compras</p>
+      <a
+        class="nl"
+        routerLink="/dashboard/mi-historial"
+        routerLinkActive="act"
+        (click)="open.set(false)"
+        >📋 Mi Historial</a
+      >
+      <a
+        class="nl"
+        routerLink="/carrito"
+        (click)="open.set(false)"
+        >🛒 Mi Carrito</a
+      >
       @if (auth.esAdmin() || auth.esSuperAdmin()) {
         <p class="sec">Administración</p>
         <a
@@ -90,14 +94,36 @@
     <header class="topbar">
       <div class="tl">
         <button class="hbg" (click)="open.set(!open())">☰</button
-        ><span class="brand">💧 Rotter</span>
+        ><a routerLink="/" class="brand" title="Ir a la página principal">💧 Rotter</a>
       </div>
       <div class="tr">
+        <a routerLink="/carrito" class="carrito-link" aria-label="Carrito">
+          <span class="carrito-icon">🛒</span>
+          @if (carrito.cantidadTotal() > 0) {
+            <span class="carrito-badge">{{ carrito.cantidadTotal() }}</span>
+          }
+        </a>
         <span class="rb" [class]="rolClass()">{{ auth.getRol() }}</span>
-        <div class="tav">{{ iniciales() }}</div>
-        <span class="tn">{{ auth.usuario()?.nombre }}</span>
+        <div class="user-menu">
+          <button class="user-btn" (click)="toggleMenuUsuario()">
+            <div class="tav">{{ iniciales() }}</div>
+            <span class="tn">{{ auth.usuario()?.nombre }}</span>
+            <span class="chevron" [class.up]="menuUsuarioAbierto()">▾</span>
+          </button>
+          @if (menuUsuarioAbierto()) {
+            <div class="user-dropdown">
+              <a routerLink="/dashboard/mi-perfil" (click)="cerrarMenuUsuario()">👤 Mi perfil</a>
+              <a routerLink="/dashboard/mi-historial" (click)="cerrarMenuUsuario()">📦 Mis pedidos</a>
+              <button type="button" class="dropdown-logout" (click)="logout()">🚪 Cerrar sesión</button>
+            </div>
+          }
+        </div>
       </div>
     </header>
+
+    @if (menuUsuarioAbierto()) {
+      <div class="user-overlay" (click)="cerrarMenuUsuario()"></div>
+    }
     <main class="pc"><router-outlet /></main>
   </div>
 </div>

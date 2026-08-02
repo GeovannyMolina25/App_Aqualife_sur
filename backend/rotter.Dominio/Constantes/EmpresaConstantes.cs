@@ -16,6 +16,11 @@ public static class EmpresaConstantes
 
     public const decimal Iva = 0.0m;
 
+    public const decimal IvaPedidosWeb = 0.15m;
+
+    /// <summary>Usuario "sistema" (Activo=false, no puede loguearse) usado como ColaboradorId en pedidos autoservicio del catálogo público.</summary>
+    public const string EmailUsuarioSistemaWeb = "pedidos-web@acqualife.com";
+
     public const string Slogan ="El agua es vida, cuídala hoy para disfrutar un mañana mejor.";
 
     public const string MensajeFinal = "¡Hidrátate, vive mejor!";

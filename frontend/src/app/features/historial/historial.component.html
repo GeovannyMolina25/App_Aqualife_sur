@@ -36,6 +36,12 @@
 
           @if (abierta() === v.id) {
             <div class="vb">
+              @if (v.origen === 'Web' && v.metodoPago) {
+                <div class="obs">
+                  💳 {{ v.metodoPago === 'ContraEntrega' ? 'Pago contra entrega' : 'Transferencia bancaria' }} ·
+                  Estado del pago: <strong>{{ v.estadoPago }}</strong>
+                </div>
+              }
               @if (v.observacion) {
                 <div class="obs">📝 {{ v.observacion }}</div>
               }

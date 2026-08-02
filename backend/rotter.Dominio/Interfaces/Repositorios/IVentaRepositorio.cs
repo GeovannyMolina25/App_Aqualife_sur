@@ -14,6 +14,8 @@ public interface IVentaRepositorio
     Task<List<Venta>> ObtenerPorColaboradorYPeriodoAsync(int colaboradorId, DateTime desde, DateTime hasta);
     Task<Venta> CrearAsync(Venta venta);
     Task<bool> ActualizarEstadoAsync(int ventaId, string nuevoEstado);
+    Task<bool> ActualizarComprobanteAsync(int ventaId, string comprobanteUrl, string estadoPago);
+    Task<bool> ActualizarEstadoPagoAsync(int ventaId, string estadoPago);
     Task<string> GenerarNumeroVentaAsync();
     Task<MetricasVentaData> ObtenerMetricasAsync();
     Task<FacturaDto?> ObtenerFacturaPorIdAsync(int ventaId);

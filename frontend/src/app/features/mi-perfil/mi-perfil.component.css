@@ -1,0 +1,103 @@
+.wrap {
+  max-width: 900px;
+}
+.ph {
+  margin-bottom: 24px;
+}
+h1 {
+  font-size: 1.6rem;
+  color: #1c2b35;
+  font-family: "Playfair Display", serif;
+}
+p {
+  font-size: 0.85rem;
+  color: #7a9aaa;
+  margin-top: 3px;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.tarjeta {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #efe4cc;
+  padding: 24px;
+}
+.tarjeta h2 {
+  font-size: 1.1rem;
+  color: #1c2b35;
+  font-family: "Playfair Display", serif;
+  margin-bottom: 18px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.fg {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fg label {
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: #4a6572;
+}
+.fg input {
+  padding: 10px 14px;
+  border: 1.5px solid #e2d0af;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+  color: #1c2b35;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.fg input:focus {
+  border-color: #3d8fa1;
+  box-shadow: 0 0 0 3px rgba(61, 143, 161, 0.15);
+}
+.fg input:disabled {
+  background: #f8f3ea;
+  color: #7a9aaa;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: #1a6b8a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-primary:hover {
+  background: #0f5470;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .tarjetas,
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}

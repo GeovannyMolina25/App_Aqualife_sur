@@ -1,0 +1,68 @@
+<header class="navbar" [class.scrolled]="scrolled()">
+  <div class="nav-inner">
+    <a routerLink="/" class="brand" (click)="cerrarMenu()">
+      <img src="assets/logo.png" alt="Acqualife" class="brand-logo" />
+      <span>ACQUALIFE</span>
+    </a>
+
+    <nav class="nav-links" [class.open]="menuAbierto()">
+      <a routerLink="/catalogo" (click)="cerrarMenu()">Catálogo</a>
+      <a (click)="irASeccion('quienes-somos')">Quiénes somos</a>
+      <a (click)="irASeccion('promociones')">Promociones</a>
+      <a (click)="irASeccion('pedidos')">Pedidos</a>
+      <a (click)="irASeccion('metodos-pago')">Métodos de pago</a>
+      <a (click)="irASeccion('contacto')">Contáctanos</a>
+
+      @if (!auth.usuario()) {
+        <a routerLink="/auth/login" class="btn-acceder-mobile" (click)="cerrarMenu()">Iniciar sesión</a>
+        <a routerLink="/auth/registro" class="btn-registro-mobile" (click)="cerrarMenu()">Registrarse</a>
+      }
+    </nav>
+
+    <a routerLink="/carrito" class="carrito-link" (click)="cerrarMenu()" aria-label="Carrito">
+      <span class="carrito-icon">🛒</span>
+      @if (carrito.cantidadTotal() > 0) {
+        <span class="carrito-badge">{{ carrito.cantidadTotal() }}</span>
+      }
+    </a>
+
+    @if (auth.usuario(); as usuario) {
+      <div class="user-menu">
+        <button class="user-btn" (click)="toggleMenuUsuario()">
+          <span class="user-avatar">{{ iniciales() }}</span>
+          <span class="user-name">{{ usuario.nombre }}</span>
+          <span class="chevron" [class.up]="menuUsuarioAbierto()">▾</span>
+        </button>
+        @if (menuUsuarioAbierto()) {
+          <div class="user-dropdown">
+            <a routerLink="/dashboard/mi-perfil" (click)="cerrarMenuUsuario()">👤 Mi perfil</a>
+            <a routerLink="/dashboard/mi-historial" (click)="cerrarMenuUsuario()">📦 Mis pedidos</a>
+            <button type="button" class="dropdown-logout" (click)="cerrarSesion()">🚪 Cerrar sesión</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="auth-buttons">
+        <a routerLink="/auth/login" class="btn-login">Iniciar sesión</a>
+        <a routerLink="/auth/registro" class="btn-registro">Registrarse</a>
+      </div>
+    }
+
+    <button
+      class="hamburger"
+      [class.open]="menuAbierto()"
+      (click)="toggleMenu()"
+      aria-label="Abrir menú"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="navbar-spacer"></div>
+
+@if (menuAbierto()) {
+  <div class="menu-overlay" (click)="cerrarMenu()"></div>
+}
+@if (menuUsuarioAbierto()) {
+  <div class="user-overlay" (click)="cerrarMenuUsuario()"></div>
+}

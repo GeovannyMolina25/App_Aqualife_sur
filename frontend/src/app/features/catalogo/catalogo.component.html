@@ -1,0 +1,95 @@
+<app-public-header />
+
+<div class="catalogo-page">
+  <div class="catalogo-head">
+    <span class="eyebrow">Catálogo</span>
+    <h1>Nuestros productos</h1>
+    <p>Elige tus productos, agrégalos al carrito y arma tu pedido.</p>
+
+    <div class="buscador">
+      <input
+        [(ngModel)]="busqueda"
+        (keyup.enter)="buscar()"
+        placeholder="Buscar producto..."
+      />
+      <button (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else if (productos().length === 0) {
+    <div class="vacio">
+      <span>🔎</span>
+      <p>No encontramos productos con ese criterio.</p>
+    </div>
+  } @else {
+    <div class="grid-productos">
+      @for (p of productos(); track p.id) {
+        <div class="producto-card" [class.brillando]="agregadoId() === p.id">
+          <div class="producto-imagen">
+            @if (p.imagenUrl) {
+              <img [src]="p.imagenUrl" [alt]="p.nombre" />
+            } @else {
+              <span class="producto-imagen-fallback">💧</span>
+            }
+            @if (p.esPromocion) {
+              <span class="promo-tag">Promo</span>
+            }
+          </div>
+
+          <div class="producto-body">
+            <h3>{{ p.nombre }}</h3>
+            @if (p.descripcion) {
+              <p class="producto-desc">{{ p.descripcion }}</p>
+            }
+
+            <div class="producto-precio">
+              @if (p.esPromocion && p.precioPromocion != null) {
+                <span class="precio-tachado">${{ p.precio.toFixed(2) }}</span>
+                <span class="precio-actual">${{ p.precioPromocion.toFixed(2) }}</span>
+              } @else {
+                <span class="precio-actual">${{ p.precio.toFixed(2) }}</span>
+              }
+            </div>
+
+            <span class="disponibilidad" [class.agotado]="p.stock <= 0">
+              {{ p.stock > 0 ? "Disponible (" + p.stock + ")" : "Agotado" }}
+            </span>
+
+            @if (p.stock > 0) {
+              <div class="producto-footer">
+                <div class="selector-cantidad">
+                  <button type="button" (click)="decrementar(p)">−</button>
+                  <input
+                    type="number"
+                    min="1"
+                    [max]="p.stock"
+                    [ngModel]="cantidades[p.id]"
+                    (ngModelChange)="onCantidadInput(p, $event)"
+                  />
+                  <button type="button" (click)="incrementar(p)">+</button>
+                </div>
+
+                <span class="producto-subtotal">${{ subtotal(p).toFixed(2) }}</span>
+              </div>
+
+              <button
+                type="button"
+                class="btn-comprar"
+                [class.agregado]="agregadoId() === p.id"
+                (click)="agregarAlCarrito(p, $event)"
+              >
+                {{ agregadoId() === p.id ? "✓ Agregado" : "Comprar" }}
+              </button>
+            } @else {
+              <button type="button" class="btn-comprar" disabled>No disponible</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <app-pagination [p]="pagina()" [totalPaginas]="totalPaginas()" (paginaCambiada)="cambiarPagina($event)" />
+  }
+</div>
