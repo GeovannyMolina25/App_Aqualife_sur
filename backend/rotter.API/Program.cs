@@ -35,7 +35,9 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("Angular");             
+app.UseCors("Angular");
+Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "wwwroot", "uploads", "comprobantes"));
+app.UseStaticFiles();
 app.UseMiddleware<ExcepcionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

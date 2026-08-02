@@ -17,6 +17,7 @@
   </div>
   <div class="auth-form-panel">
     <div class="auth-box">
+      <a routerLink="/" class="btn-volver">← Volver al inicio</a>
       <h2>Crear cuenta</h2>
       <p class="sub">Completa tus datos para registrarte</p>
       <app-alert [mensaje]="error()" tipo="error" />
@@ -106,7 +107,8 @@
         </button>
       </form>
       <p class="switch">
-        ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a>
+        ¿Ya tienes cuenta?
+        <a routerLink="/auth/login" [queryParams]="{ returnUrl: returnUrl }">Inicia sesión</a>
       </p>
     </div>
   </div>

@@ -69,6 +69,38 @@ public class VentasController : ControllerBase
         return StatusCode(r.StatusCode, r);
     }
 
+    [HttpPost("checkout")]
+    [Authorize(Roles = "Cliente,Administrador,Colaborador,SuperAdministrador")]
+    public async Task<IActionResult> Checkout([FromBody] CheckoutDto dto)
+    {
+        var clienteId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new RegistrarPedidoWebCommand(dto, clienteId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("{id}/comprobante")]
+    [Authorize(Roles = "Cliente,Administrador,Colaborador,SuperAdministrador")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(6_000_000)]
+    public async Task<IActionResult> SubirComprobante(int id, IFormFile archivo)
+    {
+        var clienteId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var esStaff = User.IsInRole("Administrador") || User.IsInRole("Colaborador") || User.IsInRole("SuperAdministrador");
+
+        await using var stream = archivo.OpenReadStream();
+        var r = await _mediator.Send(new SubirComprobanteCommand(
+            id, clienteId, esStaff, stream, archivo.FileName, archivo.ContentType, archivo.Length));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPut("{id}/estado-pago")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
+    public async Task<IActionResult> ActualizarEstadoPago(int id, [FromBody] ActualizarEstadoPagoDto dto)
+    {
+        var r = await _mediator.Send(new ActualizarEstadoPagoCommand(id, dto.NuevoEstadoPago));
+        return StatusCode(r.StatusCode, r);
+    }
+
     [HttpPut("{id}/estado")]
     [Authorize(Roles = "SuperAdministrador")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoVentaDto dto)
@@ -77,3 +109,5 @@ public class VentasController : ControllerBase
         return StatusCode(r.StatusCode, r);
     }
 }
+
+public record ActualizarEstadoPagoDto(string NuevoEstadoPago);

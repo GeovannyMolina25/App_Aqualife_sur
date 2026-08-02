@@ -4,6 +4,7 @@ using rotter.Dominio.DTOs.Ventas;
 using rotter.Dominio.Entidades;
 using rotter.Dominio.Interfaces.Repositorios;
 using rotter.Dominio.Interfaces.Servicios;
+using rotter.Infraestructura.Data;
 
 namespace rotter.Aplicacion.Ventas.Commands;
 
@@ -14,47 +15,41 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
     private readonly IVentaRepositorio _ventas;
     private readonly IProductoRepositorio _productos;
     private readonly IAuditoriaServicio _auditoria;
+    private readonly RotterDbContext _db;
 
-    public RegistrarVentaHandler(IVentaRepositorio ventas, IProductoRepositorio productos, IAuditoriaServicio auditoria)
-    { _ventas = ventas; _productos = productos; _auditoria = auditoria; }
+    public RegistrarVentaHandler(IVentaRepositorio ventas, IProductoRepositorio productos, IAuditoriaServicio auditoria, RotterDbContext db)
+    { _ventas = ventas; _productos = productos; _auditoria = auditoria; _db = db; }
 
     public async Task<RespuestaDto<VentaDto>> Handle(RegistrarVentaCommand req, CancellationToken ct)
     {
+        using var tx = await _db.Database.BeginTransactionAsync(ct);
+
         var numero = await _ventas.GenerarNumeroVentaAsync();
-        var detalles = new List<DetalleVenta>();
-        decimal total = 0;
-
-        foreach (var item in req.Dto.Items)
-        {
-            var prod = await _productos.ObtenerPorIdAsync(item.ProductoId);
-            if (prod is null) return RespuestaDto<VentaDto>.Fallo($"Producto {item.ProductoId} no encontrado.", 404);
-            if (prod.Stock < item.Cantidad) return RespuestaDto<VentaDto>.Fallo($"Stock insuficiente: {prod.Nombre}.", 400);
-
-            var precio = prod.EsPromocion && prod.PrecioPromocion.HasValue ? prod.PrecioPromocion.Value : prod.Precio;
-            var subtotal = precio * item.Cantidad;
-            total += subtotal;
-
-            detalles.Add(new DetalleVenta { ProductoId = item.ProductoId, Cantidad = item.Cantidad, PrecioUnitario = precio, Subtotal = subtotal });
-            await _productos.ActualizarStockAsync(item.ProductoId, item.Cantidad);
-        }
+        var construido = await ConstructorDetallesVenta.ConstruirAsync(_productos, req.Dto.Items);
+        if (construido.Error is not null) return RespuestaDto<VentaDto>.Fallo(construido.Error, construido.ErrorEsNotFound ? 404 : 400);
 
         var venta = new Venta
         {
             NumeroVenta = numero,
             ClienteId = req.Dto.ClienteId,
             ColaboradorId = req.ColaboradorId,
-            Total = total,
+            Subtotal = construido.Subtotal,
+            Impuestos = 0,
+            Total = construido.Subtotal,
             Observacion = req.Dto.Observacion,
             Estado = "Pendiente",
+            Origen = "Presencial",
             FechaVenta = DateTime.Now,
-            Detalles = detalles
+            Detalles = construido.Detalles
         };
 
         await _ventas.CrearAsync(venta);
+        await tx.CommitAsync(ct);
+
         await _auditoria.RegistrarAsync("REGISTRAR_VENTA", "Ventas", venta.Id.ToString(),
-            datosNuevos: new { 
-                venta.NumeroVenta, 
-                venta.Total 
+            datosNuevos: new {
+                venta.NumeroVenta,
+                venta.Total
             });
 
         var creada = await _ventas.ObtenerPorIdAsync(venta.Id);
@@ -62,13 +57,22 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
     }
 
     public static VentaDto Mapear(Venta v) => new(
-        v.Id, 
-        v.NumeroVenta, 
-        v.FechaVenta, 
-        v.Total, 
-        v.Estado, 
+        v.Id,
+        v.NumeroVenta,
+        v.FechaVenta,
+        v.Subtotal,
+        v.Impuestos,
+        v.Total,
+        v.Estado,
+        v.Origen,
+        v.MetodoPago,
+        v.EstadoPago,
+        v.ComprobanteUrl,
+        v.DireccionEnvio,
+        v.TelefonoContacto,
+        v.NombreReceptor,
         v.Observacion,
-        $"{v.Cliente.Nombre} {v.Cliente.Apellido}", 
+        $"{v.Cliente.Nombre} {v.Cliente.Apellido}",
         v.Cliente.Email,
         $"{v.Colaborador.Nombre} {v.Colaborador.Apellido}",
         v.Detalles.Select(d => new DetalleVentaDto(d.ProductoId, d.Producto.Nombre, d.Cantidad, d.PrecioUnitario, d.Subtotal)).ToList());

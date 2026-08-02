@@ -76,6 +76,25 @@ public class VentaRepositorio : IVentaRepositorio
         return true;
     }
 
+    public async Task<bool> ActualizarComprobanteAsync(int ventaId, string comprobanteUrl, string estadoPago)
+    {
+        var venta = await _db.Ventas.FindAsync(ventaId);
+        if (venta is null) return false;
+        venta.ComprobanteUrl = comprobanteUrl;
+        venta.EstadoPago = estadoPago;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> ActualizarEstadoPagoAsync(int ventaId, string estadoPago)
+    {
+        var venta = await _db.Ventas.FindAsync(ventaId);
+        if (venta is null) return false;
+        venta.EstadoPago = estadoPago;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<string> GenerarNumeroVentaAsync()
     {
         var Anio = DateTime.Now.Year;
@@ -127,15 +146,10 @@ public class VentaRepositorio : IVentaRepositorio
         if (venta == null)
             return null;
 
-        var subtotal = Math.Round(
-            venta.Total / (1 + EmpresaConstantes.Iva),
-            2
-        );
-
-        var iva = Math.Round(
-            venta.Total - subtotal,
-            2
-        );
+        // Ventas creadas antes de existir estas columnas quedan con Subtotal/Impuestos en 0;
+        // para esas se conserva el comportamiento histórico (factura sin IVA desglosado).
+        var subtotal = venta.Subtotal > 0 ? venta.Subtotal : venta.Total;
+        var iva = venta.Subtotal > 0 ? venta.Impuestos : 0;
 
         return new FacturaDto
         {

@@ -50,7 +50,16 @@ public class RotterDbContext : DbContext
             e.Property(v => v.NumeroVenta).HasMaxLength(20).IsRequired();
             e.HasIndex(v => v.NumeroVenta).IsUnique();
             e.Property(v => v.Total).HasColumnType("decimal(18,2)");
+            e.Property(v => v.Subtotal).HasColumnType("decimal(18,2)");
+            e.Property(v => v.Impuestos).HasColumnType("decimal(18,2)");
             e.Property(v => v.Estado).HasMaxLength(50);
+            e.Property(v => v.Origen).HasMaxLength(20).HasDefaultValue("Presencial");
+            e.Property(v => v.MetodoPago).HasMaxLength(50);
+            e.Property(v => v.EstadoPago).HasMaxLength(50);
+            e.Property(v => v.ComprobanteUrl).HasMaxLength(500);
+            e.Property(v => v.DireccionEnvio).HasMaxLength(300);
+            e.Property(v => v.TelefonoContacto).HasMaxLength(20);
+            e.Property(v => v.NombreReceptor).HasMaxLength(150);
             e.HasOne(v => v.Cliente).WithMany(u => u.VentasComoCliente).HasForeignKey(v => v.ClienteId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(v => v.Colaborador).WithMany(u => u.VentasComoColaborador).HasForeignKey(v => v.ColaboradorId).OnDelete(DeleteBehavior.Restrict);
         });

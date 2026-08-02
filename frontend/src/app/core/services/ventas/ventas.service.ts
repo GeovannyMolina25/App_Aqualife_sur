@@ -1,7 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { Venta, CrearVentaDto, CambiarEstadoVentaDto } from "../../models/ventas/venta.model";
+import {
+  Venta,
+  CrearVentaDto,
+  CambiarEstadoVentaDto,
+  CheckoutDto,
+  ActualizarEstadoPagoDto,
+} from "../../models/ventas/venta.model";
 import { Metricas } from "../../models/ventas/metricas.model";
 import { PagedResult, RespuestaDto } from "../../models/comun/respuesta.model";
 
@@ -45,5 +51,19 @@ export class VentasService {
         responseType: "blob"
       }
     );
+  }
+
+  checkout(dto: CheckoutDto) {
+    return this.http.post<RespuestaDto<Venta>>(`${this.url}/checkout`, dto);
+  }
+
+  subirComprobante(ventaId: number, archivo: File) {
+    const form = new FormData();
+    form.append("archivo", archivo);
+    return this.http.post<RespuestaDto<string>>(`${this.url}/${ventaId}/comprobante`, form);
+  }
+
+  actualizarEstadoPago(id: number, dto: ActualizarEstadoPagoDto) {
+    return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/estado-pago`, dto);
   }
 }

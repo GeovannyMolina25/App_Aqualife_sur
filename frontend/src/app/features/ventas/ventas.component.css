@@ -103,6 +103,24 @@ tbody td {
   background: rgba(59, 130, 246, 0.12);
   color: #2563eb;
 }
+.bk-presencial {
+  background: rgba(122, 154, 170, 0.15);
+  color: #4a6572;
+}
+.pago-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.ver-comprobante {
+  font-size: 0.75rem;
+  color: #1a6b8a;
+  font-weight: 600;
+}
+.ver-comprobante:hover {
+  text-decoration: underline;
+}
 .em {
   text-align: center;
   color: #7a9aaa;
