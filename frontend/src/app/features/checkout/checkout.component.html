@@ -1,0 +1,162 @@
+<app-public-header />
+
+<div class="checkout-page">
+  @if (!pedido()) {
+    <h1>Finalizar compra</h1>
+
+    <div class="checkout-grid">
+      <div class="checkout-main">
+        <section class="bloque">
+          <h2>Resumen del pedido</h2>
+          <div class="tabla-resumen">
+            @for (item of carrito.itemsCarrito(); track item.producto.id) {
+              <div class="fila-producto">
+                <span class="nombre">{{ item.producto.nombre }}</span>
+                <span class="cantidad">x{{ item.cantidad }}</span>
+                <span class="precio-unit">${{ carrito.precioUnitario(item.producto).toFixed(2) }}</span>
+                <span class="subtotal">${{ (carrito.precioUnitario(item.producto) * item.cantidad).toFixed(2) }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="bloque">
+          <h2>Datos de entrega</h2>
+          <p class="nota-entrega">
+            Tomamos estos datos de tu perfil, pero puedes cambiarlos solo para este pedido
+            (por ejemplo, si quieres enviarlo a otra dirección).
+          </p>
+          <div class="fg">
+            <label>Dirección de envío</label>
+            <input
+              [(ngModel)]="envio.direccion"
+              name="direccionEnvio"
+              placeholder="Calle, número, referencia, ciudad"
+            />
+          </div>
+          <div class="grid2">
+            <div class="fg">
+              <label>Teléfono de contacto</label>
+              <input [(ngModel)]="envio.telefono" name="telefonoContacto" placeholder="0999999999" />
+            </div>
+            <div class="fg">
+              <label>Nombre y apellido de quien recibe</label>
+              <input [(ngModel)]="envio.receptor" name="nombreReceptor" placeholder="Nombre completo" />
+            </div>
+          </div>
+        </section>
+
+        <section class="bloque">
+          <h2>Método de pago</h2>
+          <div class="metodos-pago">
+            <button
+              type="button"
+              class="metodo-card"
+              [class.activo]="metodoSeleccionado() === 'TransferenciaProdubanco'"
+              (click)="seleccionarMetodo('TransferenciaProdubanco')"
+            >
+              <span class="metodo-icon">🏦</span>
+              <span>Transferencia Produbanco</span>
+            </button>
+            <button
+              type="button"
+              class="metodo-card"
+              [class.activo]="metodoSeleccionado() === 'TransferenciaPichincha'"
+              (click)="seleccionarMetodo('TransferenciaPichincha')"
+            >
+              <span class="metodo-icon">🏦</span>
+              <span>Transferencia Pichincha</span>
+            </button>
+            <button
+              type="button"
+              class="metodo-card"
+              [class.activo]="metodoSeleccionado() === 'ContraEntrega'"
+              (click)="seleccionarMetodo('ContraEntrega')"
+            >
+              <span class="metodo-icon">📦</span>
+              <span>Pago contra entrega</span>
+            </button>
+          </div>
+
+          @if (datosBancoActual(); as datos) {
+            <div class="datos-bancarios">
+              <p><strong>Banco:</strong> {{ datos.banco }}</p>
+              @if (datos.tipo) {
+                <p><strong>Tipo:</strong> {{ datos.tipo }}</p>
+              }
+              <p><strong>Número de cuenta:</strong> {{ datos.numeroCuenta }}</p>
+              <p><strong>Nombre:</strong> {{ datos.nombre }}</p>
+              <p><strong>Identificación:</strong> {{ datos.identificacion }}</p>
+              <p class="nota-transferencia">
+                Realiza la transferencia y luego sube tu comprobante. Podrás hacerlo apenas confirmes el pedido.
+              </p>
+            </div>
+          } @else {
+            <p class="nota-contraentrega">
+              Pagarás en efectivo o con tarjeta al recibir tu pedido. Te pediremos confirmar por WhatsApp.
+            </p>
+          }
+        </section>
+      </div>
+
+      <aside class="checkout-resumen">
+        <h2>Total a pagar</h2>
+        <div class="resumen-fila">
+          <span>Subtotal</span>
+          <span>${{ subtotal.toFixed(2) }}</span>
+        </div>
+        <div class="resumen-fila">
+          <span>IVA (15%)</span>
+          <span>${{ impuestos.toFixed(2) }}</span>
+        </div>
+        <div class="resumen-fila total">
+          <span>Total</span>
+          <span>${{ total.toFixed(2) }}</span>
+        </div>
+
+        <app-alert [mensaje]="error()" tipo="error" />
+
+        <button type="button" class="btn-primary" [disabled]="procesando()" (click)="confirmarPedido()">
+          {{ procesando() ? "Procesando..." : "Confirmar pedido" }}
+        </button>
+        <a routerLink="/carrito" class="volver-carrito">← Volver al carrito</a>
+      </aside>
+    </div>
+  } @else {
+    <div class="confirmacion">
+      <span class="confirmacion-icon">✅</span>
+      <h1>¡Pedido recibido!</h1>
+      <p>Tu número de pedido es <strong>{{ pedido()!.numeroVenta }}</strong></p>
+      <p class="confirmacion-total">Total: ${{ pedido()!.total.toFixed(2) }}</p>
+
+      @if (pedidoEsTransferencia()) {
+        @if (!comprobanteSubido()) {
+          <div class="subir-comprobante">
+            <p>Sube el comprobante de tu transferencia para agilizar la verificación:</p>
+            <input type="file" accept="image/jpeg,image/png,application/pdf" (change)="onArchivoSeleccionado($event)" />
+            <app-alert [mensaje]="errorComprobante()" tipo="error" />
+            <button
+              type="button"
+              class="btn-primary"
+              [disabled]="!archivoComprobante || subiendoComprobante()"
+              (click)="subirComprobante()"
+            >
+              {{ subiendoComprobante() ? "Subiendo..." : "Subir comprobante" }}
+            </button>
+          </div>
+        } @else {
+          <app-alert mensaje="Comprobante recibido. Verificaremos tu pago pronto." tipo="success" />
+        }
+      } @else {
+        <a class="btn-whatsapp" [href]="enlaceWhatsapp()" target="_blank" rel="noopener">
+          💬 Confirmar por WhatsApp
+        </a>
+      }
+
+      <div class="confirmacion-links">
+        <a routerLink="/dashboard/mi-historial">Ver mis pedidos</a>
+        <a routerLink="/catalogo">Volver al catálogo</a>
+      </div>
+    </div>
+  }
+</div>

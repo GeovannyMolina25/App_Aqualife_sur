@@ -84,6 +84,17 @@
   width: 100%;
   max-width: 400px;
 }
+.btn-volver {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: #7a9aaa;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.btn-volver:hover {
+  color: #1a6b8a;
+}
 .auth-box h2 {
   font-size: 2rem;
   color: #1c2b35;

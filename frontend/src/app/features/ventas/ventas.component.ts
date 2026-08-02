@@ -11,6 +11,7 @@ import { Producto } from "../../core/models/productos/producto.model";
 import { Usuario } from "../../core/models/usuarios/usuario.model";
 import { UsuariosService } from "../../core/services/usuarios/usuarios.service";
 import { AuthService } from "../../core/services/auth/auth.service";
+import { environment } from "../../../environments/environment";
 
 @Component({
   selector: "app-ventas",
@@ -98,6 +99,18 @@ export class VentasComponent implements OnInit {
     if (nuevoEstado === v.estado) return;
     this.vs.cambiarEstado(v.id, { nuevoEstado }).subscribe((r) => {
       if (r.exito) v.estado = nuevoEstado;
+    });
+  }
+
+  comprobanteHref(url: string): string {
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${environment.apiUrl.replace(/\/api\/?$/, "")}${url}`;
+  }
+
+  actualizarEstadoPago(v: Venta, nuevoEstadoPago: string) {
+    if (nuevoEstadoPago === v.estadoPago) return;
+    this.vs.actualizarEstadoPago(v.id, { nuevoEstadoPago }).subscribe((r) => {
+      if (r.exito) v.estadoPago = nuevoEstadoPago;
     });
   }
 

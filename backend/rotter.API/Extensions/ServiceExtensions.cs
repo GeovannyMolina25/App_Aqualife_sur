@@ -10,6 +10,7 @@ using rotter.Infraestructura.Repositorios.Caja;
 using rotter.Infraestructura.Repositorios.Productos;
 using rotter.Infraestructura.Repositorios.Usuarios;
 using rotter.Infraestructura.Repositorios.Ventas;
+using rotter.Infraestructura.Servicios.Archivos;
 using rotter.Infraestructura.Servicios.Auditoria;
 using rotter.Infraestructura.Servicios.Auth;
 using rotter.Infraestructura.Servicios.Pdf;
@@ -55,6 +56,7 @@ public static class ServiceExtensions
         s.AddScoped<
             IFacturaPdfService,
             FacturaPdfService>();
+        s.AddScoped<IArchivoServicio, ArchivoServicio>();
         s.AddHttpContextAccessor();
         return s;
     }

@@ -10,5 +10,5 @@ public interface IProductoRepositorio
     Task<int> TotalAsync(bool soloActivos = true, string? busqueda = null);
     Task<Producto> CrearAsync(Producto producto);
     Task<Producto> ActualizarAsync(Producto producto);
-    Task ActualizarStockAsync(int productoId, int cantidad);
+    Task<bool> ActualizarStockAsync(int productoId, int cantidad);
 }

@@ -1,0 +1,77 @@
+<div class="wrap">
+  <div class="ph">
+    <h1>Mi Perfil</h1>
+    <p>Administra tu información personal</p>
+  </div>
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="tarjetas">
+      <div class="tarjeta">
+        <h2>Datos personales</h2>
+
+        <app-alert [mensaje]="error()" tipo="error" />
+        <app-alert [mensaje]="exito()" tipo="success" />
+
+        <div class="grid2">
+          <div class="fg">
+            <label>Nombre</label>
+            <input [(ngModel)]="form.nombre" name="nombre" />
+          </div>
+          <div class="fg">
+            <label>Apellido</label>
+            <input [(ngModel)]="form.apellido" name="apellido" />
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Correo electrónico</label>
+          <input [value]="perfil()?.email" disabled />
+        </div>
+
+        <div class="grid2">
+          <div class="fg">
+            <label>Teléfono</label>
+            <input [(ngModel)]="form.telefono" name="telefono" placeholder="0999999999" />
+          </div>
+          <div class="fg">
+            <label>Rol</label>
+            <input [value]="perfil()?.rol" disabled />
+          </div>
+        </div>
+
+        <div class="fg">
+          <label>Dirección</label>
+          <input [(ngModel)]="form.direccion" name="direccion" />
+        </div>
+
+        <button type="button" class="btn-primary" [disabled]="guardando()" (click)="guardar()">
+          {{ guardando() ? "Guardando..." : "Guardar cambios" }}
+        </button>
+      </div>
+
+      <div class="tarjeta">
+        <h2>Cambiar contraseña</h2>
+
+        <app-alert [mensaje]="errorPassword()" tipo="error" />
+        <app-alert [mensaje]="exitoPassword()" tipo="success" />
+
+        <div class="grid2">
+          <div class="fg">
+            <label>Nueva contraseña</label>
+            <input type="password" [(ngModel)]="nuevaPassword" name="nuevaPassword" />
+          </div>
+          <div class="fg">
+            <label>Confirmar contraseña</label>
+            <input type="password" [(ngModel)]="confirmarPassword" name="confirmarPassword" />
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" [disabled]="cambiandoPassword()" (click)="cambiarPassword()">
+          {{ cambiandoPassword() ? "Cambiando..." : "Cambiar contraseña" }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,7 +1,7 @@
 import { Component, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
 import { AlertComponent } from "../../../shared/components/alert/alert.component";
 import { RegistroDto } from "../../../core/models/auth/registro.model";
@@ -27,10 +27,14 @@ export class RegistroComponent {
   cargando = signal(false);
   error = signal("");
   exito = signal("");
+  returnUrl: string;
   constructor(
     private auth: AuthService,
     private router: Router,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get("returnUrl") || "/dashboard";
+  }
   onRegistro() {
     const {
       nombre,
@@ -60,7 +64,7 @@ export class RegistroComponent {
         this.cargando.set(false);
         r.exito
           ? (this.exito.set("¡Registro exitoso! Redirigiendo..."),
-            setTimeout(() => this.router.navigate(["/dashboard"]), 1500))
+            setTimeout(() => this.router.navigateByUrl(this.returnUrl), 1500))
           : this.error.set(r.mensaje);
       },
       error: (e) => {

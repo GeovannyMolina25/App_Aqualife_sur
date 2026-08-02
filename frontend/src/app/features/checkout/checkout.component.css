@@ -1,0 +1,313 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--cream-50);
+}
+
+.checkout-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px 90px;
+}
+.checkout-page h1 {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  color: var(--text-dark);
+  margin-bottom: 32px;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.bloque {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 18px rgba(15, 84, 112, 0.06);
+}
+.bloque h2 {
+  font-size: 1.05rem;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.nota-entrega {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.fg {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fg label {
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--text-mid);
+}
+.fg input {
+  padding: 10px 14px;
+  border: 1.5px solid var(--cream-300);
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  background: #fff;
+  color: var(--text-dark);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.fg input:focus {
+  border-color: var(--aqua-600);
+  box-shadow: 0 0 0 3px rgba(61, 143, 161, 0.15);
+}
+
+.tabla-resumen {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fila-producto {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 14px;
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--cream-200);
+}
+.fila-producto .nombre {
+  color: var(--text-dark);
+  font-weight: 500;
+}
+.fila-producto .subtotal {
+  font-weight: 700;
+  color: var(--text-dark);
+  min-width: 60px;
+  text-align: right;
+}
+
+.metodos-pago {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.metodo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 10px;
+  border: 1.5px solid var(--cream-300);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  transition: border-color 0.2s, background 0.2s;
+  font-family: "DM Sans", sans-serif;
+}
+.metodo-card:hover {
+  border-color: var(--aqua-600);
+}
+.metodo-card.activo {
+  border-color: var(--aqua-700);
+  background: rgba(56, 168, 154, 0.08);
+  color: var(--aqua-800);
+}
+.metodo-icon {
+  font-size: 1.5rem;
+}
+
+.datos-bancarios {
+  background: var(--cream-100);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+}
+.datos-bancarios p {
+  margin-bottom: 6px;
+}
+.nota-transferencia,
+.nota-contraentrega {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  margin-top: 6px;
+}
+
+.checkout-resumen {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 22px rgba(15, 84, 112, 0.08);
+  position: sticky;
+  top: 90px;
+}
+.checkout-resumen h2 {
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+.resumen-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--text-mid);
+  margin-bottom: 10px;
+}
+.resumen-fila.total {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  border-top: 1px solid var(--cream-200);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.btn-primary {
+  width: 100%;
+  display: inline-block;
+  background: var(--aqua-700);
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-align: center;
+  margin-top: 6px;
+}
+.btn-primary:hover {
+  background: var(--aqua-800);
+}
+.btn-primary:disabled {
+  background: var(--cream-300);
+  color: var(--text-light);
+  cursor: not-allowed;
+}
+.volver-carrito {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: var(--text-mid);
+}
+.volver-carrito:hover {
+  color: var(--aqua-700);
+}
+
+/* ===== Confirmación ===== */
+.confirmacion {
+  max-width: 480px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(15, 84, 112, 0.1);
+}
+.confirmacion-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 16px;
+}
+.confirmacion h1 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+.confirmacion p {
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+.confirmacion-total {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--aqua-800);
+  margin-bottom: 22px;
+}
+
+.subir-comprobante {
+  background: var(--cream-100);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 18px 0;
+  text-align: left;
+}
+.subir-comprobante p {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+.subir-comprobante input[type="file"] {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.82rem;
+  width: 100%;
+}
+
+.btn-whatsapp {
+  display: inline-block;
+  background: #25d366;
+  color: #fff;
+  padding: 12px 26px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin: 12px 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-whatsapp:hover {
+  background: #1ebe5a;
+  transform: translateY(-1px);
+}
+
+.confirmacion-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 22px;
+  font-size: 0.85rem;
+}
+.confirmacion-links a {
+  color: var(--aqua-700);
+  font-weight: 600;
+}
+.confirmacion-links a:hover {
+  color: var(--aqua-800);
+}
+
+@media (max-width: 860px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  .metodos-pago {
+    grid-template-columns: 1fr;
+  }
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+  .fila-producto {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "nombre nombre"
+      "cantidad precio"
+      "subtotal subtotal";
+    row-gap: 4px;
+  }
+}
