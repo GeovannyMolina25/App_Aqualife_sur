@@ -7,6 +7,7 @@
 
     <nav class="nav-links" [class.open]="menuAbierto()">
       <a routerLink="/catalogo" (click)="cerrarMenu()">Catálogo</a>
+      <a routerLink="/servicios" (click)="cerrarMenu()">Servicios</a>
       <a (click)="irASeccion('quienes-somos')">Quiénes somos</a>
       <a (click)="irASeccion('promociones')">Promociones</a>
       <a (click)="irASeccion('pedidos')">Pedidos</a>
@@ -27,6 +28,9 @@
     </a>
 
     @if (auth.usuario(); as usuario) {
+      @if (promoSrv.premioListoParaReclamar()) {
+        <span class="badge-reclamar"><span class="badge-reclamar-icon">🎁</span><span class="badge-reclamar-texto">Reclama tu premio</span></span>
+      }
       <div class="user-menu">
         <button class="user-btn" (click)="toggleMenuUsuario()">
           <span class="user-avatar">{{ iniciales() }}</span>

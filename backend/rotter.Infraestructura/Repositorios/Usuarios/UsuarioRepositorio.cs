@@ -72,4 +72,13 @@ public class UsuarioRepositorio : IUsuarioRepositorio
         usuario.FechaModificacion = DateTime.Now;
         await _db.SaveChangesAsync();
     }
+
+    // Update condicional atómico: no hace nada si el usuario no tiene la promoción del
+    // 7º botellón activa o ya se le entregó, sin necesidad de leerlo primero en memoria.
+    public async Task IncrementarRecargaSeptimoAsync(int usuarioId)
+    {
+        await _db.Database.ExecuteSqlInterpolatedAsync($@"
+            UPDATE Usuarios SET RecargasParaSeptimo = RecargasParaSeptimo + 1
+            WHERE Id = {usuarioId} AND PremioBienvenida = 'SeptimoBotellonGratis' AND PremioBienvenidaEntregado = 0");
+    }
 }

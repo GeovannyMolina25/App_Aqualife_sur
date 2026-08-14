@@ -10,86 +10,114 @@
       <input
         [(ngModel)]="busqueda"
         (keyup.enter)="buscar()"
-        placeholder="Buscar producto..."
+        placeholder="Buscar por nombre o descripción..."
       />
       <button (click)="buscar()">Buscar</button>
     </div>
   </div>
 
-  @if (cargando()) {
-    <app-spinner [full]="true" />
-  } @else if (productos().length === 0) {
-    <div class="vacio">
-      <span>🔎</span>
-      <p>No encontramos productos con ese criterio.</p>
-    </div>
-  } @else {
-    <div class="grid-productos">
-      @for (p of productos(); track p.id) {
-        <div class="producto-card" [class.brillando]="agregadoId() === p.id">
-          <div class="producto-imagen">
-            @if (p.imagenUrl) {
-              <img [src]="p.imagenUrl" [alt]="p.nombre" />
-            } @else {
-              <span class="producto-imagen-fallback">💧</span>
-            }
-            @if (p.esPromocion) {
-              <span class="promo-tag">Promo</span>
-            }
-          </div>
+  <div class="catalogo-body">
+    <aside class="categorias-sidebar">
+      <h3>Categorías</h3>
+      <nav>
+        <button
+          type="button"
+          class="cat-item"
+          [class.act]="categoriaSeleccionada() === null"
+          (click)="seleccionarCategoria(null)"
+        >
+          Todos
+        </button>
+        @for (c of categorias(); track c.id) {
+          <button
+            type="button"
+            class="cat-item"
+            [class.act]="categoriaSeleccionada() === c.id"
+            (click)="seleccionarCategoria(c.id)"
+          >
+            {{ c.nombre }}
+          </button>
+        }
+      </nav>
+    </aside>
 
-          <div class="producto-body">
-            <h3>{{ p.nombre }}</h3>
-            @if (p.descripcion) {
-              <p class="producto-desc">{{ p.descripcion }}</p>
-            }
-
-            <div class="producto-precio">
-              @if (p.esPromocion && p.precioPromocion != null) {
-                <span class="precio-tachado">${{ p.precio.toFixed(2) }}</span>
-                <span class="precio-actual">${{ p.precioPromocion.toFixed(2) }}</span>
-              } @else {
-                <span class="precio-actual">${{ p.precio.toFixed(2) }}</span>
-              }
-            </div>
-
-            <span class="disponibilidad" [class.agotado]="p.stock <= 0">
-              {{ p.stock > 0 ? "Disponible (" + p.stock + ")" : "Agotado" }}
-            </span>
-
-            @if (p.stock > 0) {
-              <div class="producto-footer">
-                <div class="selector-cantidad">
-                  <button type="button" (click)="decrementar(p)">−</button>
-                  <input
-                    type="number"
-                    min="1"
-                    [max]="p.stock"
-                    [ngModel]="cantidades[p.id]"
-                    (ngModelChange)="onCantidadInput(p, $event)"
-                  />
-                  <button type="button" (click)="incrementar(p)">+</button>
-                </div>
-
-                <span class="producto-subtotal">${{ subtotal(p).toFixed(2) }}</span>
+    <div class="catalogo-contenido">
+      @if (cargando()) {
+        <app-spinner [full]="true" />
+      } @else if (productos().length === 0) {
+        <div class="vacio">
+          <span>🔎</span>
+          <p>No encontramos productos con ese criterio.</p>
+        </div>
+      } @else {
+        <div class="grid-productos">
+          @for (p of productos(); track p.id) {
+            <div class="producto-card" [class.brillando]="agregadoId() === p.id">
+              <div class="producto-imagen">
+                @if (p.imagenUrl) {
+                  <img [src]="imagenSrc(p.imagenUrl)" [alt]="p.nombre" />
+                } @else {
+                  <span class="producto-imagen-fallback">💧</span>
+                }
+                @if (p.esPromocion) {
+                  <span class="promo-tag">Promo</span>
+                }
               </div>
 
-              <button
-                type="button"
-                class="btn-comprar"
-                [class.agregado]="agregadoId() === p.id"
-                (click)="agregarAlCarrito(p, $event)"
-              >
-                {{ agregadoId() === p.id ? "✓ Agregado" : "Comprar" }}
-              </button>
-            } @else {
-              <button type="button" class="btn-comprar" disabled>No disponible</button>
-            }
-          </div>
+              <div class="producto-body">
+                <h3>{{ p.nombre }}</h3>
+                @if (p.descripcion) {
+                  <p class="producto-desc">{{ p.descripcion }}</p>
+                }
+
+                <div class="producto-precio">
+                  @if (p.esPromocion && p.precioPromocion != null) {
+                    <span class="precio-tachado">${{ p.precio.toFixed(2) }}</span>
+                    <span class="precio-actual">${{ p.precioPromocion.toFixed(2) }}</span>
+                  } @else {
+                    <span class="precio-actual">${{ p.precio.toFixed(2) }}</span>
+                  }
+                </div>
+
+                <span class="disponibilidad" [class.agotado]="p.stock <= 0">
+                  {{ p.stock > 0 ? "Disponible (" + p.stock + ")" : "Agotado" }}
+                </span>
+
+                @if (p.stock > 0) {
+                  <div class="producto-footer">
+                    <div class="selector-cantidad">
+                      <button type="button" (click)="decrementar(p)">−</button>
+                      <input
+                        type="number"
+                        min="1"
+                        [max]="p.stock"
+                        [ngModel]="cantidades[p.id]"
+                        (ngModelChange)="onCantidadInput(p, $event)"
+                      />
+                      <button type="button" (click)="incrementar(p)">+</button>
+                    </div>
+
+                    <span class="producto-subtotal">${{ subtotal(p).toFixed(2) }}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="btn-comprar"
+                    [class.agregado]="agregadoId() === p.id"
+                    (click)="agregarAlCarrito(p, $event)"
+                  >
+                    {{ agregadoId() === p.id ? "✓ Agregado" : "Comprar" }}
+                  </button>
+                } @else {
+                  <button type="button" class="btn-comprar" disabled>No disponible</button>
+                }
+              </div>
+            </div>
+          }
         </div>
+
+        <app-pagination [p]="pagina()" [totalPaginas]="totalPaginas()" (paginaCambiada)="cambiarPagina($event)" />
       }
     </div>
-
-    <app-pagination [p]="pagina()" [totalPaginas]="totalPaginas()" (paginaCambiada)="cambiarPagina($event)" />
-  }
+  </div>
 </div>

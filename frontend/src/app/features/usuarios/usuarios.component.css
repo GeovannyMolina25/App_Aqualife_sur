@@ -127,6 +127,50 @@ tbody td {
   background: rgba(224, 92, 92, 0.12);
   color: #c44;
 }
+.bk-premio {
+  background: rgba(184, 149, 106, 0.18);
+  color: #8a6a40;
+}
+.bk-progreso {
+  background: rgba(26, 107, 138, 0.1);
+  color: #1a6b8a;
+}
+.bk-listo {
+  background: rgba(60, 179, 113, 0.15);
+  color: #2a8c5a;
+  font-weight: 700;
+}
+.bk-sin-premio {
+  font-size: 0.78rem;
+  color: #aab;
+}
+.premio-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+.btn-entregar {
+  padding: 4px 12px;
+  border: 1.5px solid #1a6b8a;
+  border-radius: 100px;
+  background: #fff;
+  color: #1a6b8a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-entregar:hover:not(:disabled) {
+  background: #1a6b8a;
+  color: #fff;
+}
+.btn-entregar:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #ccc;
+  color: #999;
+}
 
 .rs {
   padding: 5px 8px;

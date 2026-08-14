@@ -1,8 +1,10 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { Producto } from "../../core/models/productos/producto.model";
+import { environment } from "../../../environments/environment";
+import { Producto, Categoria } from "../../core/models/productos/producto.model";
 import { ProductosService } from "../../core/services/productos/productos.service";
+import { CategoriasService } from "../../core/services/categorias/categorias.service";
 import { CarritoService } from "../../core/services/carrito/carrito.service";
 import { PublicHeaderComponent } from "../../shared/components/public-header/public-header.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
@@ -24,33 +26,49 @@ export class CatalogoComponent implements OnInit {
   cantidades: Record<number, number> = {};
   agregadoId = signal<number | null>(null);
 
+  categorias = signal<Categoria[]>([]);
+  categoriaSeleccionada = signal<number | null>(null);
+
   constructor(
     private productosSrv: ProductosService,
+    private categoriasSrv: CategoriasService,
     public carrito: CarritoService,
   ) {}
 
   ngOnInit() {
+    this.categoriasSrv.obtenerTodas().subscribe((r) => {
+      if (r.exito) this.categorias.set(r.datos.filter((c) => c.tipo === "Producto"));
+    });
     this.cargar();
   }
 
   cargar() {
     this.cargando.set(true);
-    this.productosSrv.obtenerTodos(this.pagina(), 12, this.busqueda).subscribe({
-      next: (r) => {
-        this.cargando.set(false);
-        if (r.exito) {
-          this.productos.set(r.datos.items);
-          this.totalPaginas.set(r.datos.totalPaginas);
-          r.datos.items.forEach((p) => {
-            if (!(p.id in this.cantidades)) this.cantidades[p.id] = 1;
-          });
-        }
-      },
-      error: () => this.cargando.set(false),
-    });
+    this.productosSrv
+      .obtenerTodos(this.pagina(), 12, this.busqueda, this.categoriaSeleccionada() ?? undefined, "Producto")
+      .subscribe({
+        next: (r) => {
+          this.cargando.set(false);
+          if (r.exito) {
+            this.productos.set(r.datos.items);
+            this.totalPaginas.set(r.datos.totalPaginas);
+            r.datos.items.forEach((p) => {
+              if (!(p.id in this.cantidades)) this.cantidades[p.id] = 1;
+            });
+          }
+        },
+        error: () => this.cargando.set(false),
+      });
   }
 
   buscar() {
+    this.pagina.set(1);
+    this.cargar();
+  }
+
+  seleccionarCategoria(id: number | null) {
+    if (this.categoriaSeleccionada() === id) return;
+    this.categoriaSeleccionada.set(id);
     this.pagina.set(1);
     this.cargar();
   }
@@ -59,6 +77,11 @@ export class CatalogoComponent implements OnInit {
     this.pagina.set(p);
     this.cargar();
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  imagenSrc(url: string): string {
+    if (/^https?:\/\//i.test(url)) return url;
+    return `${environment.apiUrl.replace(/\/api\/?$/, "")}${url}`;
   }
 
   precio(p: Producto): number {

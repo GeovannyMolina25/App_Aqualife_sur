@@ -8,6 +8,7 @@ import {
 } from "@angular/router";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { CarritoService } from "../../core/services/carrito/carrito.service";
+import { PromocionBienvenidaService } from "../../core/services/promocion-bienvenida/promocion-bienvenida.service";
 
 @Component({
   selector: "app-layout",
@@ -29,6 +30,7 @@ export class LayoutComponent {
   constructor(
     public auth: AuthService,
     public carrito: CarritoService,
+    public promoSrv: PromocionBienvenidaService,
     private router: Router,
   ) {}
   toggleMenuUsuario() {

@@ -18,7 +18,8 @@ public class ObtenerUsuariosHandler : IRequestHandler<ObtenerUsuariosQuery, Resp
         var total   = await _usuarios.TotalAsync(req.Busqueda);
         var paginas = (int)Math.Ceiling(total / (double)req.Tamano);
         var dtos    = lista.Select(u => new UsuarioDto(u.Id, u.Nombre, u.Apellido, u.Email,
-            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion)).ToList();
+            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion,
+            u.PremioBienvenida, u.RecargasParaSeptimo, u.PremioBienvenidaEntregado)).ToList();
 
         return RespuestaDto<PagedResult<UsuarioDto>>.Ok(new(dtos, total, req.Pagina, req.Tamano, paginas));
     }

@@ -11,5 +11,8 @@ public record UsuarioDto(
     string? Telefono,
     string Rol,
     bool Activo,
-    DateTime FechaCreacion
+    DateTime FechaCreacion,
+    string? PremioBienvenida,
+    int RecargasParaSeptimo,
+    bool PremioBienvenidaEntregado
 );

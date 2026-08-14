@@ -10,6 +10,9 @@ export interface Usuario {
   rol: string;
   activo: boolean;
   fechaCreacion: string;
+  premioBienvenida?: string;
+  recargasParaSeptimo: number;
+  premioBienvenidaEntregado: boolean;
 }
 export interface CambiarRolDto {
   nuevoRolId: number;

@@ -20,4 +20,8 @@ export class UsuariosService {
   cambiarRol(id: number, dto: CambiarRolDto) {
     return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/rol`, dto);
   }
+
+  entregarPremioBienvenida(id: number) {
+    return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/premio-bienvenida/entregar`, {});
+  }
 }

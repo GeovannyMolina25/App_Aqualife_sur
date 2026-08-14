@@ -186,6 +186,28 @@
   font-size: 0.75rem;
   font-weight: 500;
 }
+.badge-reclamar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #b8956a;
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  animation: badge-reclamar-pulso 1.8s ease-in-out infinite;
+}
+@keyframes badge-reclamar-pulso {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@media (max-width: 640px) {
+  .badge-reclamar-texto {
+    display: none;
+  }
+}
 .carrito-link {
   position: relative;
   display: flex;

@@ -25,7 +25,8 @@ public class ActualizarPerfilHandler : IRequestHandler<ActualizarPerfilCommand, 
         await _usuarios.ActualizarAsync(u);
 
         return RespuestaDto<UsuarioDto>.Ok(new UsuarioDto(u.Id, u.Nombre, u.Apellido, u.Email,
-            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion),
+            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion,
+            u.PremioBienvenida, u.RecargasParaSeptimo, u.PremioBienvenidaEntregado),
             "Perfil actualizado.");
     }
 }

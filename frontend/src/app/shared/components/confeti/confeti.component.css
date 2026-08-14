@@ -1,0 +1,31 @@
+.confeti-contenedor {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confeti-pieza {
+  position: absolute;
+  top: -12px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.9;
+  animation-name: confeti-caida;
+  animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes confeti-caida {
+  0% {
+    transform: translateY(0) rotate(var(--rot-inicial, 0deg));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(calc(var(--rot-inicial, 0deg) + 540deg));
+    opacity: 0.4;
+  }
+}
