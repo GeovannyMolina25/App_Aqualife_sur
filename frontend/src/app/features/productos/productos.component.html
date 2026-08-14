@@ -86,7 +86,7 @@
             <label>Categoría *</label
             ><select [(ngModel)]="nuevo.categoriaId">
               <option [value]="0">Seleccionar</option>
-              @for (c of categorias; track c.id) {
+              @for (c of categorias(); track c.id) {
                 <option [value]="c.id">{{ c.nombre }}</option>
               }
             </select>

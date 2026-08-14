@@ -13,4 +13,5 @@ public interface IUsuarioRepositorio
     Task<Usuario> ActualizarAsync(Usuario usuario);
     Task<bool> ExisteEmailAsync(string email);
     Task CambiarRolAsync(int usuarioId, int nuevoRolId);
+    Task IncrementarRecargaSeptimoAsync(int usuarioId);
 }

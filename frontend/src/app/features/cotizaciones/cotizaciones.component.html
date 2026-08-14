@@ -1,0 +1,142 @@
+<div class="wrap">
+  <div class="hr">
+    <div>
+      <h1>Cotizaciones de Servicios</h1>
+      <p>Solicitudes de cotización recibidas — revisa los datos y llama al cliente.</p>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <button type="button" class="fp" [class.act]="estadoFiltro() === null" (click)="filtrarPorEstado(null)">
+      Todos
+    </button>
+    @for (e of estados; track e) {
+      <button type="button" class="fp" [class.act]="estadoFiltro() === e" (click)="filtrarPorEstado(e)">
+        {{ e }}
+      </button>
+    }
+  </div>
+
+  <div class="sb">
+    <input
+      type="text"
+      class="si"
+      placeholder="Buscar por nombre, teléfono o servicio..."
+      [ngModel]="busqueda()"
+      (ngModelChange)="buscar($event)"
+    />
+  </div>
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="tc">
+      <div class="tw">
+        <table>
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Contacto</th>
+              <th>Dirección</th>
+              <th>Tamaño</th>
+              <th>Fecha deseada</th>
+              <th>Estado</th>
+              <th>Solicitado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of cotizaciones(); track c.id) {
+              <tr>
+                <td><strong>{{ c.servicioNombre }}</strong></td>
+                <td>
+                  <div class="contacto">
+                    <span>{{ c.nombreContacto }}</span>
+                    <a [href]="telHref(c.telefono)" class="tel-link">📞 {{ c.telefono }}</a>
+                  </div>
+                </td>
+                <td>{{ c.direccion }}</td>
+                <td>{{ c.tamanoEspacio }}</td>
+                <td>{{ c.fechaDeseada ? (c.fechaDeseada | date: "dd/MM/yyyy") : "—" }}</td>
+                <td>
+                  <select
+                    class="es"
+                    [ngClass]="{
+                      'es-entrante': c.estado === 'Entrante',
+                      'es-pendiente': c.estado === 'Pendiente',
+                      'es-realizado': c.estado === 'Realizado',
+                      'es-anulado': c.estado === 'Anulado'
+                    }"
+                    [ngModel]="c.estado"
+                    (ngModelChange)="cambiarEstado(c, $event)"
+                  >
+                    @for (e of estados; track e) {
+                      <option [value]="e">{{ e }}</option>
+                    }
+                  </select>
+                </td>
+                <td>{{ c.fechaCreacion | date: "dd/MM/yyyy HH:mm" }}</td>
+                <td>
+                  <button type="button" class="btn-detalle" (click)="verDetalle(c)" title="Ver detalles">
+                    👁️
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="em">No hay cotizaciones con ese criterio.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <app-pagination [p]="pagina()" [totalPaginas]="totalPaginas()" (paginaCambiada)="cambiarPagina($event)" />
+  }
+</div>
+
+@if (detalle(); as c) {
+  <div class="ov" (click)="cerrarDetalle()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>{{ c.servicioNombre }}</span>
+        <button (click)="cerrarDetalle()">✕</button>
+      </div>
+      <div class="mb">
+        <div class="fg">
+          <label>Estado</label>
+          <select
+            class="es"
+            [ngClass]="{
+              'es-entrante': c.estado === 'Entrante',
+              'es-pendiente': c.estado === 'Pendiente',
+              'es-realizado': c.estado === 'Realizado',
+              'es-anulado': c.estado === 'Anulado'
+            }"
+            [ngModel]="c.estado"
+            (ngModelChange)="cambiarEstado(c, $event)"
+          >
+            @for (e of estados; track e) {
+              <option [value]="e">{{ e }}</option>
+            }
+          </select>
+        </div>
+        <p><strong>Nombre:</strong> {{ c.nombreContacto }}</p>
+        <p><strong>Teléfono:</strong> <a [href]="telHref(c.telefono)">{{ c.telefono }}</a></p>
+        @if (c.email) {
+          <p><strong>Correo:</strong> {{ c.email }}</p>
+        }
+        <p><strong>Dirección:</strong> {{ c.direccion }}</p>
+        <p><strong>Tamaño del espacio:</strong> {{ c.tamanoEspacio }}</p>
+        <p><strong>Fecha deseada:</strong> {{ c.fechaDeseada ? (c.fechaDeseada | date: "dd/MM/yyyy") : "No especificada" }}</p>
+        @if (c.comentario) {
+          <p><strong>Comentario:</strong> {{ c.comentario }}</p>
+        }
+        <p class="hint">Solicitado el {{ c.fechaCreacion | date: "dd/MM/yyyy HH:mm" }}</p>
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+}

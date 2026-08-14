@@ -8,6 +8,7 @@ using rotter.Infraestructura.Data;
 using rotter.Infraestructura.Repositorios.Auditoria;
 using rotter.Infraestructura.Repositorios.Caja;
 using rotter.Infraestructura.Repositorios.Productos;
+using rotter.Infraestructura.Repositorios.ServiciosLimpieza;
 using rotter.Infraestructura.Repositorios.Usuarios;
 using rotter.Infraestructura.Repositorios.Ventas;
 using rotter.Infraestructura.Servicios.Archivos;
@@ -41,9 +42,11 @@ public static class ServiceExtensions
     {
         s.AddScoped<IUsuarioRepositorio,   UsuarioRepositorio>();
         s.AddScoped<IProductoRepositorio,  ProductoRepositorio>();
+        s.AddScoped<ICategoriaRepositorio, CategoriaRepositorio>();
         s.AddScoped<IVentaRepositorio,     VentaRepositorio>();
         s.AddScoped<IAuditoriaRepositorio, AuditoriaRepositorio>();
         s.AddScoped<ICajaRepositorio,      CajaRepositorio>();
+        s.AddScoped<ICotizacionServicioRepositorio, CotizacionServicioRepositorio>();
         return s;
     }
 

@@ -1,5 +1,6 @@
 <div class="landing">
   <app-public-header />
+
   <!-- ===== HERO ===== -->
   <section class="hero" id="inicio">
     <div class="hero-text fade-in">
@@ -104,6 +105,11 @@
         <h3>Compras al por mayor</h3>
         <p>Precios preferenciales para pedidos de mayor cantidad.</p>
       </div>
+      <a class="promo-card promo-card-link" routerLink="/servicios">
+        <span class="promo-badge">Nuevo</span>
+        <h3>🧹 Servicios de limpieza a domicilio</h3>
+        <p>Casa, oficina, vehículo y más. Cotiza el servicio que necesites.</p>
+      </a>
     </div>
   </section>
 
@@ -163,6 +169,7 @@
       <div class="pago-card">
         <span class="pago-icon">💳</span>
         <span>Tarjeta de crédito/débito</span>
+        <span><b>muy pronto</b></span>
       </div>
       <div class="pago-card">
         <span class="pago-icon">📱</span>
@@ -212,7 +219,7 @@
   </section>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="footer">
+  <footer class="footer" #footerRef>
     <div class="footer-inner">
       <div class="footer-brand">
         <img src="assets/logo.png" alt="Acqualife" />
@@ -233,4 +240,23 @@
     </div>
     <p class="footer-copy">© {{ anioActual }} Acqualife. Todos los derechos reservados.</p>
   </footer>
+
+  <!-- ===== PROMO FLOTANTE DE BIENVENIDA ===== -->
+  @if (!authSrv.estaAutenticado() && !promoOculta()) {
+    <div
+      class="promo-flotante"
+      [class.detenida]="promoDetenida()"
+      [style.bottom.px]="promoDetenida() ? footerAltura() + 20 : 20"
+    >
+      <button type="button" class="promo-flotante-cerrar" (click)="cerrarPromo()" aria-label="Cerrar">✕</button>
+      <div class="promo-flotante-fila">
+        <span class="promo-flotante-icon">🎁</span>
+        <div class="promo-flotante-texto">
+          <strong>¡Regístrate y gana premios!</strong>
+          <p>Gira la ruleta de bienvenida y participa por botellón + llaves gratis, toma todo y más.</p>
+        </div>
+      </div>
+      <a routerLink="/auth/registro" class="promo-flotante-btn">Regístrate ahora</a>
+    </div>
+  }
 </div>

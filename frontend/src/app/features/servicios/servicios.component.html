@@ -1,0 +1,179 @@
+<app-public-header />
+
+<div class="servicios-page">
+  <div class="servicios-head">
+    <span class="eyebrow">Servicios</span>
+    <h1>Servicios de limpieza a domicilio</h1>
+    <p>Elige el servicio que necesitas y solicita tu cotización.</p>
+
+    <div class="buscador">
+      <input
+        [(ngModel)]="busqueda"
+        (keyup.enter)="buscar()"
+        placeholder="Buscar por nombre o descripción..."
+      />
+      <button (click)="buscar()">Buscar</button>
+    </div>
+  </div>
+
+  <div class="servicios-body">
+    <aside class="categorias-sidebar">
+      <h3>Categorías</h3>
+      <nav>
+        <button
+          type="button"
+          class="cat-item"
+          [class.act]="categoriaSeleccionada() === null"
+          (click)="seleccionarCategoria(null)"
+        >
+          Todos
+        </button>
+        @for (c of categorias(); track c.id) {
+          <button
+            type="button"
+            class="cat-item"
+            [class.act]="categoriaSeleccionada() === c.id"
+            (click)="seleccionarCategoria(c.id)"
+          >
+            {{ c.nombre }}
+          </button>
+        }
+      </nav>
+
+      @if (puedeCrearServicios()) {
+        <button type="button" class="btn-agregar-servicio" (click)="abrirCrearServicio()">
+          + Agregar servicio
+        </button>
+      }
+    </aside>
+
+    <div class="servicios-contenido">
+      @if (cargando()) {
+        <app-spinner [full]="true" />
+      } @else if (servicios().length === 0) {
+        <div class="vacio">
+          <span>🧹</span>
+          <p>No encontramos servicios con ese criterio.</p>
+        </div>
+      } @else {
+        <div class="grid-servicios">
+          @for (s of servicios(); track s.id) {
+            <div class="servicio-card">
+              <div class="servicio-imagen">
+                @if (s.imagenUrl) {
+                  <img [src]="imagenSrc(s.imagenUrl)" [alt]="s.nombre" />
+                } @else {
+                  <span class="servicio-imagen-fallback">🧹</span>
+                }
+              </div>
+
+              <div class="servicio-body">
+                <h3>{{ s.nombre }}</h3>
+                @if (s.descripcion) {
+                  <p class="servicio-desc">{{ s.descripcion }}</p>
+                }
+
+                <button type="button" class="btn-cotizar" (click)="abrirCotizar(s)">
+                  Cotizar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <app-pagination [p]="pagina()" [totalPaginas]="totalPaginas()" (paginaCambiada)="cambiarPagina($event)" />
+      }
+    </div>
+  </div>
+</div>
+
+<!-- ===== Modal Cotizar ===== -->
+@if (servicioCotizando(); as servicio) {
+  <div class="modal-overlay" (click)="cerrarCotizar()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <button type="button" class="cerrar-x" (click)="cerrarCotizar()" aria-label="Cerrar">✕</button>
+
+      @if (cotizacionEnviada()) {
+        <div class="modal-exito">
+          <span class="modal-exito-icono">✅</span>
+          <h2>¡Solicitud enviada!</h2>
+          <p>Te contactaremos pronto para coordinar tu cotización de <strong>{{ servicio.nombre }}</strong>.</p>
+          <button type="button" class="btn-primario" (click)="cerrarCotizar()">Cerrar</button>
+        </div>
+      } @else {
+        <h2>Cotizar: {{ servicio.nombre }}</h2>
+        <p class="modal-sub">Cuéntanos los detalles y te enviaremos tu cotización.</p>
+
+        <app-alert tipo="error" [mensaje]="errorCotizacion()" />
+
+        <div class="form-grid">
+          <label>
+            Nombre
+            <input [(ngModel)]="formCotizar.nombreContacto" placeholder="Tu nombre completo" />
+          </label>
+          <label>
+            Teléfono
+            <input [(ngModel)]="formCotizar.telefono" placeholder="09XXXXXXXX" />
+          </label>
+          <label>
+            Correo (opcional)
+            <input [(ngModel)]="formCotizar.email" placeholder="tucorreo@ejemplo.com" />
+          </label>
+          <label>
+            Dirección
+            <input [(ngModel)]="formCotizar.direccion" placeholder="Dirección donde se realizará el servicio" />
+          </label>
+          <label>
+            Tamaño del espacio
+            <input [(ngModel)]="formCotizar.tamanoEspacio" placeholder="Ej. Casa 3 habitaciones, 90m²" />
+          </label>
+          <label>
+            Fecha deseada (opcional)
+            <input type="date" [(ngModel)]="formCotizar.fechaDeseada" />
+          </label>
+          <label class="full">
+            Comentario (opcional)
+            <textarea [(ngModel)]="formCotizar.comentario" rows="3" placeholder="Detalles adicionales..."></textarea>
+          </label>
+        </div>
+
+        <button type="button" class="btn-primario" [disabled]="enviandoCotizacion()" (click)="enviarCotizacion()">
+          {{ enviandoCotizacion() ? "Enviando..." : "Solicitar cotización" }}
+        </button>
+      }
+    </div>
+  </div>
+}
+
+<!-- ===== Modal Agregar servicio (staff) ===== -->
+@if (mostrarModalCrearServicio()) {
+  <div class="modal-overlay" (click)="cerrarCrearServicio()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <button type="button" class="cerrar-x" (click)="cerrarCrearServicio()" aria-label="Cerrar">✕</button>
+
+      <h2>Agregar servicio</h2>
+      <p class="modal-sub">Se agregará a la categoría "{{ categoriaActual()?.nombre }}".</p>
+
+      <app-alert tipo="error" [mensaje]="errorCrearServicio()" />
+
+      <div class="form-grid">
+        <label class="full">
+          Nombre
+          <input [(ngModel)]="nuevoServicio.nombre" placeholder="Ej. Limpieza de alfombras" />
+        </label>
+        <label class="full">
+          Descripción
+          <textarea [(ngModel)]="nuevoServicio.descripcion" rows="3" placeholder="Descripción corta del servicio"></textarea>
+        </label>
+        <label class="full">
+          Foto (opcional)
+          <input type="file" accept="image/jpeg,image/png" (change)="onImagenServicioSeleccionada($event)" />
+        </label>
+      </div>
+
+      <button type="button" class="btn-primario" [disabled]="guardandoServicio()" (click)="guardarServicio()">
+        {{ guardandoServicio() ? "Guardando..." : "Guardar servicio" }}
+      </button>
+    </div>
+  </div>
+}

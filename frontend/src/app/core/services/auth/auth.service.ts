@@ -11,6 +11,7 @@ import { LoginDto } from "../../models/auth/login.model";
 import { RegistroDto } from "../../models/auth/registro.model";
 import { RespuestaDto } from "../../models/comun/respuesta.model";
 import { OlvidePasswordDto, ActualizarPerfilDto, Usuario } from "../../models/usuarios/usuario.model";
+import { PromocionBienvenidaService } from "../promocion-bienvenida/promocion-bienvenida.service";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private promocionSrv: PromocionBienvenidaService,
   ) {}
 
   login(dto: LoginDto) {
@@ -148,6 +150,9 @@ cambiarPassword(nuevaPassword: string) {
     localStorage.setItem(this.TOKEN_KEY, datos.token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(datos.usuario));
     this.usuario.set(datos.usuario);
+    // Se revisa una sola vez por login/registro (nunca por navegación) si corresponde
+    // mostrar la ruleta de bienvenida.
+    this.promocionSrv.verificarAlIniciarSesion();
   }
 
   private leerStorage(): UsuarioAuth | null {

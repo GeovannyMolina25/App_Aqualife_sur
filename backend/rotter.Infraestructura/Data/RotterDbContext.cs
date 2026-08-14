@@ -17,6 +17,7 @@ public class RotterDbContext : DbContext
     public DbSet<IngresoCaja> IngresoCaja => Set<IngresoCaja>();
     public DbSet<DetalleIngresoCaja> DetalleIngresoCaja => Set<DetalleIngresoCaja>();
     public DbSet<SalidaCaja> SalidaCaja => Set<SalidaCaja>();
+    public DbSet<CotizacionServicio> CotizacionesServicio => Set<CotizacionServicio>();
 
     protected override void OnModelCreating(ModelBuilder m)
     {
@@ -31,10 +32,15 @@ public class RotterDbContext : DbContext
             e.Property(u => u.PasswordHash).HasMaxLength(500);
             e.Property(u => u.Sexo).HasMaxLength(20);
             e.Property(u => u.Direccion).HasMaxLength(300);
+            e.Property(u => u.PremioBienvenida).HasMaxLength(50);
             e.HasOne(u => u.Rol).WithMany(r => r.Usuarios).HasForeignKey(u => u.RolId);
         });
 
-        m.Entity<Categoria>(e => { e.ToTable("Categorias"); e.Property(c => c.Nombre).HasMaxLength(100).IsRequired(); });
+        m.Entity<Categoria>(e => {
+            e.ToTable("Categorias");
+            e.Property(c => c.Nombre).HasMaxLength(100).IsRequired();
+            e.Property(c => c.Tipo).HasMaxLength(20).IsRequired().HasDefaultValue(TiposCategoria.Producto);
+        });
 
         m.Entity<Producto>(e => {
             e.ToTable("Productos");
@@ -103,6 +109,19 @@ public class RotterDbContext : DbContext
             e.Property(s => s.Valor).HasColumnType("decimal(18,2)");
             e.Property(s => s.Motivo).HasMaxLength(200).IsRequired();
             e.HasOne(s => s.Usuario).WithMany().HasForeignKey(s => s.UsuarioId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        m.Entity<CotizacionServicio>(e => {
+            e.ToTable("CotizacionesServicio");
+            e.Property(c => c.NombreContacto).HasMaxLength(150).IsRequired();
+            e.Property(c => c.Telefono).HasMaxLength(20).IsRequired();
+            e.Property(c => c.Email).HasMaxLength(200);
+            e.Property(c => c.Direccion).HasMaxLength(300).IsRequired();
+            e.Property(c => c.TamanoEspacio).HasMaxLength(100).IsRequired();
+            e.Property(c => c.Comentario).HasMaxLength(1000);
+            e.Property(c => c.Estado).HasMaxLength(20).IsRequired().HasDefaultValue(EstadosCotizacion.Entrante);
+            e.HasOne(c => c.Producto).WithMany().HasForeignKey(c => c.ProductoId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne(c => c.Cliente).WithMany().HasForeignKey(c => c.ClienteId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
