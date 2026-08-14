@@ -8,6 +8,8 @@ import {
   ResultadoGiroDto,
 } from "../../models/usuarios/promocion.model";
 
+const DURACION_CONFETI_MS = 3000;
+
 @Injectable({ providedIn: "root" })
 export class PromocionBienvenidaService {
   private url = `${environment.apiUrl}/usuarios/promocion-bienvenida`;
@@ -16,6 +18,13 @@ export class PromocionBienvenidaService {
   mostrarTarjeta = signal(false);
   tarjetaRecargas = signal(0);
   premioSimpleGanado = signal<string | null>(null);
+  mostrarConfeti = signal(false);
+
+  /** Premio ganado y aún no entregado por el personal — controla el aviso
+   *  "Reclama tu premio" junto al nombre del usuario en los headers. */
+  premioListoParaReclamar = signal(false);
+
+  private confetiTimeoutId?: ReturnType<typeof setTimeout>;
 
   constructor(private http: HttpClient) {}
 
@@ -23,9 +32,32 @@ export class PromocionBienvenidaService {
   verificarAlIniciarSesion() {
     this.http.get<RespuestaDto<EstadoPromocionDto>>(this.url).subscribe({
       next: (r) => {
-        if (r.exito && r.datos.debeGirar) this.mostrarRuleta.set(true);
+        if (!r.exito) return;
+        if (r.datos.debeGirar) this.mostrarRuleta.set(true);
+        this.evaluarPremioListo(r.datos);
       },
     });
+  }
+
+  /** Sincroniza en silencio el aviso "Reclama tu premio" (nunca dispara la ruleta) —
+   *  segura de llamar en cada arranque de la app o navegación, aunque el usuario
+   *  ya llevara un rato con la sesión abierta. */
+  sincronizarPremioListo() {
+    this.http.get<RespuestaDto<EstadoPromocionDto>>(this.url).subscribe({
+      next: (r) => {
+        if (r.exito) this.evaluarPremioListo(r.datos);
+      },
+    });
+  }
+
+  private evaluarPremioListo(estado: EstadoPromocionDto) {
+    if (!estado.premioBienvenida || estado.premioBienvenidaEntregado) {
+      this.premioListoParaReclamar.set(false);
+      return;
+    }
+    const listo =
+      estado.premioBienvenida === PREMIO_SEPTIMO_BOTELLON ? estado.recargasParaSeptimo >= 7 : true;
+    this.premioListoParaReclamar.set(listo);
   }
 
   girar() {
@@ -39,12 +71,20 @@ export class PromocionBienvenidaService {
   /** Se llama con el resultado que acaba de devolver girar(), tras la animación de la rueda. */
   procesarResultadoGiro(resultado: ResultadoGiroDto) {
     this.mostrarRuleta.set(false);
+    this.dispararConfeti();
     if (resultado.premioReal === PREMIO_SEPTIMO_BOTELLON) {
       this.tarjetaRecargas.set(0);
       this.mostrarTarjeta.set(true);
     } else {
       this.premioSimpleGanado.set(resultado.premioReal);
+      this.premioListoParaReclamar.set(true);
     }
+  }
+
+  private dispararConfeti() {
+    this.mostrarConfeti.set(true);
+    clearTimeout(this.confetiTimeoutId);
+    this.confetiTimeoutId = setTimeout(() => this.mostrarConfeti.set(false), DURACION_CONFETI_MS);
   }
 
   cerrarPremioSimple() {
@@ -62,6 +102,7 @@ export class PromocionBienvenidaService {
       next: (r) => {
         if (!r.exito) return;
         const estado = r.datos;
+        this.evaluarPremioListo(estado);
         const sigueLlenandoTarjeta = estado.recargasParaSeptimo > 0 && estado.recargasParaSeptimo <= 7;
         if (
           estado.premioBienvenida === PREMIO_SEPTIMO_BOTELLON &&

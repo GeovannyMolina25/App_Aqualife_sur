@@ -129,6 +129,26 @@
   transform: translateY(-1px);
 }
 
+/* ===== Aviso de premio listo para reclamar ===== */
+.badge-reclamar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--sand-500);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  animation: badge-reclamar-pulso 1.8s ease-in-out infinite;
+}
+@keyframes badge-reclamar-pulso {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
 /* ===== Usuario logueado ===== */
 .user-menu {
   position: relative;
@@ -317,6 +337,12 @@
 
 @media (max-width: 480px) {
   .brand span {
+    display: none;
+  }
+  .badge-reclamar {
+    padding: 6px 8px;
+  }
+  .badge-reclamar-texto {
     display: none;
   }
 }

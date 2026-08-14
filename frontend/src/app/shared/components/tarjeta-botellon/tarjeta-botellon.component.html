@@ -5,9 +5,13 @@
 
       <div class="tarjeta-header">
         <span class="decor estrella">⭐</span>
-        <h2>Llena los círculos y reclama una recarga totalmente gratis</h2>
+        <h2>Llena los círculos y reclama el premio de tu séptima compra</h2>
         <span class="decor exclamacion">❗</span>
       </div>
+
+      @if (promoSrv.tarjetaRecargas() === 0) {
+        <p class="tarjeta-ganaste">🎉 ¡Ganaste el séptimo botellón gratis!</p>
+      }
 
       <div class="tarjeta-cuerpo">
         <div class="circulos-grid">
@@ -23,7 +27,7 @@
 
         <div class="circulo-gratis-fila">
           <div class="circulo circulo-gratis" [class.marcado]="marcado(6)">
-            <span class="gratis-texto">¡GRATIS!</span>
+            <span class="gratis-texto">{{ marcado(6) ? "Reclama tu premio" : "¡GRATIS!" }}</span>
             @if (marcado(6)) {
               <span class="x-marca" [class.sello-animado]="esUltimaMarcada(6)">✕</span>
             }

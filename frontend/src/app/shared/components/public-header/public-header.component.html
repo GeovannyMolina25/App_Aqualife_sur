@@ -28,6 +28,9 @@
     </a>
 
     @if (auth.usuario(); as usuario) {
+      @if (promoSrv.premioListoParaReclamar()) {
+        <span class="badge-reclamar"><span class="badge-reclamar-icon">🎁</span><span class="badge-reclamar-texto">Reclama tu premio</span></span>
+      }
       <div class="user-menu">
         <button class="user-btn" (click)="toggleMenuUsuario()">
           <span class="user-avatar">{{ iniciales() }}</span>

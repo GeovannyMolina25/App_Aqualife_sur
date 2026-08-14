@@ -158,21 +158,16 @@
 }
 .premio-simple-modal h2 {
   font-family: "Playfair Display", serif;
-  font-size: 1.4rem;
-  color: #1c2b35;
-  margin-bottom: 4px;
+  font-size: 1.5rem;
+  color: #1a6b8a;
+  margin-bottom: 14px;
 }
 .premio-simple-modal p {
   color: #4a6572;
   font-size: 0.9rem;
 }
-.premio-simple-nombre {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1a6b8a;
-  margin: 6px 0 14px;
-}
 .premio-simple-nota {
-  font-size: 0.8rem;
-  color: #7a9aaa;
+  font-size: 0.85rem;
+  color: #4a6572;
+  font-weight: 600;
 }

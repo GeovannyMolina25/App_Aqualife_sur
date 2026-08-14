@@ -32,10 +32,8 @@
     <div class="premio-simple-modal">
       <button type="button" class="cerrar-x" (click)="promoSrv.cerrarPremioSimple()" aria-label="Cerrar">✕</button>
       <span class="premio-simple-icono">🎉</span>
-      <h2>¡Felicidades!</h2>
-      <p>Ganaste:</p>
-      <p class="premio-simple-nombre">{{ premioSimpleNombre() }}</p>
-      <p class="premio-simple-nota">Acércate a tu próxima recarga para reclamar tu premio.</p>
+      <h2>¡Ganaste {{ premioSimpleNombre() }}!</h2>
+      <p class="premio-simple-nota">🎁 Reclama tu premio en tu próxima visita al local.</p>
     </div>
   </div>
 }
