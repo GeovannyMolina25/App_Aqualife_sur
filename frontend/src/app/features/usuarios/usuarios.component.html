@@ -28,6 +28,7 @@
               <th>Rol</th>
               <th>Estado</th>
               <th>Registro</th>
+              <th>Premio bienvenida</th>
               <th>Cambiar Rol</th>
             </tr>
           </thead>
@@ -57,6 +58,32 @@
                 </td>
                 <td>{{ u.fechaCreacion | date: "dd/MM/yyyy" }}</td>
                 <td>
+                  @if (u.premioBienvenida) {
+                    <div class="premio-col">
+                      <span class="bk bk-premio">{{ nombrePremio(u) }}</span>
+                      @if (u.premioBienvenidaEntregado) {
+                        <span class="bk bk-ok">Entregado</span>
+                      } @else {
+                        @if (u.recargasParaSeptimo && u.premioBienvenida === 'SeptimoBotellonGratis') {
+                          <span class="bk bk-progreso">{{ u.recargasParaSeptimo }}/7</span>
+                        }
+                        @if (listoParaEntregar(u)) {
+                          <span class="bk bk-listo">🎁 Listo para entregar</span>
+                        }
+                        <button
+                          class="btn-entregar"
+                          [disabled]="!listoParaEntregar(u)"
+                          (click)="entregarPremio(u)"
+                        >
+                          Entregar
+                        </button>
+                      }
+                    </div>
+                  } @else {
+                    <span class="bk bk-sin-premio">Sin premio aún</span>
+                  }
+                </td>
+                <td>
                   <select
                     class="rs"
                     (change)="cambiarRol(u.id, +$any($event.target).value)"
@@ -75,7 +102,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="em">No hay usuarios registrados.</td>
+                <td colspan="8" class="em">No hay usuarios registrados.</td>
               </tr>
             }
           </tbody>

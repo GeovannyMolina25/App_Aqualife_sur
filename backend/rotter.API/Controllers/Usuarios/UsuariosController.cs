@@ -47,4 +47,28 @@ public class UsuariosController : ControllerBase
         var r = await _mediator.Send(new CambiarRolCommand(id, dto.NuevoRolId));
         return StatusCode(r.StatusCode, r);
     }
+
+    [HttpGet("promocion-bienvenida")]
+    public async Task<IActionResult> ObtenerEstadoPromocion()
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new ObtenerEstadoPromocionQuery(usuarioId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("promocion-bienvenida/girar")]
+    public async Task<IActionResult> GirarRuleta()
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new GirarRuletaCommand(usuarioId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPut("{id}/premio-bienvenida/entregar")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
+    public async Task<IActionResult> EntregarPremioBienvenida(int id)
+    {
+        var r = await _mediator.Send(new EntregarPremioBienvenidaCommand(id));
+        return StatusCode(r.StatusCode, r);
+    }
 }

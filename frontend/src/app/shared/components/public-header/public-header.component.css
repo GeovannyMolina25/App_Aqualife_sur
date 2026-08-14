@@ -21,12 +21,12 @@
   box-shadow: 0 2px 18px rgba(15, 84, 112, 0.1);
 }
 .nav-inner {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 14px 24px;
+  max-width: none;
+  margin: 0;
+  padding: 14px 28px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 .brand {
   display: flex;
@@ -37,6 +37,7 @@
   font-size: 1.1rem;
   color: var(--aqua-800);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .brand-logo {
   width: 36px;
@@ -47,16 +48,17 @@
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   margin: 0 auto;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 .nav-links a {
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 500;
   color: var(--text-mid);
   transition: color 0.2s;
   cursor: pointer;
+  white-space: nowrap;
 }
 .nav-links a:hover {
   color: var(--aqua-700);
@@ -77,6 +79,7 @@
   border-radius: 50%;
   font-size: 1.2rem;
   transition: background 0.2s;
+  flex-shrink: 0;
 }
 .carrito-link:hover {
   background: var(--cream-200);
@@ -104,6 +107,7 @@
   align-items: center;
   gap: 10px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 .btn-login {
   font-size: 0.88rem;
@@ -128,6 +132,7 @@
 /* ===== Usuario logueado ===== */
 .user-menu {
   position: relative;
+  flex-shrink: 0;
 }
 .user-btn {
   display: flex;
@@ -258,7 +263,7 @@
 }
 
 /* ===== Responsive ===== */
-@media (max-width: 860px) {
+@media (max-width: 1100px) {
   .nav-links {
     position: fixed;
     top: 0;

@@ -36,7 +36,7 @@ public class CrearProductoHandler : IRequestHandler<CrearProductoCommand, Respue
         return RespuestaDto<ProductoDto>.Ok(Mapear(creado!), "Producto creado exitosamente.");
     }
 
-    private static ProductoDto Mapear(Producto p) => new(p.Id, p.Nombre, p.Descripcion, p.Caracteristicas,
-        p.Precio, p.Stock, p.Categoria.Nombre, p.ImagenUrl, p.EsPromocion, p.PrecioPromocion,
+    public static ProductoDto Mapear(Producto p) => new(p.Id, p.Nombre, p.Descripcion, p.Caracteristicas,
+        p.Precio, p.Stock, p.CategoriaId, p.Categoria.Nombre, p.Categoria.Tipo, p.ImagenUrl, p.EsPromocion, p.PrecioPromocion,
         p.FechaInicioPromocion, p.FechaFinPromocion, p.Activo);
 }

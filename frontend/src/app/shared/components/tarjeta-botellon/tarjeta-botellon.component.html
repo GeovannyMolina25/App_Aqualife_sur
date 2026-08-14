@@ -1,0 +1,43 @@
+@if (promoSrv.mostrarTarjeta()) {
+  <div class="tarjeta-overlay">
+    <div class="tarjeta-modal">
+      <button type="button" class="cerrar-x" (click)="promoSrv.cerrarTarjeta()" aria-label="Cerrar">✕</button>
+
+      <div class="tarjeta-header">
+        <span class="decor estrella">⭐</span>
+        <h2>Llena los círculos y reclama una recarga totalmente gratis</h2>
+        <span class="decor exclamacion">❗</span>
+      </div>
+
+      <div class="tarjeta-cuerpo">
+        <div class="circulos-grid">
+          @for (i of circulos; track i) {
+            <div class="circulo" [class.marcado]="marcado(i)">
+              <img src="assets/logo.png" alt="" class="circulo-logo" />
+              @if (marcado(i)) {
+                <span class="x-marca" [class.sello-animado]="esUltimaMarcada(i)">✕</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="circulo-gratis-fila">
+          <div class="circulo circulo-gratis" [class.marcado]="marcado(6)">
+            <span class="gratis-texto">¡GRATIS!</span>
+            @if (marcado(6)) {
+              <span class="x-marca" [class.sello-animado]="esUltimaMarcada(6)">✕</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <p class="tarjeta-instruccion">
+        Recuerda hacer firmar o sellar cada vez que realices tu recarga.
+      </p>
+      <p class="tarjeta-footer">
+        Gracias por confiar en ACQUALIFE. Tu recarga segura nos permite seguir
+        llevándote agua purificada de calidad para tu bienestar y el de tu familia.
+      </p>
+    </div>
+  </div>
+}

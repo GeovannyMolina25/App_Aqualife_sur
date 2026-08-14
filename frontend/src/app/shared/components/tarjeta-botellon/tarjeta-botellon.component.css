@@ -1,0 +1,181 @@
+.tarjeta-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 84, 112, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.tarjeta-modal {
+  background: #e7ece9;
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.cerrar-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  font-size: 1rem;
+  color: #1c2b35;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.tarjeta-header {
+  background: #fff;
+  border: 3px solid #1a6b8a;
+  border-radius: 14px;
+  padding: 14px 34px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.tarjeta-header h2 {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #1a6b8a;
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+.decor {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.tarjeta-cuerpo {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 16px;
+  margin-bottom: 16px;
+}
+
+.circulos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.circulo {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid #e8a0ab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #fdfbf7;
+}
+.circulo-logo {
+  width: 65%;
+  height: 65%;
+  object-fit: contain;
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+.circulo.marcado {
+  border-color: #b8956a;
+}
+
+.circulo-gratis-fila {
+  display: flex;
+  justify-content: center;
+}
+.circulo-gratis {
+  width: 33%;
+  border: none;
+  background: radial-gradient(circle, #ffd23f 0%, #ff8c42 65%, #e8590c 100%);
+  box-shadow: 0 4px 14px rgba(232, 89, 12, 0.35);
+}
+.gratis-texto {
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transform: rotate(-8deg);
+}
+
+.x-marca {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #c0392b;
+  transform: rotate(-6deg);
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+}
+
+/* Animación de "sello" cayendo y golpeando el círculo — 100% CSS, ~5s */
+.x-marca.sello-animado {
+  animation: sello-caida 5s cubic-bezier(0.34, 1.2, 0.4, 1) both;
+}
+@keyframes sello-caida {
+  0% {
+    transform: translateY(-160px) scale(2.4) rotate(-30deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  55% {
+    transform: translateY(0) scale(1.2) rotate(10deg);
+    opacity: 1;
+  }
+  68% {
+    transform: translateY(0) scale(0.9) rotate(-8deg);
+  }
+  80% {
+    transform: translateY(0) scale(1.06) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(-6deg);
+    opacity: 1;
+  }
+}
+
+.tarjeta-instruccion {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a6b8a;
+  margin-bottom: 12px;
+}
+.tarjeta-footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #4a6572;
+  line-height: 1.5;
+}
+
+@media (max-width: 380px) {
+  .tarjeta-header h2 {
+    font-size: 0.82rem;
+  }
+  .x-marca {
+    font-size: 1.9rem;
+  }
+}

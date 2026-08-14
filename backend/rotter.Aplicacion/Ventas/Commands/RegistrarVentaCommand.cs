@@ -14,11 +14,12 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
 {
     private readonly IVentaRepositorio _ventas;
     private readonly IProductoRepositorio _productos;
+    private readonly IUsuarioRepositorio _usuarios;
     private readonly IAuditoriaServicio _auditoria;
     private readonly RotterDbContext _db;
 
-    public RegistrarVentaHandler(IVentaRepositorio ventas, IProductoRepositorio productos, IAuditoriaServicio auditoria, RotterDbContext db)
-    { _ventas = ventas; _productos = productos; _auditoria = auditoria; _db = db; }
+    public RegistrarVentaHandler(IVentaRepositorio ventas, IProductoRepositorio productos, IUsuarioRepositorio usuarios, IAuditoriaServicio auditoria, RotterDbContext db)
+    { _ventas = ventas; _productos = productos; _usuarios = usuarios; _auditoria = auditoria; _db = db; }
 
     public async Task<RespuestaDto<VentaDto>> Handle(RegistrarVentaCommand req, CancellationToken ct)
     {
@@ -44,6 +45,8 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
         };
 
         await _ventas.CrearAsync(venta);
+        // Cada compra (presencial o web) cuenta como una recarga hacia el 7º botellón gratis.
+        await _usuarios.IncrementarRecargaSeptimoAsync(req.Dto.ClienteId);
         await tx.CommitAsync(ct);
 
         await _auditoria.RegistrarAsync("REGISTRAR_VENTA", "Ventas", venta.Id.ToString(),

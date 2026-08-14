@@ -1,0 +1,41 @@
+@if (promoSrv.mostrarRuleta()) {
+  <div class="ruleta-overlay">
+    <div class="ruleta-modal">
+      <h2>¡Bienvenido a ACQUALIFE!</h2>
+      <p>Gira la ruleta y descubre tu premio de bienvenida</p>
+
+      <div class="ruleta-contenedor">
+        <div class="puntero">▼</div>
+        <div class="rueda" [style.transform]="'rotate(' + rotacionGrados() + 'deg)'">
+          @for (seg of segmentos; track $index) {
+            <div class="etiqueta-sector" [style.transform]="'rotate(' + ($index * 45 + 22.5) + 'deg)'">
+              <span>{{ seg.etiqueta }}</span>
+            </div>
+          }
+        </div>
+        <div class="rueda-centro"></div>
+      </div>
+
+      @if (error()) {
+        <p class="ruleta-error">{{ error() }}</p>
+      }
+
+      <button type="button" class="btn-girar" [disabled]="girando()" (click)="girar()">
+        {{ girando() ? "Girando..." : "Girar la ruleta" }}
+      </button>
+    </div>
+  </div>
+}
+
+@if (promoSrv.premioSimpleGanado()) {
+  <div class="ruleta-overlay">
+    <div class="premio-simple-modal">
+      <button type="button" class="cerrar-x" (click)="promoSrv.cerrarPremioSimple()" aria-label="Cerrar">✕</button>
+      <span class="premio-simple-icono">🎉</span>
+      <h2>¡Felicidades!</h2>
+      <p>Ganaste:</p>
+      <p class="premio-simple-nombre">{{ premioSimpleNombre() }}</p>
+      <p class="premio-simple-nota">Acércate a tu próxima recarga para reclamar tu premio.</p>
+    </div>
+  </div>
+}

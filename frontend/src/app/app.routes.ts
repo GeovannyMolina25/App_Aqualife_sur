@@ -23,6 +23,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: "servicios",
+    loadComponent: () =>
+      import("./features/servicios/servicios.component").then(
+        (m) => m.ServiciosComponent,
+      ),
+  },
+  {
     path: "carrito",
     loadComponent: () =>
       import("./features/carrito/carrito.component").then(
@@ -91,6 +98,15 @@ export const routes: Routes = [
         loadComponent: () =>
           import("./features/ventas/ventas.component").then(
             (m) => m.VentasComponent,
+          ),
+      },
+
+      {
+        path: "cotizaciones",
+        canActivate: [colaboradorGuard],
+        loadComponent: () =>
+          import("./features/cotizaciones/cotizaciones.component").then(
+            (m) => m.CotizacionesComponent,
           ),
       },
 

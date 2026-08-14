@@ -1,0 +1,178 @@
+.ruleta-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 84, 112, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.ruleta-modal {
+  background: #fdfbf7;
+  border-radius: 24px;
+  padding: 32px 28px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+.ruleta-modal h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  color: #1c2b35;
+  margin-bottom: 6px;
+}
+.ruleta-modal p {
+  color: #4a6572;
+  font-size: 0.88rem;
+  margin-bottom: 22px;
+}
+
+.ruleta-contenedor {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 26px;
+}
+.puntero {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.6rem;
+  color: #b8956a;
+  z-index: 2;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+}
+.rueda {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 0 0 2px rgba(0, 0, 0, 0.05);
+  background: conic-gradient(
+    #3866f2 0deg 45deg,
+    #191919 45deg 90deg,
+    #ffc93c 90deg 135deg,
+    #8e44ad 135deg 180deg,
+    #e8483c 180deg 225deg,
+    #2fae60 225deg 270deg,
+    #ff8c3c 270deg 315deg,
+    #17a8a0 315deg 360deg
+  );
+  position: relative;
+  transition: transform 4.5s cubic-bezier(0.15, 0.65, 0.1, 1);
+}
+.etiqueta-sector {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 50%;
+  width: 0;
+  transform-origin: bottom center;
+}
+.etiqueta-sector span {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-block;
+  width: 78px;
+  text-align: center;
+  font-size: 0.64rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+.rueda-centro {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46px;
+  height: 46px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff5e0, #b8956a 70%);
+  border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.ruleta-error {
+  color: #c0392b;
+  font-size: 0.82rem;
+  margin: -10px 0 14px;
+}
+
+.btn-girar {
+  width: 100%;
+  padding: 13px;
+  background: #b8956a;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-girar:hover:not(:disabled) {
+  background: #a17f57;
+  transform: translateY(-1px);
+}
+.btn-girar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== Premio simple (Botellón+Llaves / Toma Todo) ===== */
+.premio-simple-modal {
+  background: #fdfbf7;
+  border-radius: 24px;
+  padding: 40px 32px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+.cerrar-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #7a9aaa;
+  cursor: pointer;
+}
+.premio-simple-icono {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+}
+.premio-simple-modal h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 1.4rem;
+  color: #1c2b35;
+  margin-bottom: 4px;
+}
+.premio-simple-modal p {
+  color: #4a6572;
+  font-size: 0.9rem;
+}
+.premio-simple-nombre {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a6b8a;
+  margin: 6px 0 14px;
+}
+.premio-simple-nota {
+  font-size: 0.8rem;
+  color: #7a9aaa;
+}

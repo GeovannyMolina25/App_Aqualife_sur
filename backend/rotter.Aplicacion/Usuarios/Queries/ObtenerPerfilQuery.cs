@@ -18,6 +18,7 @@ public class ObtenerPerfilHandler : IRequestHandler<ObtenerPerfilQuery, Respuest
         if (u is null) return RespuestaDto<UsuarioDto>.Fallo("Usuario no encontrado.", 404);
 
         return RespuestaDto<UsuarioDto>.Ok(new UsuarioDto(u.Id, u.Nombre, u.Apellido, u.Email,
-            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion));
+            u.FechaNacimiento, u.Sexo, u.Direccion, u.Telefono, u.Rol.Nombre, u.Activo, u.FechaCreacion,
+            u.PremioBienvenida, u.RecargasParaSeptimo, u.PremioBienvenidaEntregado));
     }
 }
