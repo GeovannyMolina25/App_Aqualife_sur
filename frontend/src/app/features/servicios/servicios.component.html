@@ -4,7 +4,7 @@
   <div class="servicios-head">
     <span class="eyebrow">Servicios</span>
     <h1>Servicios de limpieza a domicilio</h1>
-    <p>Elige el servicio que necesitas y solicita tu cotización.</p>
+    <p>Contrata el servicio que necesitas o solicita una cotización a tu medida.</p>
 
     <div class="buscador">
       <input
@@ -40,9 +40,9 @@
         }
       </nav>
 
-      @if (puedeCrearServicios()) {
+      @if (esAdmin()) {
         <button type="button" class="btn-agregar-servicio" (click)="abrirCrearServicio()">
-          + Agregar servicio
+          <app-icon name="sparkles" tono="none" /> Agregar servicio
         </button>
       }
     </aside>
@@ -52,30 +52,90 @@
         <app-spinner [full]="true" />
       } @else if (servicios().length === 0) {
         <div class="vacio">
-          <span><app-icon name="sparkles" /></span>
+          <span><app-icon name="sparkles" chip /></span>
           <p>No encontramos servicios con ese criterio.</p>
         </div>
       } @else {
         <div class="grid-servicios">
           @for (s of servicios(); track s.id) {
-            <div class="servicio-card">
+            <div class="servicio-card" [class.oculto]="!s.activo">
               <div class="servicio-imagen">
                 @if (s.imagenUrl) {
                   <img [src]="imagenSrc(s.imagenUrl)" [alt]="s.nombre" />
                 } @else {
-                  <span class="servicio-imagen-fallback"><app-icon name="sparkles" /></span>
+                  <span class="servicio-imagen-fallback"><app-icon name="sparkles" chip /></span>
+                }
+                @if (s.esPromocion && s.precioPromocion != null) {
+                  <span class="tag tag-promo">Promo</span>
+                }
+                @if (!s.activo) {
+                  <span class="tag tag-oculto">Oculto</span>
                 }
               </div>
 
               <div class="servicio-body">
+                <span class="servicio-cat">{{ s.categoria }}</span>
                 <h3>{{ s.nombre }}</h3>
                 @if (s.descripcion) {
                   <p class="servicio-desc">{{ s.descripcion }}</p>
                 }
 
-                <button type="button" class="btn-cotizar" (click)="abrirCotizar(s)">
-                  Cotizar
-                </button>
+                @if (incluye(s).length) {
+                  <ul class="incluye">
+                    @for (x of incluye(s); track x) {
+                      <li><app-icon name="check" tono="teal" /> {{ x }}</li>
+                    }
+                  </ul>
+                }
+
+                <div class="servicio-precio">
+                  @if (!tienePrecio(s)) {
+                    <span class="precio-convenir">Precio a convenir</span>
+                  } @else if (s.esPromocion && s.precioPromocion != null) {
+                    <span class="precio-actual">${{ s.precioPromocion | number: "1.2-2" }}</span>
+                    <span class="precio-tachado">${{ s.precio | number: "1.2-2" }}</span>
+                  } @else {
+                    <span class="precio-actual">${{ s.precio | number: "1.2-2" }}</span>
+                  }
+                </div>
+
+                <div class="acciones">
+                  @if (tienePrecio(s)) {
+                    <button
+                      type="button"
+                      class="btn-comprar"
+                      [class.agregado]="agregadoId() === s.id"
+                      [disabled]="!s.activo"
+                      (click)="agregarAlCarrito(s)"
+                    >
+                      @if (agregadoId() === s.id) {
+                        <app-icon name="check" /> Agregado
+                      } @else {
+                        <app-icon name="cart" tono="none" /> Agregar al carrito
+                      }
+                    </button>
+                    <button type="button" class="btn-cotizar btn-cotizar-sec" (click)="abrirCotizar(s)">Cotizar</button>
+                  } @else {
+                    <button type="button" class="btn-cotizar" (click)="abrirCotizar(s)">Solicitar cotización</button>
+                  }
+                </div>
+
+                @if (esAdmin()) {
+                  <div class="admin-acciones">
+                    <button type="button" (click)="abrirEditarServicio(s)">
+                      <app-icon name="edit" /> Editar
+                    </button>
+                    <button
+                      type="button"
+                      [class.peligro]="s.activo"
+                      [disabled]="cambiandoEstadoId() === s.id"
+                      (click)="cambiarEstado(s)"
+                    >
+                      <app-icon [name]="s.activo ? 'eye-off' : 'eye'" />
+                      {{ s.activo ? "Ocultar" : "Publicar" }}
+                    </button>
+                  </div>
+                }
               </div>
             </div>
           }
@@ -95,7 +155,7 @@
 
       @if (cotizacionEnviada()) {
         <div class="modal-exito">
-          <span class="modal-exito-icono"><app-icon name="circle-check" /></span>
+          <span class="modal-exito-icono"><app-icon name="circle-check" chip /></span>
           <h2>¡Solicitud enviada!</h2>
           <p>Te contactaremos pronto para coordinar tu cotización de <strong>{{ servicio.nombre }}</strong>.</p>
           <button type="button" class="btn-primario" (click)="cerrarCotizar()">Cerrar</button>
@@ -145,34 +205,83 @@
   </div>
 }
 
-<!-- ===== Modal Agregar servicio (staff) ===== -->
-@if (mostrarModalCrearServicio()) {
-  <div class="modal-overlay" (click)="cerrarCrearServicio()">
-    <div class="modal-card" (click)="$event.stopPropagation()">
-      <button type="button" class="cerrar-x" (click)="cerrarCrearServicio()" aria-label="Cerrar"><app-icon name="x" /></button>
+<!-- ===== Modal Agregar / Editar servicio (administrador) ===== -->
+@if (mostrarModalServicio()) {
+  <div class="modal-overlay" (click)="cerrarModalServicio()">
+    <div class="modal-card modal-ancho" (click)="$event.stopPropagation()">
+      <button type="button" class="cerrar-x" (click)="cerrarModalServicio()" aria-label="Cerrar"><app-icon name="x" /></button>
 
-      <h2>Agregar servicio</h2>
-      <p class="modal-sub">Se agregará a la categoría "{{ categoriaActual()?.nombre }}".</p>
+      <h2>{{ servicioEditando() ? "Editar servicio" : "Agregar servicio" }}</h2>
+      <p class="modal-sub">
+        {{ servicioEditando() ? "Los cambios se verán al instante en el catálogo." : "Los clientes podrán verlo, comprarlo o pedir una cotización." }}
+      </p>
 
-      <app-alert tipo="error" [mensaje]="errorCrearServicio()" />
+      <app-alert tipo="error" [mensaje]="errorServicio()" />
 
       <div class="form-grid">
         <label class="full">
-          Nombre
-          <input [(ngModel)]="nuevoServicio.nombre" placeholder="Ej. Limpieza de alfombras" />
+          Nombre *
+          <input [(ngModel)]="formServicio.nombre" placeholder="Ej. Limpieza de alfombras" maxlength="150" />
+        </label>
+        <label class="full">
+          Categoría *
+          <select [(ngModel)]="formServicio.categoriaId">
+            @for (c of categorias(); track c.id) {
+              <option [ngValue]="c.id">{{ c.nombre }}</option>
+            }
+          </select>
         </label>
         <label class="full">
           Descripción
-          <textarea [(ngModel)]="nuevoServicio.descripcion" rows="3" placeholder="Descripción corta del servicio"></textarea>
+          <textarea [(ngModel)]="formServicio.descripcion" rows="2" placeholder="Qué es el servicio y para quién es"></textarea>
         </label>
         <label class="full">
+          Qué incluye
+          <textarea
+            [(ngModel)]="formServicio.caracteristicas"
+            rows="3"
+            placeholder="Una cosa por línea, por ejemplo:&#10;Aspirado profundo&#10;Productos incluidos&#10;Duración aprox. 3 horas"
+          ></textarea>
+          <span class="ayuda">Se muestran hasta 4 en la tarjeta del servicio.</span>
+        </label>
+
+        <label>
+          Precio ($)
+          <input type="number" min="0" step="0.01" [(ngModel)]="formServicio.precio" placeholder="0.00" />
+          <span class="ayuda">Déjalo en 0 si es "a convenir": solo se podrá cotizar.</span>
+        </label>
+        <div class="promo-box">
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="formServicio.esPromocion" />
+            <span>En promoción</span>
+          </label>
+          @if (formServicio.esPromocion) {
+            <label>
+              Precio promocional ($)
+              <input type="number" min="0" step="0.01" [(ngModel)]="formServicio.precioPromocion" placeholder="0.00" />
+            </label>
+            @if (descuentoPromo(); as d) {
+              <span class="descuento">{{ d }}% de descuento</span>
+            }
+          }
+        </div>
+
+        <label class="full">
           Foto (opcional)
-          <input type="file" accept="image/jpeg,image/png" (change)="onImagenServicioSeleccionada($event)" />
+          <div class="foto-campo">
+            @if (vistaPreviaImagen(); as src) {
+              <img class="foto-preview" [src]="src" alt="Vista previa" />
+            }
+            <input type="file" accept="image/jpeg,image/png" (change)="onImagenServicioSeleccionada($event)" />
+          </div>
+          @if (servicioEditando()) {
+            <span class="ayuda">Si no eliges otra, se conserva la foto actual.</span>
+          }
         </label>
       </div>
 
       <button type="button" class="btn-primario" [disabled]="guardandoServicio()" (click)="guardarServicio()">
-        {{ guardandoServicio() ? "Guardando..." : "Guardar servicio" }}
+        {{ guardandoServicio() ? "Guardando..." : servicioEditando() ? "Guardar cambios" : "Guardar servicio" }}
       </button>
     </div>
   </div>

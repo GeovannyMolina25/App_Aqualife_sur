@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { CarritoService, ItemCarrito } from "../../core/services/carrito/carrito.service";
+import { CarritoService, ItemCarrito, maxCantidad } from "../../core/services/carrito/carrito.service";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { PublicHeaderComponent } from "../../shared/components/public-header/public-header.component";
 
@@ -28,6 +28,8 @@ export class CarritoComponent {
   subtotalItem(item: ItemCarrito): number {
     return this.precioUnitario(item) * item.cantidad;
   }
+
+  maxCantidad = maxCantidad;
 
   incrementar(item: ItemCarrito) {
     this.carrito.actualizarCantidad(item.producto.id, item.cantidad + 1);

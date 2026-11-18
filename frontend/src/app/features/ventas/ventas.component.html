@@ -224,7 +224,7 @@
                 type="number"
                 class="qi"
                 min="0"
-                [max]="p.stock"
+                [max]="p.categoriaTipo === 'Servicio' ? null : p.stock"
                 [value]="getCantidad(p.id)"
                 (change)="setCantidad(p.id, +$any($event.target).value, p)"
                 placeholder="0"

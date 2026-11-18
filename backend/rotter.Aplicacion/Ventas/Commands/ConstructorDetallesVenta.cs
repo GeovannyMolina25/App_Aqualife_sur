@@ -27,9 +27,20 @@ public static class ConstructorDetallesVenta
             var precio = prod.EsPromocion && prod.PrecioPromocion.HasValue ? prod.PrecioPromocion.Value : prod.Precio;
             var itemSubtotal = precio * item.Cantidad;
 
-            var stockOk = await productos.ActualizarStockAsync(item.ProductoId, item.Cantidad);
-            if (!stockOk)
-                return new ResultadoConstruccionVenta(detalles, subtotal, $"Stock insuficiente: {prod.Nombre}.", false);
+            // Los servicios no tienen inventario: no se valida ni se descuenta stock.
+            // Un servicio sin precio fijo ("a convenir") no se vende directo, se cotiza.
+            if (prod.Categoria?.Tipo == TiposCategoria.Servicio)
+            {
+                if (precio <= 0)
+                    return new ResultadoConstruccionVenta(detalles, subtotal,
+                        $"El servicio \"{prod.Nombre}\" no tiene precio fijo; solicita una cotización.", false);
+            }
+            else
+            {
+                var stockOk = await productos.ActualizarStockAsync(item.ProductoId, item.Cantidad);
+                if (!stockOk)
+                    return new ResultadoConstruccionVenta(detalles, subtotal, $"Stock insuficiente: {prod.Nombre}.", false);
+            }
 
             subtotal += itemSubtotal;
             detalles.Add(new DetalleVenta { ProductoId = item.ProductoId, Cantidad = item.Cantidad, PrecioUnitario = precio, Subtotal = itemSubtotal });

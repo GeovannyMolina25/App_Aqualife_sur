@@ -10,6 +10,11 @@ export interface ItemCarrito {
 const CLAVE_INVITADO = "rotter_carrito_invitado";
 const claveDeUsuario = (usuarioId: number) => `rotter_carrito_usuario_${usuarioId}`;
 
+/** Los servicios no tienen inventario: se limita a un máximo razonable en vez de al stock. */
+export const MAX_CANTIDAD_SERVICIO = 20;
+export const maxCantidad = (p: Producto) =>
+  p.categoriaTipo === "Servicio" ? MAX_CANTIDAD_SERVICIO : p.stock;
+
 @Injectable({ providedIn: "root" })
 export class CarritoService {
   private claveActual: string;
@@ -60,16 +65,16 @@ export class CarritoService {
     const nuevos =
       idx >= 0
         ? actuales.map((i, n) =>
-            n === idx ? { ...i, cantidad: Math.min(i.cantidad + cantidad, producto.stock) } : i,
+            n === idx ? { ...i, cantidad: Math.min(i.cantidad + cantidad, maxCantidad(producto)) } : i,
           )
-        : [...actuales, { producto, cantidad: Math.min(cantidad, producto.stock) }];
+        : [...actuales, { producto, cantidad: Math.min(cantidad, maxCantidad(producto)) }];
     this.guardar(nuevos);
   }
 
   actualizarCantidad(productoId: number, cantidad: number) {
     const nuevos = this.items().map((i) =>
       i.producto.id === productoId
-        ? { ...i, cantidad: Math.max(1, Math.min(cantidad, i.producto.stock)) }
+        ? { ...i, cantidad: Math.max(1, Math.min(cantidad, maxCantidad(i.producto))) }
         : i,
     );
     this.guardar(nuevos);
@@ -90,7 +95,7 @@ export class CarritoService {
       if (idx >= 0) {
         resultado[idx] = {
           ...resultado[idx],
-          cantidad: Math.min(resultado[idx].cantidad + item.cantidad, item.producto.stock),
+          cantidad: Math.min(resultado[idx].cantidad + item.cantidad, maxCantidad(item.producto)),
         };
       } else {
         resultado.push(item);

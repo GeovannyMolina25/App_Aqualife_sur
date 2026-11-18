@@ -32,7 +32,7 @@
               <input
                 type="number"
                 min="1"
-                [max]="item.producto.stock"
+                [max]="maxCantidad(item.producto)"
                 [ngModel]="item.cantidad"
                 (ngModelChange)="onCantidadInput(item, $event)"
               />

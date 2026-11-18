@@ -21,7 +21,10 @@ public record CrearProductoConImagenCommand(
     Stream? ImagenContenido,
     string? ImagenNombreOriginal,
     string? ImagenContentType,
-    long ImagenTamanoBytes
+    long ImagenTamanoBytes,
+    string? Caracteristicas = null,
+    bool EsPromocion = false,
+    decimal? PrecioPromocion = null
 ) : IRequest<RespuestaDto<ProductoDto>>;
 
 public class CrearProductoConImagenHandler : IRequestHandler<CrearProductoConImagenCommand, RespuestaDto<ProductoDto>>
@@ -38,6 +41,8 @@ public class CrearProductoConImagenHandler : IRequestHandler<CrearProductoConIma
             return RespuestaDto<ProductoDto>.Fallo("El nombre es obligatorio.");
         if (req.CategoriaId <= 0)
             return RespuestaDto<ProductoDto>.Fallo("Selecciona una categoría.");
+        var errorPrecio = ValidacionPrecios.Validar(req.Precio, req.EsPromocion, req.PrecioPromocion);
+        if (errorPrecio is not null) return RespuestaDto<ProductoDto>.Fallo(errorPrecio);
 
         string? imagenUrl = null;
         if (req.ImagenContenido is not null && req.ImagenTamanoBytes > 0)
@@ -48,8 +53,8 @@ public class CrearProductoConImagenHandler : IRequestHandler<CrearProductoConIma
             imagenUrl = resultado.Url;
         }
 
-        var dto = new CrearProductoDto(req.Nombre, req.Descripcion, null, req.Precio, req.Stock, req.CategoriaId,
-            imagenUrl, false, null, null, null);
+        var dto = new CrearProductoDto(req.Nombre.Trim(), req.Descripcion?.Trim(), req.Caracteristicas?.Trim(), req.Precio, req.Stock,
+            req.CategoriaId, imagenUrl, req.EsPromocion, req.EsPromocion ? req.PrecioPromocion : null, null, null);
 
         return await _mediator.Send(new CrearProductoCommand(dto, req.UsuarioId), ct);
     }

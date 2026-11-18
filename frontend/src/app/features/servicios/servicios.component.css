@@ -366,3 +366,216 @@
   font-size: 0.9rem;
   margin-bottom: 20px;
 }
+
+/* ===== Precio, qué incluye y compra ===== */
+.servicio-card.oculto {
+  opacity: 0.6;
+}
+.tag {
+  position: absolute;
+  top: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tag-promo {
+  right: 12px;
+  background: #38a89a;
+  color: #fff;
+}
+.tag-oculto {
+  left: 12px;
+  background: #4a6572;
+  color: #fff;
+}
+.servicio-cat {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.incluye {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.incluye li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+}
+.incluye app-icon {
+  margin-top: 2px;
+}
+.servicio-precio {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+.precio-actual {
+  font-family: "Playfair Display", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--aqua-700);
+}
+.precio-tachado {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  text-decoration: line-through;
+}
+.precio-convenir {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--sand-500);
+}
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+.acciones .btn-cotizar {
+  margin-top: 0;
+  flex: 1;
+}
+.btn-comprar {
+  flex: 1.6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: var(--aqua-700);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-comprar:hover:not(:disabled) {
+  background: var(--aqua-800);
+}
+.btn-comprar.agregado {
+  background: #38a89a;
+}
+.btn-comprar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-cotizar-sec {
+  background: transparent;
+  color: var(--sand-500);
+  border: 1.5px solid var(--cream-300);
+}
+.btn-cotizar-sec:hover {
+  background: var(--cream-100);
+  color: #9a7a52;
+}
+
+/* ===== Controles de administrador ===== */
+.admin-acciones {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px dashed var(--cream-200);
+}
+.admin-acciones button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px;
+  background: #fff;
+  border: 1px solid var(--cream-200);
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-mid);
+  cursor: pointer;
+}
+.admin-acciones button:hover:not(:disabled) {
+  background: var(--cream-100);
+}
+.admin-acciones button.peligro {
+  color: #c04040;
+}
+
+/* ===== Formulario agregar / editar ===== */
+.modal-ancho {
+  max-width: 560px;
+}
+.form-grid select {
+  padding: 9px 12px;
+  border: 1.5px solid var(--cream-300);
+  border-radius: 9px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.88rem;
+  background: #fff;
+  outline: none;
+}
+.ayuda {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-light);
+}
+.promo-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--cream-100);
+  border-radius: 10px;
+}
+.promo-box .switch {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.promo-box .switch input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--aqua-700);
+}
+.descuento {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #38a89a;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.foto-campo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.foto-preview {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--cream-200);
+}
+@media (max-width: 520px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .acciones {
+    flex-direction: column;
+  }
+}
