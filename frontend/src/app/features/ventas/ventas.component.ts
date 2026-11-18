@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { VentasService } from "../../core/services/ventas/ventas.service";
 import { ProductosService } from "../../core/services/productos/productos.service";
@@ -16,7 +17,7 @@ import { environment } from "../../../environments/environment";
 @Component({
   selector: "app-ventas",
   standalone: true,
-  imports: [CommonModule, FormsModule, AlertComponent, SpinnerComponent, PaginationComponent],
+  imports: [IconComponent, CommonModule, FormsModule, AlertComponent, SpinnerComponent, PaginationComponent],
   templateUrl: "./ventas.component.html",
   styleUrls: ["./ventas.component.css"],
 })
@@ -53,6 +54,24 @@ export class VentasComponent implements OnInit {
   });
 
   estadosVenta = ESTADOS_VENTA;
+
+  pestanaItems = signal<"productos" | "servicios">("productos");
+  private cantidadesVersion = signal(0);
+  private esServicio = (p: Producto) =>
+    p.categoriaTipo === "Servicio" || /servicio/i.test(p.categoria ?? "");
+  productosLista = computed(() => this.productosDisp().filter((p) => !this.esServicio(p)));
+  serviciosLista = computed(() => this.productosDisp().filter((p) => this.esServicio(p)));
+  itemsPestana = computed(() =>
+    this.pestanaItems() === "productos" ? this.productosLista() : this.serviciosLista(),
+  );
+  seleccionadosPorPestana = computed(() => {
+    this.cantidadesVersion();
+    const ids = new Set(this.ctds.keys());
+    return {
+      productos: this.productosLista().filter((p) => ids.has(p.id)).length,
+      servicios: this.serviciosLista().filter((p) => ids.has(p.id)).length,
+    };
+  });
 
   constructor(
     private vs: VentasService,
@@ -149,6 +168,7 @@ export class VentasComponent implements OnInit {
           precio: p.precioPromocion ?? p.precio,
         })
       : this.ctds.delete(id);
+    this.cantidadesVersion.update((v) => v + 1);
     this.dto.items = Array.from(this.ctds.entries()).map(([productoId, v]) => ({
       productoId,
       cantidad: v.cantidad,
@@ -165,6 +185,8 @@ export class VentasComponent implements OnInit {
     this.errorModal.set("");
     this.exitoModal.set("");
     this.ctds.clear();
+    this.cantidadesVersion.update((v) => v + 1);
+    this.pestanaItems.set("productos");
     this.totalEstimado.set(0);
     this.dto = { clienteId: 0, items: [] };
     this.clienteBusqueda.set("");
@@ -204,7 +226,7 @@ export class VentasComponent implements OnInit {
   registrar() {
     if (!this.dto.clienteId || this.dto.items.length === 0) {
       this.errorModal.set(
-        "Ingresa el ID del cliente y selecciona al menos un producto.",
+        "Selecciona un cliente y al menos un producto o servicio.",
       );
       return;
     }
@@ -213,7 +235,7 @@ export class VentasComponent implements OnInit {
       next: (r) => {
         this.guardando.set(false);
         r.exito
-          ? (this.exitoModal.set("✓ Venta registrada."),
+          ? (this.exitoModal.set("Venta registrada."),
             setTimeout(() => {
               this.cerrarModal();
               this.cargar();

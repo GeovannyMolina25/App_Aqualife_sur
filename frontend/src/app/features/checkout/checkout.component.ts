@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { CarritoService } from "../../core/services/carrito/carrito.service";
@@ -14,7 +15,7 @@ const IVA = 0.15;
 @Component({
   selector: "app-checkout",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, PublicHeaderComponent, AlertComponent],
+  imports: [IconComponent, CommonModule, FormsModule, RouterLink, PublicHeaderComponent, AlertComponent],
   templateUrl: "./checkout.component.html",
   styleUrls: ["./checkout.component.css"],
 })

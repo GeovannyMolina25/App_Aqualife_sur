@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent, htmlIcono } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { Producto } from "../../core/models/productos/producto.model";
 import { ProductosService } from "../../core/services/productos/productos.service";
@@ -11,7 +12,7 @@ import { PaginationComponent } from "../../shared/components/pagination/paginati
 @Component({
   selector: "app-catalogo",
   standalone: true,
-  imports: [CommonModule, FormsModule, PublicHeaderComponent, SpinnerComponent, PaginationComponent],
+  imports: [IconComponent, CommonModule, FormsModule, PublicHeaderComponent, SpinnerComponent, PaginationComponent],
   templateUrl: "./catalogo.component.html",
   styleUrls: ["./catalogo.component.css"],
 })
@@ -105,11 +106,13 @@ export class CatalogoComponent implements OnInit {
     const destinoY = destino.top + destino.height / 2;
 
     const gota = document.createElement("div");
-    gota.textContent = "💧";
+    gota.innerHTML = htmlIcono("droplet");
     gota.style.cssText = `
       position: fixed;
       left: 0; top: 0;
       font-size: 1.5rem;
+      color: #1a6b8a;
+      display: flex;
       z-index: 9999;
       pointer-events: none;
       will-change: transform, opacity;

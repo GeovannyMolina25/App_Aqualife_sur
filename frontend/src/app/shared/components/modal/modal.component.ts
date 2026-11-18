@@ -1,16 +1,17 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../icon/icon.component";
 
 @Component({
   selector: "app-modal",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   template: `@if (visible) {
     <div class="ov" (click)="close()">
       <div class="mo" (click)="$event.stopPropagation()">
         <div class="mh">
           <span class="mt">{{ titulo }}</span
-          ><button class="mc" (click)="close()">✕</button>
+          ><button class="mc" (click)="close()"><app-icon name="x" /></button>
         </div>
         <div class="mb"><ng-content /></div>
         <div class="mf"><ng-content select="[slot=footer]" /></div>

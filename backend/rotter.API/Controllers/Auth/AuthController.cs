@@ -2,6 +2,7 @@ using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using rotter.Aplicacion.Auth.Commands;
 using rotter.Dominio.DTOs.Auth;
 
@@ -15,6 +16,7 @@ public class AuthController : ControllerBase
     public AuthController(IMediator mediator) => _mediator = mediator;
 
     [HttpPost("registro")]
+    [EnableRateLimiting("AuthPolicy")]
     public async Task<IActionResult> Registro([FromBody] RegistroDto dto)
     {
         var r = await _mediator.Send(new RegistrarUsuarioCommand(dto));
@@ -22,9 +24,28 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("AuthPolicy")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         var r = await _mediator.Send(new LoginCommand(dto));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("refresh")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthPolicy")]
+    public async Task<IActionResult> Refrescar([FromBody] RefrescarTokenDto dto)
+    {
+        var r = await _mediator.Send(new RefrescarTokenCommand(dto.RefreshToken));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new CerrarSesionCommand(usuarioId));
         return StatusCode(r.StatusCode, r);
     }
 
@@ -39,6 +60,7 @@ public class AuthController : ControllerBase
     });
     [HttpPost("recuperar-password")]
     [AllowAnonymous]
+    [EnableRateLimiting("AuthPolicy")]
     public async Task<IActionResult> RecuperarPassword(
     [FromBody] OlvidePasswordDto dto
 )
@@ -62,6 +84,42 @@ public class AuthController : ControllerBase
                 dto.NuevaPassword
             )
         );
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("2fa/iniciar")]
+    [Authorize]
+    public async Task<IActionResult> Iniciar2FA()
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new IniciarDosFactoresCommand(usuarioId));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("2fa/confirmar")]
+    [Authorize]
+    public async Task<IActionResult> Confirmar2FA([FromBody] ConfirmarDosFactoresDto dto)
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new ConfirmarDosFactoresCommand(usuarioId, dto.Codigo));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("2fa/desactivar")]
+    [Authorize]
+    public async Task<IActionResult> Desactivar2FA([FromBody] DesactivarDosFactoresDto dto)
+    {
+        var usuarioId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var r = await _mediator.Send(new DesactivarDosFactoresCommand(usuarioId, dto.Codigo));
+        return StatusCode(r.StatusCode, r);
+    }
+
+    [HttpPost("2fa/verificar")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthPolicy")]
+    public async Task<IActionResult> Verificar2FA([FromBody] VerificarDosFactoresDto dto)
+    {
+        var r = await _mediator.Send(new VerificarDosFactoresCommand(dto.TokenDesafio, dto.Codigo));
         return StatusCode(r.StatusCode, r);
     }
 }

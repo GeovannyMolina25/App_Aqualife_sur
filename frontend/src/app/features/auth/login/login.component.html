@@ -10,7 +10,7 @@
         />
 
         @if (errorLogo()) {
-          <span class="fallback-icon">💧</span>
+          <span class="fallback-icon"><app-icon name="droplet" /></span>
         }
       </div>
       <h1>ACQUALIFE</h1>
@@ -18,15 +18,15 @@
         Sistema integral de gestión de productos yventas de la emprasa ACQUALIFE.
       </p>
       <ul>
-        <li><span>✓</span> Gestión de ventas en tiempo real</li>
-        <li><span>✓</span> Reportes PDF y Excel</li>
-        <li><span>✓</span> Control de inventario</li>
+        <li><span><app-icon name="check" /></span> Gestión de ventas en tiempo real</li>
+        <li><span><app-icon name="check" /></span> Reportes PDF y Excel</li>
+        <li><span><app-icon name="check" /></span> Control de inventario</li>
       </ul>
     </div>
   </div>
   <div class="auth-form-panel">
     <div class="auth-box">
-      <a routerLink="/" class="btn-volver">← Volver al inicio</a>
+      <a routerLink="/" class="btn-volver"><app-icon name="arrow-left" /> Volver al inicio</a>
       <h2>Bienvenido</h2>
       <p class="sub">Ingresa tus credenciales para continuar</p>
       <app-alert [mensaje]="error()" tipo="error" />
@@ -52,7 +52,7 @@
               placeholder="••••••••"
               required
             /><button type="button" (click)="verPass.set(!verPass())">
-              {{ verPass() ? "🙈" : "👁" }}
+              <app-icon [name]="verPass() ? 'eye-off' : 'eye'" />
             </button>
           </div>
         </div>
@@ -79,7 +79,7 @@
     <div class="mo" (click)="$event.stopPropagation()">
       <div class="mh">
         <span>Recuperar contraseña</span>
-        <button (click)="olvideModal.set(false)">✕</button>
+        <button (click)="olvideModal.set(false)"><app-icon name="x" /></button>
       </div>
 
       <div class="mb">
@@ -102,6 +102,37 @@
 
         <button class="btn-submit" (click)="recuperarPassword()">
           {{ cargandoRecuperacion() ? "Enviando..." : "Enviar recuperación" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (modalDosFactores()) {
+  <div class="ov">
+    <div class="mo">
+      <div class="mh">
+        <span>Verificación en dos pasos</span>
+      </div>
+
+      <div class="mb">
+        <app-alert [mensaje]="mensaje2FA()" tipo="error" />
+
+        <div class="fg">
+          <label>Código de tu app autenticadora</label>
+          <input
+            [(ngModel)]="codigo2FA"
+            name="codigo2FA"
+            placeholder="123456"
+            maxlength="6"
+            inputmode="numeric"
+          />
+        </div>
+      </div>
+
+      <div class="mf">
+        <button class="btn-submit" [disabled]="cargando2FA()" (click)="confirmarCodigo2FA()">
+          {{ cargando2FA() ? "Verificando..." : "Verificar" }}
         </button>
       </div>
     </div>

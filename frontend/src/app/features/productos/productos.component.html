@@ -29,7 +29,7 @@
             @if (p.imagenUrl) {
               <img [src]="p.imagenUrl" [alt]="p.nombre" />
             } @else {
-              <span>💧</span>
+              <span><app-icon name="droplet" /></span>
             }
             @if (p.esPromocion) {
               <span class="pt">PROMO</span>
@@ -70,7 +70,7 @@
   <div class="ov" (click)="cerrarModal()">
     <div class="mo" (click)="$event.stopPropagation()">
       <div class="mh">
-        <span>Nuevo Producto</span><button (click)="cerrarModal()">✕</button>
+        <span>Nuevo Producto</span><button (click)="cerrarModal()"><app-icon name="x" /></button>
       </div>
       <div class="mb">
         <app-alert [mensaje]="errorModal()" tipo="error" />

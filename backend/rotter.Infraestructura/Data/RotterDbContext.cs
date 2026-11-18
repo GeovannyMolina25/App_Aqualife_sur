@@ -31,6 +31,8 @@ public class RotterDbContext : DbContext
             e.Property(u => u.PasswordHash).HasMaxLength(500);
             e.Property(u => u.Sexo).HasMaxLength(20);
             e.Property(u => u.Direccion).HasMaxLength(300);
+            e.Property(u => u.RefreshTokenHash).HasMaxLength(200);
+            e.Property(u => u.TwoFactorSecretCifrado).HasMaxLength(200);
             e.HasOne(u => u.Rol).WithMany(r => r.Usuarios).HasForeignKey(u => u.RolId);
         });
 

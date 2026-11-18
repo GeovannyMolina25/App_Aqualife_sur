@@ -1,5 +1,6 @@
 import { Component, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
@@ -8,7 +9,7 @@ import { AlertComponent } from "../../../shared/components/alert/alert.component
 @Component({
   selector: "app-login",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AlertComponent],
+  imports: [IconComponent, CommonModule, FormsModule, RouterLink, AlertComponent],
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.css"],
 })
@@ -31,6 +32,11 @@ export class LoginComponent {
   mensajeRecuperacion = signal("");
   tipoMensajeRecuperacion = signal<"success" | "error">("error");
   cargandoRecuperacion = signal(false);
+  modalDosFactores = signal(false);
+  tokenDesafio2FA = "";
+  codigo2FA = "";
+  mensaje2FA = signal("");
+  cargando2FA = signal(false);
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -56,19 +62,51 @@ export class LoginComponent {
       this.auth.login({ email: this.email, password: this.password }).subscribe({
         next: (r) => {
           this.cargando.set(false);
-          if (r.exito) {
-            if (r.datos.debeCambiarPassword) {
-              this.modalCambiarPassword.set(true);
-            } else {
-              this.router.navigateByUrl(this.returnUrl);
-            }
-          } else {
+          if (!r.exito) {
             this.error.set(r.mensaje);
+            return;
+          }
+          if (r.datos.requiereDosFactores) {
+            this.tokenDesafio2FA = r.datos.tokenDesafio ?? "";
+            this.modalDosFactores.set(true);
+            return;
+          }
+          if (r.datos.auth?.debeCambiarPassword) {
+            this.modalCambiarPassword.set(true);
+          } else {
+            this.router.navigateByUrl(this.returnUrl);
           }
         },
         error: (e) => {
           this.cargando.set(false);
           this.error.set(e?.error?.mensaje ?? "Error de conexión.");
+        },
+      });
+    }
+    confirmarCodigo2FA() {
+      if (!this.codigo2FA) {
+        this.mensaje2FA.set("Ingresa el código de tu app autenticadora.");
+        return;
+      }
+      this.cargando2FA.set(true);
+      this.mensaje2FA.set("");
+      this.auth.verificarDosFactores(this.tokenDesafio2FA, this.codigo2FA).subscribe({
+        next: (r) => {
+          this.cargando2FA.set(false);
+          if (!r.exito) {
+            this.mensaje2FA.set(r.mensaje);
+            return;
+          }
+          this.modalDosFactores.set(false);
+          if (r.datos.debeCambiarPassword) {
+            this.modalCambiarPassword.set(true);
+          } else {
+            this.router.navigateByUrl(this.returnUrl);
+          }
+        },
+        error: (e) => {
+          this.cargando2FA.set(false);
+          this.mensaje2FA.set(e?.error?.mensaje ?? "Código inválido.");
         },
       });
     }

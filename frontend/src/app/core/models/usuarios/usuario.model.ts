@@ -10,9 +10,24 @@ export interface Usuario {
   rol: string;
   activo: boolean;
   fechaCreacion: string;
+  twoFactorHabilitado: boolean;
 }
 export interface CambiarRolDto {
   nuevoRolId: number;
+}
+export interface CrearUsuarioRapidoDto {
+  nombre: string;
+  apellido: string;
+  email?: string;
+  telefono?: string;
+  direccion?: string;
+}
+export interface UsuarioRapidoCreado {
+  id: number;
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono: string;
 }
 export interface OlvidePasswordDto {
   dato: string;

@@ -1,5 +1,6 @@
 import { Component, HostListener, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../icon/icon.component";
 import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
 import { CarritoService } from "../../../core/services/carrito/carrito.service";
@@ -7,7 +8,7 @@ import { CarritoService } from "../../../core/services/carrito/carrito.service";
 @Component({
   selector: "app-public-header",
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, IconComponent],
   templateUrl: "./public-header.component.html",
   styleUrls: ["./public-header.component.css"],
 })

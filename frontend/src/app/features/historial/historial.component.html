@@ -8,7 +8,7 @@
     <app-spinner [full]="true" />
   } @else if (ventas().length === 0) {
     <div class="empty">
-      <div class="ei">🛒</div>
+      <div class="ei"><app-icon name="cart" chip /></div>
       <h3>Aún no tienes compras</h3>
       <p>Explora nuestro catálogo y haz tu primera compra.</p>
     </div>
@@ -38,12 +38,12 @@
             <div class="vb">
               @if (v.origen === 'Web' && v.metodoPago) {
                 <div class="obs">
-                  💳 {{ v.metodoPago === 'ContraEntrega' ? 'Pago contra entrega' : 'Transferencia bancaria' }} ·
+                  <app-icon name="card" /> {{ v.metodoPago === 'ContraEntrega' ? 'Pago contra entrega' : 'Transferencia bancaria' }} ·
                   Estado del pago: <strong>{{ v.estadoPago }}</strong>
                 </div>
               }
               @if (v.observacion) {
-                <div class="obs">📝 {{ v.observacion }}</div>
+                <div class="obs"><app-icon name="edit" /> {{ v.observacion }}</div>
               }
               <div class="dets">
                 @for (d of v.detalles; track d.productoId) {

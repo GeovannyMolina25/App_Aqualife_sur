@@ -1,6 +1,6 @@
 <div class="dw">
   <div class="dh">
-    <h1>Te extrañamos, {{ auth.usuario()?.nombre }} gracias por tu visita. 👋</h1>
+    <h1>Te extrañamos, {{ auth.usuario()?.nombre }} gracias por tu visita.</h1>
     <p>
       {{ hoy }} · <strong>{{ auth.getRol() }}</strong>
     </p>
@@ -8,7 +8,7 @@
   @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
     <div class="mg">
       <div class="mc">
-        <div class="mi">💰</div>
+        <div class="mi"><app-icon name="dollar" chip /></div>
         <div class="ml">Ventas hoy</div>
         <div class="mv">
           ${{ metricas()?.totalVentasHoy | number: "1.2-2" }}
@@ -16,7 +16,7 @@
         <div class="ms">{{ metricas()?.ventasHoy }} transacciones</div>
       </div>
       <div class="mc">
-        <div class="mi">📊</div>
+        <div class="mi"><app-icon name="chart" chip /></div>
         <div class="ml">Ventas del mes</div>
         <div class="mv">
           ${{ metricas()?.totalVentasMes | number: "1.2-2" }}
@@ -24,13 +24,13 @@
         <div class="ms">Total acumulado</div>
       </div>
       <div class="mc">
-        <div class="mi">🛒</div>
+        <div class="mi"><app-icon name="cart" chip /></div>
         <div class="ml">Transacciones hoy</div>
         <div class="mv">{{ metricas()?.ventasHoy ?? 0 }}</div>
         <div class="ms">Ventas completadas</div>
       </div>
       <div class="mc">
-        <div class="mi">📦</div>
+        <div class="mi"><app-icon name="package" chip /></div>
         <div class="ml">Productos activos</div>
         <div class="mv">{{ metricas()?.productosActivos ?? 0 }}</div>
         <div class="ms">En catálogo</div>
@@ -43,7 +43,7 @@
   ) {
     <div class="mg-caja">
       <div class="mc mc-caja">
-        <div class="mi">🏦</div>
+        <div class="mi"><app-icon name="bank" chip /></div>
         <div class="ml">Saldo en Caja</div>
         <div class="mv">${{ saldoCaja()!.saldo | number: "1.2-2" }}</div>
         <div class="ms">
@@ -52,9 +52,108 @@
       </div>
     </div>
   }
+  @if ((auth.esAdmin() || auth.esSuperAdmin()) && metricas(); as m) {
+    <div class="rank-grid">
+      <section class="card rank-card">
+        <div class="rank-h">
+          <app-icon name="package" chip />
+          <div>
+            <h3>Productos más vendidos</h3>
+            <p>Unidades vendidas · histórico</p>
+          </div>
+        </div>
+        <ol class="rank-list">
+          @for (p of m.topProductos; track p.nombre; let i = $index) {
+            <li
+              class="rank-row"
+              [attr.title]="p.nombre + ': ' + p.unidades + ' unidades · $' + (p.montoTotal | number: '1.2-2')"
+            >
+              <span class="rk" [class]="'r' + (i + 1)">{{ i + 1 }}</span>
+              <div class="rank-body">
+                <div class="rank-top">
+                  <span class="rank-name">{{ p.nombre }}</span>
+                  <span class="rank-val"><strong>{{ p.unidades }}</strong> u.</span>
+                </div>
+                <div class="bar"><span class="bar-fill bar-prod" [style.width.%]="(p.unidades / maxUnidadesProducto()) * 100"></span></div>
+                <div class="rank-sub">${{ p.montoTotal | number: "1.2-2" }} en ventas</div>
+              </div>
+            </li>
+          } @empty {
+            <li class="rank-empty">Aún no hay ventas registradas.</li>
+          }
+        </ol>
+      </section>
+
+      <section class="card rank-card">
+        <div class="rank-h">
+          <app-icon name="sparkles" tono="teal" chip />
+          <div>
+            <h3>Servicios más vendidos</h3>
+            <p>Veces contratado · histórico</p>
+          </div>
+        </div>
+        <ol class="rank-list">
+          @for (s of m.topServicios; track s.nombre; let i = $index) {
+            <li
+              class="rank-row"
+              [attr.title]="s.nombre + ': ' + s.unidades + ' veces · $' + (s.montoTotal | number: '1.2-2')"
+            >
+              <span class="rk" [class]="'r' + (i + 1)">{{ i + 1 }}</span>
+              <div class="rank-body">
+                <div class="rank-top">
+                  <span class="rank-name">{{ s.nombre }}</span>
+                  <span class="rank-val"><strong>{{ s.unidades }}</strong> {{ s.unidades === 1 ? "vez" : "veces" }}</span>
+                </div>
+                <div class="bar"><span class="bar-fill bar-serv" [style.width.%]="(s.unidades / maxUnidadesServicio()) * 100"></span></div>
+                <div class="rank-sub">${{ s.montoTotal | number: "1.2-2" }} en ventas</div>
+              </div>
+            </li>
+          } @empty {
+            <li class="rank-empty">
+              <app-icon class="rank-empty-ic" name="sparkles" tono="teal" chip />
+              <span>Aún no se ha vendido ningún servicio.</span>
+            </li>
+          }
+        </ol>
+      </section>
+
+      <section class="card rank-card">
+        <div class="rank-h">
+          <app-icon name="users" chip />
+          <div>
+            <h3>Clientes que más compraron</h3>
+            <p>Total gastado · histórico</p>
+          </div>
+        </div>
+        <ol class="rank-list">
+          @for (c of m.topClientes; track c.email; let i = $index) {
+            <li
+              class="rank-row"
+              [attr.title]="c.nombre + ' (' + c.email + '): ' + c.compras + ' compras, ' + c.unidades + ' productos, $' + (c.totalGastado | number: '1.2-2')"
+            >
+              <span class="rk" [class]="'r' + (i + 1)">{{ i + 1 }}</span>
+              <div class="rank-body">
+                <div class="rank-top">
+                  <span class="rank-name">{{ c.nombre }}</span>
+                  <span class="rank-val"><strong>${{ c.totalGastado | number: "1.2-2" }}</strong></span>
+                </div>
+                <div class="bar"><span class="bar-fill bar-cli" [style.width.%]="(c.totalGastado / maxGastoCliente()) * 100"></span></div>
+                <div class="rank-sub">
+                  {{ c.compras }} {{ c.compras === 1 ? "compra" : "compras" }} ·
+                  {{ c.unidades }} {{ c.unidades === 1 ? "producto" : "productos" }}
+                </div>
+              </div>
+            </li>
+          } @empty {
+            <li class="rank-empty">Aún no hay compras registradas.</li>
+          }
+        </ol>
+      </section>
+    </div>
+  }
   @if ((auth.esAdmin() || auth.esSuperAdmin()) && metricas()?.topColaboradores?.length) {
     <div class="card mb">
-      <div class="ch">🏆 Top Colaboradores del Mes</div>
+      <div class="ch"><app-icon name="trophy" /> Top Colaboradores del Mes</div>
       <table>
         <thead>
           <tr>
@@ -88,7 +187,7 @@
   <h3 class="st">Acciones Rápidas</h3>
   <div class="ag">
     <a routerLink="/dashboard/productos" class="ac"
-      ><span>🛍️</span>
+      ><span><app-icon name="bag" chip /></span>
       <div>
         <div class="an">Ver Productos</div>
         <div class="ad">Catálogo completo</div>
@@ -96,13 +195,13 @@
     >
     @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
       <a routerLink="/dashboard/ventas" class="ac"
-        ><span>📝</span>
+        ><span><app-icon name="edit" chip /></span>
         <div>
           <div class="an">Registrar Venta</div>
           <div class="ad">Nueva transacción</div>
         </div></a
       ><a routerLink="/dashboard/caja" class="ac"
-        ><span>🏦</span>
+        ><span><app-icon name="bank" chip /></span>
         <div>
           <div class="an">Caja</div>
           <div class="ad">Ingresos y salidas</div>
@@ -111,7 +210,7 @@
     }
     @if (auth.esCliente()) {
       <a routerLink="/dashboard/mi-historial" class="ac"
-        ><span>📋</span>
+        ><span><app-icon name="clipboard" chip /></span>
         <div>
           <div class="an">Mis Compras</div>
           <div class="ad">Ver historial</div>
@@ -120,13 +219,13 @@
     }
     @if (auth.esAdmin() || auth.esSuperAdmin()) {
       <a routerLink="/dashboard/usuarios" class="ac"
-        ><span>👥</span>
+        ><span><app-icon name="users" chip /></span>
         <div>
           <div class="an">Usuarios</div>
           <div class="ad">Gestionar cuentas</div>
         </div></a
       ><a routerLink="/dashboard/reportes" class="ac"
-        ><span>📄</span>
+        ><span><app-icon name="file-text" chip /></span>
         <div>
           <div class="an">Reportes</div>
           <div class="ad">PDF y Excel</div>
@@ -135,14 +234,14 @@
     }
   </div>
   @if (auth.esCliente()) {
-    <h3 class="st">🎁 Promociones Activas</h3>
+    <h3 class="st"><app-icon name="gift" /> Promociones Activas</h3>
     @if (cargandoPromos()) {
       <app-spinner [full]="true" />
     } @else {
       <div class="pg">
         @for (p of promociones(); track p.id) {
           <div class="pc2">
-            <div class="pi">💧<span class="pt">PROMO</span></div>
+            <div class="pi"><app-icon name="droplet" /><span class="pt">PROMO</span></div>
             <div class="pb2">
               <div class="pn">{{ p.nombre }}</div>
               <div class="pca">{{ p.categoria }}</div>

@@ -1,5 +1,6 @@
 import { Component, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { ReportesService } from "../../core/services/reportes/reportes.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
@@ -7,7 +8,7 @@ import { AlertComponent } from "../../shared/components/alert/alert.component";
 @Component({
   selector: "app-reportes",
   standalone: true,
-  imports: [CommonModule, FormsModule, AlertComponent],
+  imports: [IconComponent, CommonModule, FormsModule, AlertComponent],
   templateUrl: "./reportes.component.html",
   styleUrls: ["./reportes.component.css"],
 })
@@ -37,7 +38,36 @@ export class ReportesComponent {
     { num: 12, nombre: "Diciembre" },
   ];
 
+  rankingDesde = "";
+  rankingHasta = "";
+  cargandoRanking = signal<"pdf" | "excel" | null>(null);
+  exitoRanking = signal("");
+  errorRanking = signal("");
+
   constructor(private svc: ReportesService) {}
+
+  descargarRanking(formato: "pdf" | "excel") {
+    if (this.rankingDesde && this.rankingHasta && this.rankingDesde > this.rankingHasta) {
+      this.errorRanking.set("La fecha 'Desde' no puede ser mayor que 'Hasta'.");
+      return;
+    }
+    this.cargandoRanking.set(formato);
+    this.exitoRanking.set("");
+    this.errorRanking.set("");
+    this.svc.ranking(formato, this.rankingDesde, this.rankingHasta).subscribe({
+      next: (blob) => {
+        this.cargandoRanking.set(null);
+        const fecha = new Date().toISOString().slice(0, 10);
+        this.svc.descargar(blob, `ranking-ventas-${fecha}.${formato === "pdf" ? "pdf" : "xlsx"}`);
+        this.exitoRanking.set(`${formato === "pdf" ? "PDF" : "Excel"} descargado exitosamente.`);
+        setTimeout(() => this.exitoRanking.set(""), 4000);
+      },
+      error: () => {
+        this.cargandoRanking.set(null);
+        this.errorRanking.set("No se pudo generar el reporte.");
+      },
+    });
+  }
 
   descargarPdf() {
     this.cargandoPdf.set(true);
@@ -45,7 +75,7 @@ export class ReportesComponent {
     this.svc.pdfMensual(this.anio, this.mes).subscribe({
       next: (blob) => {
         this.cargandoPdf.set(false);
-        this.exitoPdf.set("✓ PDF descargado exitosamente.");
+        this.exitoPdf.set("PDF descargado exitosamente.");
         this.svc.descargar(
           blob,
           `ventas-${this.anio}-${String(this.mes).padStart(2, "0")}.pdf`,
@@ -63,7 +93,7 @@ export class ReportesComponent {
     this.svc.excel(this.desde, this.hasta).subscribe({
       next: (blob) => {
         this.cargandoExcel.set(false);
-        this.exitoExcel.set("✓ Excel descargado exitosamente.");
+        this.exitoExcel.set("Excel descargado exitosamente.");
         this.svc.descargar(blob, `productos-vendidos-${this.desde}.xlsx`);
         setTimeout(() => this.exitoExcel.set(""), 4000);
       },

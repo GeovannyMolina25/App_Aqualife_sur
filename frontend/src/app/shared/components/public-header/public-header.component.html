@@ -20,7 +20,7 @@
     </nav>
 
     <a routerLink="/carrito" class="carrito-link" (click)="cerrarMenu()" aria-label="Carrito">
-      <span class="carrito-icon">🛒</span>
+      <span class="carrito-icon"><app-icon name="cart" /></span>
       @if (carrito.cantidadTotal() > 0) {
         <span class="carrito-badge">{{ carrito.cantidadTotal() }}</span>
       }
@@ -35,9 +35,9 @@
         </button>
         @if (menuUsuarioAbierto()) {
           <div class="user-dropdown">
-            <a routerLink="/dashboard/mi-perfil" (click)="cerrarMenuUsuario()">👤 Mi perfil</a>
-            <a routerLink="/dashboard/mi-historial" (click)="cerrarMenuUsuario()">📦 Mis pedidos</a>
-            <button type="button" class="dropdown-logout" (click)="cerrarSesion()">🚪 Cerrar sesión</button>
+            <a routerLink="/dashboard/mi-perfil" (click)="cerrarMenuUsuario()"><app-icon name="user" /> Mi perfil</a>
+            <a routerLink="/dashboard/mi-historial" (click)="cerrarMenuUsuario()"><app-icon name="package" /> Mis pedidos</a>
+            <button type="button" class="dropdown-logout" (click)="cerrarSesion()"><app-icon name="logout" /> Cerrar sesión</button>
           </div>
         }
       </div>

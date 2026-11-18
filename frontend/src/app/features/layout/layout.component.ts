@@ -1,5 +1,6 @@
 import { Component, computed, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import {
   Router,
   RouterLink,
@@ -12,7 +13,7 @@ import { CarritoService } from "../../core/services/carrito/carrito.service";
 @Component({
   selector: "app-layout",
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [IconComponent, CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: "./layout.component.html",
   styleUrls: ["./layout.component.css"],
 })

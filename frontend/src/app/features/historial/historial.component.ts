@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { VentasService } from "../../core/services/ventas/ventas.service";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
 import { Venta } from "../../core/models/ventas/venta.model";
@@ -7,7 +8,7 @@ import { Venta } from "../../core/models/ventas/venta.model";
 @Component({
   selector: "app-historial",
   standalone: true,
-  imports: [CommonModule, SpinnerComponent],
+  imports: [IconComponent, CommonModule, SpinnerComponent],
   templateUrl: "./historial.component.html",
   styleUrls: ["./historial.component.css"],
 })

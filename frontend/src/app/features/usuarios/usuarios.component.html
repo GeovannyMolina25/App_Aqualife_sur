@@ -1,7 +1,14 @@
 <div class="wrap">
   <div class="ph">
-    <h1>Gestión de Usuarios</h1>
-    <p>Administra roles y accesos del sistema</p>
+    <div>
+      <h1>Gestión de Usuarios</h1>
+      <p>Administra roles y accesos del sistema</p>
+    </div>
+    @if (auth.esAdmin() || auth.esSuperAdmin()) {
+      <button class="btn-p" (click)="abrirRapido()">
+        <app-icon name="user-plus" tono="none" /> Agregar usuario rápido
+      </button>
+    }
   </div>
 
   <div class="sb">
@@ -89,3 +96,65 @@
     />
   }
 </div>
+
+@if (modalRapido()) {
+  <div class="ov" (click)="cerrarRapido()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>Agregar usuario rápido</span>
+        <button (click)="cerrarRapido()"><app-icon name="x" /></button>
+      </div>
+
+      <form class="mb" (ngSubmit)="crearRapido()">
+        <app-alert [mensaje]="errorRapido()" tipo="error" />
+
+        @if (creado(); as c) {
+          <div class="creado">
+            <app-icon name="circle-check" weight="fill" size="22px" />
+            <div>
+              <strong>{{ c.nombre }} {{ c.apellido }} creado.</strong>
+              <span>Correo: <b>{{ c.email }}</b> · Teléfono: {{ c.telefono }} · Contraseña: <b>123456</b></span>
+            </div>
+          </div>
+        }
+
+        <div class="row2">
+          <div class="fg">
+            <label>Nombre *</label>
+            <input name="nombre" [(ngModel)]="rapido.nombre" placeholder="Ej. Juan" autofocus />
+          </div>
+          <div class="fg">
+            <label>Apellido *</label>
+            <input name="apellido" [(ngModel)]="rapido.apellido" placeholder="Ej. Pérez" />
+          </div>
+        </div>
+        <div class="fg">
+          <label>Correo</label>
+          <input name="email" type="email" [(ngModel)]="rapido.email" placeholder="Opcional" />
+          <span class="hint">Si lo dejas vacío se genera, por ejemplo: juanperez47&#64;acqualife.com</span>
+        </div>
+        <div class="row2">
+          <div class="fg">
+            <label>Teléfono</label>
+            <input name="telefono" [(ngModel)]="rapido.telefono" placeholder="0987654321" />
+          </div>
+          <div class="fg">
+            <label>Dirección</label>
+            <input name="direccion" [(ngModel)]="rapido.direccion" placeholder="Opcional" />
+          </div>
+        </div>
+        <div class="nota">
+          <app-icon name="info" />
+          <span>Se crea como <b>Cliente</b> con la contraseña <b>123456</b>.</span>
+        </div>
+
+        <div class="mf">
+          <button type="button" class="btn-s" (click)="cerrarRapido()">Cerrar</button>
+          <button type="submit" class="btn-p" [disabled]="guardandoRapido()">
+            {{ guardandoRapido() ? "Creando..." : "Crear usuario" }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

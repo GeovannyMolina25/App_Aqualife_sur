@@ -5,7 +5,7 @@
 
   @if (carrito.itemsCarrito().length === 0) {
     <div class="carrito-vacio">
-      <span>🛒</span>
+      <span><app-icon name="cart" /></span>
       <p>Tu carrito está vacío.</p>
       <a routerLink="/catalogo" class="btn-primary">Ver catálogo</a>
     </div>
@@ -18,7 +18,7 @@
               @if (item.producto.imagenUrl) {
                 <img [src]="item.producto.imagenUrl" [alt]="item.producto.nombre" />
               } @else {
-                <span>💧</span>
+                <span><app-icon name="droplet" /></span>
               }
             </div>
 
@@ -42,7 +42,7 @@
             <span class="item-subtotal">${{ subtotalItem(item).toFixed(2) }}</span>
 
             <button type="button" class="btn-quitar" (click)="quitar(item.producto.id)" aria-label="Quitar">
-              ✕
+              <app-icon name="x" />
             </button>
           </div>
         }
@@ -58,7 +58,7 @@
         <button type="button" class="btn-primary btn-pagar" (click)="procederAlPago()">
           Proceder al pago
         </button>
-        <a routerLink="/catalogo" class="seguir-comprando">← Seguir comprando</a>
+        <a routerLink="/catalogo" class="seguir-comprando"><app-icon name="arrow-left" /> Seguir comprando</a>
       </aside>
     </div>
   }

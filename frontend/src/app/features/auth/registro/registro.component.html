@@ -6,7 +6,7 @@
           src="assets/logo.png"
           alt="Logo"
           (error)="$any($event.target).style.display = 'none'"
-        /><span>💧</span>
+        /><span><app-icon name="droplet" /></span>
       </div>
       <h1>Únete a Rotter</h1>
       <p>
@@ -17,7 +17,7 @@
   </div>
   <div class="auth-form-panel">
     <div class="auth-box">
-      <a routerLink="/" class="btn-volver">← Volver al inicio</a>
+      <a routerLink="/" class="btn-volver"><app-icon name="arrow-left" /> Volver al inicio</a>
       <h2>Crear cuenta</h2>
       <p class="sub">Completa tus datos para registrarte</p>
       <app-alert [mensaje]="error()" tipo="error" />

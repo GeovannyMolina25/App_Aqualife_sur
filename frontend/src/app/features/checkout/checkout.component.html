@@ -55,7 +55,7 @@
               [class.activo]="metodoSeleccionado() === 'TransferenciaProdubanco'"
               (click)="seleccionarMetodo('TransferenciaProdubanco')"
             >
-              <span class="metodo-icon">🏦</span>
+              <span class="metodo-icon"><app-icon name="bank" chip /></span>
               <span>Transferencia Produbanco</span>
             </button>
             <button
@@ -64,7 +64,7 @@
               [class.activo]="metodoSeleccionado() === 'TransferenciaPichincha'"
               (click)="seleccionarMetodo('TransferenciaPichincha')"
             >
-              <span class="metodo-icon">🏦</span>
+              <span class="metodo-icon"><app-icon name="bank" chip /></span>
               <span>Transferencia Pichincha</span>
             </button>
             <button
@@ -73,7 +73,7 @@
               [class.activo]="metodoSeleccionado() === 'ContraEntrega'"
               (click)="seleccionarMetodo('ContraEntrega')"
             >
-              <span class="metodo-icon">📦</span>
+              <span class="metodo-icon"><app-icon name="truck" chip /></span>
               <span>Pago contra entrega</span>
             </button>
           </div>
@@ -119,12 +119,12 @@
         <button type="button" class="btn-primary" [disabled]="procesando()" (click)="confirmarPedido()">
           {{ procesando() ? "Procesando..." : "Confirmar pedido" }}
         </button>
-        <a routerLink="/carrito" class="volver-carrito">← Volver al carrito</a>
+        <a routerLink="/carrito" class="volver-carrito"><app-icon name="arrow-left" /> Volver al carrito</a>
       </aside>
     </div>
   } @else {
     <div class="confirmacion">
-      <span class="confirmacion-icon">✅</span>
+      <span class="confirmacion-icon"><app-icon name="circle-check" chip /></span>
       <h1>¡Pedido recibido!</h1>
       <p>Tu número de pedido es <strong>{{ pedido()!.numeroVenta }}</strong></p>
       <p class="confirmacion-total">Total: ${{ pedido()!.total.toFixed(2) }}</p>
@@ -149,7 +149,7 @@
         }
       } @else {
         <a class="btn-whatsapp" [href]="enlaceWhatsapp()" target="_blank" rel="noopener">
-          💬 Confirmar por WhatsApp
+          <app-icon name="message" tono="none" weight="fill" /> Confirmar por WhatsApp
         </a>
       }
 

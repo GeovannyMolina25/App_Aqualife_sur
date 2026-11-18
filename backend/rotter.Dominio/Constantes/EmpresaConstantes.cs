@@ -21,6 +21,9 @@ public static class EmpresaConstantes
     /// <summary>Usuario "sistema" (Activo=false, no puede loguearse) usado como ColaboradorId en pedidos autoservicio del catálogo público.</summary>
     public const string EmailUsuarioSistemaWeb = "pedidos-web@acqualife.com";
 
+    /// <summary>Cliente genérico ("Usuario Desconocido") que el registro de ventas usa por defecto en ventas de mostrador.</summary>
+    public const int ClienteGenericoId = 9;
+
     public const string Slogan ="El agua es vida, cuídala hoy para disfrutar un mañana mejor.";
 
     public const string MensajeFinal = "¡Hidrátate, vive mejor!";

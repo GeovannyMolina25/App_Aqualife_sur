@@ -7,6 +7,7 @@ public interface IUsuarioRepositorio
     Task<Usuario?> ObtenerPorEmailAsync(string email);
     Task<Usuario?> ObtenerPorTelefonoAsync(string telefono);
     Task<Usuario?> ObtenerPorIdAsync(int id);
+    Task<Usuario?> ObtenerPorRefreshTokenHashAsync(string hash);
     Task<List<Usuario>> ObtenerTodosAsync(int pagina, int tamano, string? busqueda = null);
     Task<int> TotalAsync(string? busqueda = null);
     Task<Usuario> CrearAsync(Usuario usuario);

@@ -11,15 +11,16 @@ namespace rotter.API.Controllers.Reportes;
 public class ReportesController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public ReportesController(IMediator mediator) => _mediator = mediator;
+    private readonly ILogger<ReportesController> _logger;
+    public ReportesController(IMediator mediator, ILogger<ReportesController> logger)
+    { _mediator = mediator; _logger = logger; }
 
     [HttpGet("pdf-mensual")]
     public async Task<IActionResult> PdfMensual(
     [FromQuery(Name = "anio")] int anio,
     [FromQuery(Name = "mes")] int mes)
     {
-        Console.WriteLine($"ANIO: {anio}");
-        Console.WriteLine($"MES: {mes}");
+        _logger.LogInformation("Generando reporte PDF mensual {Anio}-{Mes}", anio, mes);
 
         var r = await _mediator.Send(
             new GenerarPdfMensualQuery(anio, mes));
@@ -39,6 +40,19 @@ public class ReportesController : ControllerBase
         var r = await _mediator.Send(new GenerarPdfColaboradorQuery(colaboradorId, desde, hasta));
         if (!r.Exito) return BadRequest(r);
         return File(r.Datos!, "application/pdf", $"colaborador-{colaboradorId}-{desde:yyyyMMdd}.pdf");
+    }
+
+    [HttpGet("ranking")]
+    public async Task<IActionResult> Ranking([FromQuery] DateTime? desde, [FromQuery] DateTime? hasta, [FromQuery] string formato = "pdf")
+    {
+        var esExcel = formato.Equals("excel", StringComparison.OrdinalIgnoreCase);
+        var r = await _mediator.Send(new GenerarRankingQuery(desde, hasta, esExcel ? FormatoReporte.Excel : FormatoReporte.Pdf));
+        if (!r.Exito) return BadRequest(r);
+
+        var nombre = $"ranking-ventas-{DateTime.Now:yyyyMMdd}";
+        return esExcel
+            ? File(r.Datos!, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{nombre}.xlsx")
+            : File(r.Datos!, "application/pdf", $"{nombre}.pdf");
     }
 
     [HttpGet("excel")]

@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Net;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,7 +31,7 @@ public static class ServiceExtensions
 
         var builder = new Microsoft.Data.SqlClient.SqlConnectionStringBuilder(connectionString)
         {
-            Encrypt = false,
+            Encrypt = true,
             TrustServerCertificate = true
         };
 
@@ -50,6 +54,9 @@ public static class ServiceExtensions
     public static IServiceCollection AddServicios(this IServiceCollection s)
     {
         s.AddScoped<IJwtServicio, JwtServicio>();
+        s.AddScoped<IEmisorSesionServicio, EmisorSesionServicio>();
+        s.AddSingleton<ITotpServicio, TotpServicio>();
+        s.AddSingleton<ICifradoServicio, CifradoServicio>();
         s.AddScoped<IAuditoriaServicio, AuditoriaServicio>();
         s.AddScoped<IReporteServicio, ReporteServicio>();
 
@@ -63,7 +70,12 @@ public static class ServiceExtensions
 
     public static IServiceCollection AddJwtAuth(this IServiceCollection s, IConfiguration c)
     {
-        var key = Encoding.UTF8.GetBytes(c["JWT:SecretKey"]!);
+        var secretKey = c["JWT:SecretKey"];
+        if (string.IsNullOrWhiteSpace(secretKey))
+            throw new InvalidOperationException(
+                "JWT:SecretKey no está configurado. Defínelo con 'dotnet user-secrets set \"JWT:SecretKey\" \"...\"' en desarrollo o la variable de entorno JWT__SecretKey en producción.");
+
+        var key = Encoding.UTF8.GetBytes(secretKey);
         s.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
             {
@@ -89,18 +101,51 @@ public static class ServiceExtensions
         return s;
     }
 
-    public static IServiceCollection AddCorsAngular(this IServiceCollection s)
+    public static IServiceCollection AddRateLimitingSeguridad(this IServiceCollection s)
     {
-        s.AddCors(o => o.AddPolicy("Angular", p =>
-            p.WithOrigins(
+        s.AddRateLimiter(o =>
+        {
+            o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            o.AddPolicy("AuthPolicy", ctx => RateLimitPartition.GetFixedWindowLimiter(
+                ctx.Connection.RemoteIpAddress?.ToString() ?? "sin-ip",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window      = TimeSpan.FromMinutes(1),
+                    QueueLimit  = 0
+                }));
+        });
+        return s;
+    }
+
+    public static IServiceCollection AddCorsAngular(this IServiceCollection s, IConfiguration c)
+    {
+        var origenes = c.GetSection("Cors:OrigenesPermitidos").Get<string[]>();
+        if (origenes is null || origenes.Length == 0)
+            origenes = new[]
+            {
                 "http://localhost:4200",
                 "http://192.168.100.53:4200",
-                "http://localhost:9090",              // 👈 AGREGA ESTE
-                "http://192.168.100.53:9090"         // 👈 Y ESTE
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
+                "http://localhost:9090",
+                "http://192.168.100.53:9090"
+            };
+
+        s.AddCors(o => o.AddPolicy("Angular", p => p
+            .WithOrigins(origenes)
+            .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .WithHeaders("Content-Type", "Authorization")
         ));
+        return s;
+    }
+
+    public static IServiceCollection AddForwardedHeadersSeguros(this IServiceCollection s, IConfiguration c)
+    {
+        s.Configure<ForwardedHeadersOptions>(o =>
+        {
+            o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            foreach (var ip in c.GetSection("ReverseProxy:IpsConfiables").Get<string[]>() ?? Array.Empty<string>())
+                if (IPAddress.TryParse(ip, out var parsed)) o.KnownProxies.Add(parsed);
+        });
         return s;
     }
 }

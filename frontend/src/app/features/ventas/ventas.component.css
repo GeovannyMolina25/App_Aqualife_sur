@@ -308,6 +308,59 @@ tbody td {
   display: block;
   margin-bottom: 8px;
 }
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 10px;
+  background: #f8f3ea;
+  border-radius: 10px;
+}
+.tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #4a6572;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.tab:hover {
+  color: #1a6b8a;
+}
+.tab-on {
+  background: #fff;
+  color: #1a6b8a;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(28, 43, 53, 0.1);
+}
+.tab-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #1a6b8a;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ps-empty {
+  padding: 28px 14px;
+  text-align: center;
+  color: #7a9aaa;
+  font-size: 0.85rem;
+}
 .ps {
   border: 1.5px solid #e2d0af;
   border-radius: 10px;

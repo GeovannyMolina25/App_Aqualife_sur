@@ -1,10 +1,13 @@
 import { Injectable, signal } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { tap } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { catchError, finalize, map, shareReplay, tap } from "rxjs/operators";
 import { environment } from "../../../../environments/environment";
 import {
   AuthResponse,
+  DosFactoresSetup,
+  LoginResultado,
   UsuarioAuth,
 } from "../../models/auth/auth-response.model";
 import { LoginDto } from "../../models/auth/login.model";
@@ -15,10 +18,13 @@ import { OlvidePasswordDto, ActualizarPerfilDto, Usuario } from "../../models/us
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private readonly TOKEN_KEY = "rotter_token";
+  private readonly REFRESH_TOKEN_KEY = "rotter_refresh_token";
   private readonly USER_KEY = "rotter_user";
   private readonly ACTIVIDAD_KEY = "rotter_ultima_actividad";
   private readonly SESION_EXPIRADA_KEY = "rotter_sesion_expirada";
   private readonly INACTIVIDAD_LIMITE_MS = 30 * 60 * 1000; // 30 minutos
+
+  private refrescando$: Observable<string | null> | null = null;
 
   usuario = signal<UsuarioAuth | null>(this.leerStorage());
 
@@ -29,12 +35,34 @@ export class AuthService {
 
   login(dto: LoginDto) {
     return this.http
-      .post<RespuestaDto<AuthResponse>>(`${environment.apiUrl}/auth/login`, dto)
+      .post<RespuestaDto<LoginResultado>>(`${environment.apiUrl}/auth/login`, dto)
+      .pipe(
+        tap((r) => {
+          if (r.exito && !r.datos.requiereDosFactores && r.datos.auth) this.guardar(r.datos.auth);
+        }),
+      );
+  }
+
+  verificarDosFactores(tokenDesafio: string, codigo: string) {
+    return this.http
+      .post<RespuestaDto<AuthResponse>>(`${environment.apiUrl}/auth/2fa/verificar`, { tokenDesafio, codigo })
       .pipe(
         tap((r) => {
           if (r.exito) this.guardar(r.datos);
         }),
       );
+  }
+
+  iniciarDosFactores() {
+    return this.http.post<RespuestaDto<DosFactoresSetup>>(`${environment.apiUrl}/auth/2fa/iniciar`, {});
+  }
+
+  confirmarDosFactores(codigo: string) {
+    return this.http.post<RespuestaDto<boolean>>(`${environment.apiUrl}/auth/2fa/confirmar`, { codigo });
+  }
+
+  desactivarDosFactores(codigo: string) {
+    return this.http.post<RespuestaDto<boolean>>(`${environment.apiUrl}/auth/2fa/desactivar`, { codigo });
   }
 
   registro(dto: RegistroDto) {
@@ -64,11 +92,41 @@ cambiarPassword(nuevaPassword: string) {
 }
 
   logout() {
+    if (this.getToken()) this.http.post(`${environment.apiUrl}/auth/logout`, {}).subscribe({ error: () => {} });
+
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.ACTIVIDAD_KEY);
     this.usuario.set(null);
     this.router.navigate(["/auth/login"]);
+  }
+
+  /** Canjea el refresh token guardado por un nuevo access token. Comparte la llamada en curso si ya hay una. */
+  refrescarToken(): Observable<string | null> {
+    if (this.refrescando$) return this.refrescando$;
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) return of(null);
+
+    this.refrescando$ = this.http
+      .post<RespuestaDto<AuthResponse>>(`${environment.apiUrl}/auth/refresh`, { refreshToken })
+      .pipe(
+        map((r) => {
+          if (!r.exito) throw new Error("Refresh fallido");
+          localStorage.setItem(this.TOKEN_KEY, r.datos.token);
+          localStorage.setItem(this.REFRESH_TOKEN_KEY, r.datos.refreshToken);
+          return r.datos.token;
+        }),
+        catchError(() => {
+          this.logoutForzado("token");
+          return of(null);
+        }),
+        finalize(() => (this.refrescando$ = null)),
+        shareReplay(1),
+      );
+
+    return this.refrescando$;
   }
 
   /** Sesión terminada por el propio backend (401) o por inactividad del usuario, no por un logout manual. */
@@ -117,6 +175,10 @@ cambiarPassword(nuevaPassword: string) {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  getRefreshToken(): string | null {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
   estaAutenticado(): boolean {
     const t = this.getToken();
     if (!t) return false;
@@ -146,6 +208,7 @@ cambiarPassword(nuevaPassword: string) {
 
   private guardar(datos: AuthResponse) {
     localStorage.setItem(this.TOKEN_KEY, datos.token);
+    localStorage.setItem(this.REFRESH_TOKEN_KEY, datos.refreshToken);
     localStorage.setItem(this.USER_KEY, JSON.stringify(datos.usuario));
     this.usuario.set(datos.usuario);
   }

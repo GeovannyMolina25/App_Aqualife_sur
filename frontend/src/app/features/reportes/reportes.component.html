@@ -7,7 +7,7 @@
   <div class="rg">
     <!-- PDF Mensual -->
     <div class="rc">
-      <div class="ri">📄</div>
+      <div class="ri"><app-icon name="file-text" chip /></div>
       <h3>Ventas Mensuales</h3>
       <p class="rd">
         Reporte PDF con todas las ventas del mes seleccionado, incluyendo
@@ -33,13 +33,13 @@
         [disabled]="cargandoPdf()"
         (click)="descargarPdf()"
       >
-        {{ cargandoPdf() ? "⏳ Generando..." : "⬇️ Descargar PDF" }}
+        @if (cargandoPdf()) { <app-icon name="loader" [spin]="true" /> Generando... } @else { <app-icon name="download" /> Descargar PDF }
       </button>
     </div>
 
     <!-- Excel Productos Vendidos -->
     <div class="rc">
-      <div class="ri">📊</div>
+      <div class="ri"><app-icon name="file-sheet" chip /></div>
       <h3>Productos Vendidos</h3>
       <p class="rd">
         Excel con detalle de productos: cliente, precio, cantidad, fecha y hora
@@ -61,8 +61,39 @@
         [disabled]="cargandoExcel() || !desde || !hasta"
         (click)="descargarExcel()"
       >
-        {{ cargandoExcel() ? "⏳ Generando..." : "⬇️ Descargar Excel" }}
+        @if (cargandoExcel()) { <app-icon name="loader" [spin]="true" /> Generando... } @else { <app-icon name="download" /> Descargar Excel }
       </button>
+    </div>
+
+    <!-- Ranking: clientes, productos y servicios -->
+    <div class="rc">
+      <div class="ri"><app-icon name="trophy" chip /></div>
+      <h3>Ranking de Ventas</h3>
+      <p class="rd">
+        Todos los clientes que compraron (compras, productos y total gastado) y
+        todos los productos y servicios ordenados por lo más vendido.
+      </p>
+      <div class="fr">
+        <div class="fg">
+          <label>Desde</label>
+          <input type="date" [(ngModel)]="rankingDesde" />
+        </div>
+        <div class="fg">
+          <label>Hasta</label>
+          <input type="date" [(ngModel)]="rankingHasta" />
+        </div>
+      </div>
+      <p class="hint">Deja las fechas vacías para incluir todo el historial.</p>
+      <app-alert [mensaje]="exitoRanking()" tipo="success" />
+      <app-alert [mensaje]="errorRanking()" tipo="error" />
+      <div class="btns">
+        <button class="btn-pdf" [disabled]="cargandoRanking() !== null" (click)="descargarRanking('pdf')">
+          @if (cargandoRanking() === "pdf") { <app-icon name="loader" [spin]="true" /> Generando... } @else { <app-icon name="download" /> PDF }
+        </button>
+        <button class="btn-xl" [disabled]="cargandoRanking() !== null" (click)="descargarRanking('excel')">
+          @if (cargandoRanking() === "excel") { <app-icon name="loader" [spin]="true" /> Generando... } @else { <app-icon name="download" /> Excel }
+        </button>
+      </div>
     </div>
   </div>
 </div>

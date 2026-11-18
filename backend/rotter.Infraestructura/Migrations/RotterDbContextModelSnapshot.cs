@@ -373,6 +373,9 @@ namespace rotter.Infraestructura.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("BloqueadoHasta")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Direccion")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -392,6 +395,9 @@ namespace rotter.Infraestructura.Migrations
                     b.Property<DateOnly>("FechaNacimiento")
                         .HasColumnType("date");
 
+                    b.Property<int>("IntentosFallidos")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -401,6 +407,16 @@ namespace rotter.Infraestructura.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("RefreshTokenExpira")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshTokenHash")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("RequiereCambioPassword")
+                        .HasColumnType("bit");
 
                     b.Property<int>("RolId")
                         .HasColumnType("int");
@@ -412,6 +428,13 @@ namespace rotter.Infraestructura.Migrations
 
                     b.Property<string>("Telefono")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorHabilitado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TwoFactorSecretCifrado")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("UltimoAcceso")
                         .HasColumnType("datetime2");

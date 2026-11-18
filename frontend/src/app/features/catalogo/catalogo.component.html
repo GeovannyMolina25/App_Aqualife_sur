@@ -20,7 +20,7 @@
     <app-spinner [full]="true" />
   } @else if (productos().length === 0) {
     <div class="vacio">
-      <span>🔎</span>
+      <span><app-icon name="search" /></span>
       <p>No encontramos productos con ese criterio.</p>
     </div>
   } @else {
@@ -31,7 +31,7 @@
             @if (p.imagenUrl) {
               <img [src]="p.imagenUrl" [alt]="p.nombre" />
             } @else {
-              <span class="producto-imagen-fallback">💧</span>
+              <span class="producto-imagen-fallback"><app-icon name="droplet" /></span>
             }
             @if (p.esPromocion) {
               <span class="promo-tag">Promo</span>
@@ -80,7 +80,7 @@
                 [class.agregado]="agregadoId() === p.id"
                 (click)="agregarAlCarrito(p, $event)"
               >
-                {{ agregadoId() === p.id ? "✓ Agregado" : "Comprar" }}
+                @if (agregadoId() === p.id) { <app-icon name="check" /> Agregado } @else { Comprar }
               </button>
             } @else {
               <button type="button" class="btn-comprar" disabled>No disponible</button>

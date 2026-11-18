@@ -100,7 +100,7 @@
     <div class="mo" (click)="$event.stopPropagation()">
       <div class="mh">
         <span>Registrar Ingreso a Caja</span
-        ><button (click)="cerrarModalIngreso()">✕</button>
+        ><button (click)="cerrarModalIngreso()"><app-icon name="x" /></button>
       </div>
       <div class="mb">
         <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert
@@ -205,7 +205,7 @@
     <div class="mo" (click)="$event.stopPropagation()">
       <div class="mh">
         <span>Registrar Salida de Caja</span
-        ><button (click)="cerrarModalSalida()">✕</button>
+        ><button (click)="cerrarModalSalida()"><app-icon name="x" /></button>
       </div>
       <div class="mb">
         <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert

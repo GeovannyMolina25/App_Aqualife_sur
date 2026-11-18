@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { ProductosService } from "../../core/services/productos/productos.service";
@@ -16,6 +17,7 @@ import {
   selector: "app-productos",
   standalone: true,
   imports: [
+    IconComponent,
     CommonModule,
     FormsModule,
     AlertComponent,

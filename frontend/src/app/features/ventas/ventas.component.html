@@ -76,7 +76,7 @@
                   @if (v.origen === 'Web') {
                     <div class="pago-col">
                       @if (v.comprobanteUrl) {
-                        <a [href]="comprobanteHref(v.comprobanteUrl)" target="_blank" class="ver-comprobante">📎 Comprobante</a>
+                        <a [href]="comprobanteHref(v.comprobanteUrl)" target="_blank" class="ver-comprobante"><app-icon name="paperclip" /> Comprobante</a>
                       }
                       @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
                         <select
@@ -103,7 +103,7 @@
                     (click)="abrirFactura(v)"
                     title="Ver Factura"
                   >
-                    🧾
+                    <app-icon name="receipt" />
                   </button>
                 </td>
               </tr>
@@ -128,7 +128,7 @@
     <div class="mo" (click)="$event.stopPropagation()">
       <div class="mh">
         <span>Registrar Nueva Venta</span
-        ><button (click)="cerrarModal()">✕</button>
+        ><button (click)="cerrarModal()"><app-icon name="x" /></button>
       </div>
       <div class="mb">
         <app-alert [mensaje]="errorModal()" tipo="error" /><app-alert
@@ -182,9 +182,37 @@
             placeholder="Notas adicionales (opcional)"
           />
         </div>
-        <label class="sl">Productos *</label>
+        <label class="sl">Productos y servicios *</label>
+        <div class="tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [class.tab-on]="pestanaItems() === 'productos'"
+            [attr.aria-selected]="pestanaItems() === 'productos'"
+            (click)="pestanaItems.set('productos')"
+          >
+            <app-icon name="package" /> Productos
+            @if (seleccionadosPorPestana().productos > 0) {
+              <span class="tab-badge">{{ seleccionadosPorPestana().productos }}</span>
+            }
+          </button>
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [class.tab-on]="pestanaItems() === 'servicios'"
+            [attr.aria-selected]="pestanaItems() === 'servicios'"
+            (click)="pestanaItems.set('servicios')"
+          >
+            <app-icon name="sparkles" /> Servicios
+            @if (seleccionadosPorPestana().servicios > 0) {
+              <span class="tab-badge">{{ seleccionadosPorPestana().servicios }}</span>
+            }
+          </button>
+        </div>
         <div class="ps">
-          @for (p of productosDisp(); track p.id) {
+          @for (p of itemsPestana(); track p.id) {
             <div class="pr">
               <div class="pi2">
                 <span class="pn">{{ p.nombre }}</span
@@ -201,6 +229,10 @@
                 (change)="setCantidad(p.id, +$any($event.target).value, p)"
                 placeholder="0"
               />
+            </div>
+          } @empty {
+            <div class="ps-empty">
+              {{ pestanaItems() === "productos" ? "No hay productos disponibles." : "No hay servicios disponibles." }}
             </div>
           }
         </div>
@@ -226,7 +258,7 @@
     <div class="mo factura-modal" (click)="$event.stopPropagation()">
       <div class="mh">
         <span>Factura</span>
-        <button (click)="cerrarFactura()">✕</button>
+        <button (click)="cerrarFactura()"><app-icon name="x" /></button>
       </div>
       <div class="mb">
         <h3>Venta #{{ ventaSeleccionada()?.numeroVenta }}</h3>

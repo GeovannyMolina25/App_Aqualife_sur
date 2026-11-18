@@ -138,6 +138,88 @@ public class VentaRepositorio : IVentaRepositorio
             .Take(10)
             .ToList();
     }
+    /// <summary>Ventas no anuladas dentro del rango (ambos extremos opcionales; <paramref name="hasta"/> incluye todo ese día).</summary>
+    private IQueryable<Venta> VentasValidas(DateTime? desde, DateTime? hasta)
+    {
+        var q = _db.Ventas.Where(v => v.Estado != "Anulada");
+        if (desde.HasValue) q = q.Where(v => v.FechaVenta >= desde.Value.Date);
+        if (hasta.HasValue) q = q.Where(v => v.FechaVenta < hasta.Value.Date.AddDays(1));
+        return q;
+    }
+
+    /// <summary>
+    /// Productos (o servicios) ordenados por unidades vendidas, sin ventas anuladas.
+    /// Un ítem es servicio si su categoría se llama "Servicio…" (p. ej. "Servicios de Limpieza").
+    /// <paramref name="cantidad"/> null = todos; <paramref name="incluirSinVentas"/> agrega al final los activos que no se vendieron.
+    /// </summary>
+    public async Task<List<TopProductoData>> ObtenerTopProductosAsync(int? cantidad, bool servicios = false,
+        DateTime? desde = null, DateTime? hasta = null, bool incluirSinVentas = false)
+    {
+        var ventas = VentasValidas(desde, hasta);
+        var consulta = _db.DetalleVentas
+            .Where(d => ventas.Any(v => v.Id == d.VentaId)
+                && d.Producto.Categoria.Nombre.Contains("Servicio") == servicios)
+            .GroupBy(d => new { d.ProductoId, d.Producto.Nombre, Categoria = d.Producto.Categoria.Nombre })
+            .Select(g => new { g.Key.ProductoId, g.Key.Nombre, g.Key.Categoria, Unidades = g.Sum(d => d.Cantidad), Total = g.Sum(d => d.Subtotal) })
+            .OrderByDescending(x => x.Unidades)
+            .ThenByDescending(x => x.Total);
+
+        var top = cantidad.HasValue
+            ? await consulta.Take(cantidad.Value).ToListAsync()
+            : await consulta.ToListAsync();
+
+        var resultado = top.Select(t => new TopProductoData(t.Nombre, t.Unidades, t.Total, t.Categoria)).ToList();
+        if (!incluirSinVentas) return resultado;
+
+        var vendidos = top.Select(t => t.ProductoId).ToList();
+        var sinVentas = await _db.Productos
+            .Where(p => p.Activo && !vendidos.Contains(p.Id)
+                && p.Categoria.Nombre.Contains("Servicio") == servicios)
+            .OrderBy(p => p.Nombre)
+            .Select(p => new TopProductoData(p.Nombre, 0, 0m, p.Categoria.Nombre))
+            .ToListAsync();
+
+        resultado.AddRange(sinVentas);
+        return resultado;
+    }
+
+    /// <summary>
+    /// Clientes ordenados por total gastado, sin ventas anuladas. Se excluyen el cliente genérico
+    /// de mostrador y el usuario sistema de pedidos web, que no son compradores reales.
+    /// <paramref name="cantidad"/> null = todos.
+    /// </summary>
+    public async Task<List<TopClienteData>> ObtenerTopClientesAsync(int? cantidad, DateTime? desde = null, DateTime? hasta = null)
+    {
+        var ventasValidas = VentasValidas(desde, hasta).Where(v =>
+            v.ClienteId != EmpresaConstantes.ClienteGenericoId
+            && v.Cliente.Email != EmpresaConstantes.EmailUsuarioSistemaWeb);
+
+        var consulta = ventasValidas
+            .GroupBy(v => new { v.ClienteId, v.Cliente.Nombre, v.Cliente.Apellido, v.Cliente.Email })
+            .Select(g => new
+            {
+                g.Key.ClienteId, g.Key.Nombre, g.Key.Apellido, g.Key.Email,
+                Compras = g.Count(), Total = g.Sum(v => v.Total), Ultima = g.Max(v => v.FechaVenta)
+            })
+            .OrderByDescending(x => x.Total);
+
+        var top = cantidad.HasValue
+            ? await consulta.Take(cantidad.Value).ToListAsync()
+            : await consulta.ToListAsync();
+
+        var ids = top.Select(t => t.ClienteId).ToList();
+        var unidades = await _db.DetalleVentas
+            .Where(d => ids.Contains(d.Venta.ClienteId) && ventasValidas.Any(v => v.Id == d.VentaId))
+            .GroupBy(d => d.Venta.ClienteId)
+            .Select(g => new { ClienteId = g.Key, Unidades = g.Sum(d => d.Cantidad) })
+            .ToDictionaryAsync(x => x.ClienteId, x => x.Unidades);
+
+        return top.Select(t => new TopClienteData(
+                $"{t.Nombre} {t.Apellido}", t.Email, t.Compras,
+                unidades.GetValueOrDefault(t.ClienteId), t.Total, t.Ultima))
+            .ToList();
+    }
+
     public async Task<FacturaDto?> ObtenerFacturaPorIdAsync(int ventaId)
     {
         var venta = await ConIncludes()

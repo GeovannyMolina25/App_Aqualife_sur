@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
 
 @Injectable({ providedIn: "root" })
@@ -25,6 +25,14 @@ export class ReportesService {
     return this.http.get(`${this.url}/excel?desde=${desde}&hasta=${hasta}`, {
       responseType: "blob",
     });
+  }
+
+  /** Ranking completo de clientes, productos y servicios. Sin fechas = todo el historial. */
+  ranking(formato: "pdf" | "excel", desde?: string, hasta?: string) {
+    let params = new HttpParams().set("formato", formato);
+    if (desde) params = params.set("desde", desde);
+    if (hasta) params = params.set("hasta", hasta);
+    return this.http.get(`${this.url}/ranking`, { params, responseType: "blob" });
   }
 
   descargar(blob: Blob, nombre: string) {

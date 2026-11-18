@@ -5,6 +5,15 @@ export interface AuthResponse {
   expiracion: string;
   debeCambiarPassword: boolean;
 }
+export interface LoginResultado {
+  requiereDosFactores: boolean;
+  tokenDesafio: string | null;
+  auth: AuthResponse | null;
+}
+export interface DosFactoresSetup {
+  secreto: string;
+  uriConfiguracion: string;
+}
 export interface UsuarioAuth {
   id: number;
   nombre: string;

@@ -28,6 +28,14 @@ export class MiPerfilComponent implements OnInit {
   errorPassword = signal("");
   exitoPassword = signal("");
 
+  configurando2FA = signal(false);
+  procesando2FA = signal(false);
+  secreto2FA = signal("");
+  uriConfiguracion2FA = signal("");
+  codigo2FA = "";
+  mensaje2FA = signal("");
+  tipoMensaje2FA = signal<"success" | "error">("error");
+
   constructor(private auth: AuthService) {}
 
   ngOnInit() {
@@ -102,5 +110,82 @@ export class MiPerfilComponent implements OnInit {
         this.errorPassword.set(e?.error?.mensaje ?? "No se pudo cambiar la contraseña.");
       },
     });
+  }
+
+  iniciar2FA() {
+    this.mensaje2FA.set("");
+    this.auth.iniciarDosFactores().subscribe({
+      next: (r) => {
+        if (r.exito) {
+          this.secreto2FA.set(r.datos.secreto);
+          this.uriConfiguracion2FA.set(r.datos.uriConfiguracion);
+          this.configurando2FA.set(true);
+        } else {
+          this.tipoMensaje2FA.set("error");
+          this.mensaje2FA.set(r.mensaje);
+        }
+      },
+      error: (e) => {
+        this.tipoMensaje2FA.set("error");
+        this.mensaje2FA.set(e?.error?.mensaje ?? "No se pudo iniciar la configuración.");
+      },
+    });
+  }
+
+  confirmar2FA() {
+    if (!this.codigo2FA) {
+      this.tipoMensaje2FA.set("error");
+      this.mensaje2FA.set("Ingresa el código de tu app autenticadora.");
+      return;
+    }
+    this.procesando2FA.set(true);
+    this.auth.confirmarDosFactores(this.codigo2FA).subscribe({
+      next: (r) => {
+        this.procesando2FA.set(false);
+        this.tipoMensaje2FA.set(r.exito ? "success" : "error");
+        this.mensaje2FA.set(r.mensaje);
+        if (r.exito) {
+          this.configurando2FA.set(false);
+          this.codigo2FA = "";
+          this.perfil.update((p) => (p ? { ...p, twoFactorHabilitado: true } : p));
+        }
+      },
+      error: (e) => {
+        this.procesando2FA.set(false);
+        this.tipoMensaje2FA.set("error");
+        this.mensaje2FA.set(e?.error?.mensaje ?? "Código inválido.");
+      },
+    });
+  }
+
+  desactivar2FA() {
+    if (!this.codigo2FA) {
+      this.tipoMensaje2FA.set("error");
+      this.mensaje2FA.set("Ingresa el código de tu app autenticadora.");
+      return;
+    }
+    this.procesando2FA.set(true);
+    this.auth.desactivarDosFactores(this.codigo2FA).subscribe({
+      next: (r) => {
+        this.procesando2FA.set(false);
+        this.tipoMensaje2FA.set(r.exito ? "success" : "error");
+        this.mensaje2FA.set(r.mensaje);
+        if (r.exito) {
+          this.codigo2FA = "";
+          this.perfil.update((p) => (p ? { ...p, twoFactorHabilitado: false } : p));
+        }
+      },
+      error: (e) => {
+        this.procesando2FA.set(false);
+        this.tipoMensaje2FA.set("error");
+        this.mensaje2FA.set(e?.error?.mensaje ?? "Código inválido.");
+      },
+    });
+  }
+
+  cancelarConfiguracion2FA() {
+    this.configurando2FA.set(false);
+    this.codigo2FA = "";
+    this.mensaje2FA.set("");
   }
 }

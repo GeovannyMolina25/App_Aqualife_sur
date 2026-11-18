@@ -25,6 +25,9 @@ public class UsuarioRepositorio : IUsuarioRepositorio
     public async Task<Usuario?> ObtenerPorIdAsync(int id) =>
         await _db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
 
+    public async Task<Usuario?> ObtenerPorRefreshTokenHashAsync(string hash) =>
+        await _db.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.RefreshTokenHash == hash);
+
     public async Task<List<Usuario>> ObtenerTodosAsync(int pagina, int tamano, string? busqueda = null) =>
         await FiltrarPorBusqueda(_db.Usuarios.Include(u => u.Rol), busqueda)
             .OrderBy(u => u.Nombre)

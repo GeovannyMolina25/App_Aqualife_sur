@@ -16,6 +16,13 @@ public class Usuario
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
     public DateTime? FechaModificacion { get; set; }
     public DateTime? UltimoAcceso { get; set; }
+    public int IntentosFallidos { get; set; }
+    public DateTime? BloqueadoHasta { get; set; }
+    public bool RequiereCambioPassword { get; set; }
+    public string? RefreshTokenHash { get; set; }
+    public DateTime? RefreshTokenExpira { get; set; }
+    public bool TwoFactorHabilitado { get; set; }
+    public string? TwoFactorSecretCifrado { get; set; }
     public Rol Rol { get; set; } = null!;
     public ICollection<Venta> VentasComoCliente { get; set; } = new List<Venta>();
     public ICollection<Venta> VentasComoColaborador { get; set; } = new List<Venta>();

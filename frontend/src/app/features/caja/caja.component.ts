@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { CajaService } from "../../core/services/caja/caja.service";
 import { AuthService } from "../../core/services/auth/auth.service";
@@ -25,7 +26,7 @@ const BANCOS = [
 @Component({
   selector: "app-caja",
   standalone: true,
-  imports: [CommonModule, FormsModule, AlertComponent, SpinnerComponent, PaginationComponent],
+  imports: [IconComponent, CommonModule, FormsModule, AlertComponent, SpinnerComponent, PaginationComponent],
   templateUrl: "./caja.component.html",
   styleUrls: ["./caja.component.css"],
 })
@@ -157,7 +158,7 @@ export class CajaComponent implements OnInit {
       next: (r) => {
         this.guardando.set(false);
         if (r.exito) {
-          this.exitoModal.set("✓ Ingreso registrado.");
+          this.exitoModal.set("Ingreso registrado.");
           setTimeout(() => {
             this.cerrarModalIngreso();
             this.cargarSaldo();
@@ -197,7 +198,7 @@ export class CajaComponent implements OnInit {
       next: (r) => {
         this.guardando.set(false);
         if (r.exito) {
-          this.exitoModal.set("✓ Salida registrada.");
+          this.exitoModal.set("Salida registrada.");
           setTimeout(() => {
             this.cerrarModalSalida();
             this.cargarSaldo();

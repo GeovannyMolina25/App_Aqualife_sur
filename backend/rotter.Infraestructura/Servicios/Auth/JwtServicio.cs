@@ -14,11 +14,13 @@ public class JwtServicio : IJwtServicio
     private readonly IConfiguration _config;
     public JwtServicio(IConfiguration config) => _config = config;
 
+    public int ObtenerMinutosExpiracion() => int.Parse(_config["JWT:MinutosExpiracion"] ?? "30");
+
     public string GenerarToken(Usuario usuario)
     {
         var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var exp   = DateTime.Now.AddHours(int.Parse(_config["JWT:HorasExpiracion"] ?? "24"));
+        var exp   = DateTime.Now.AddMinutes(ObtenerMinutosExpiracion());
 
         var claims = new[]
         {
@@ -42,6 +44,42 @@ public class JwtServicio : IJwtServicio
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(bytes);
         return Convert.ToBase64String(bytes);
+    }
+
+    public string HashRefreshToken(string refreshToken) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(refreshToken)));
+
+    public string GenerarTokenDesafio2FA(int usuarioId)
+    {
+        var key   = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim("uid", usuarioId.ToString()),
+            new Claim("purpose", "2fa")
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: _config["JWT:Issuer"], audience: _config["JWT:Audience"],
+            claims: claims, expires: DateTime.Now.AddMinutes(5), signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public int? ValidarTokenDesafio2FA(string token)
+    {
+        var principal = ValidarToken(token);
+        if (principal is null) return null;
+
+        var purpose = principal.FindFirst("purpose")?.Value;
+        var uid     = principal.FindFirst("uid")?.Value;
+        if (purpose != "2fa" || uid is null) return null;
+
+        var exp = principal.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
+        if (exp is null || DateTimeOffset.FromUnixTimeSeconds(long.Parse(exp)) < DateTimeOffset.UtcNow) return null;
+
+        return int.Parse(uid);
     }
 
     public ClaimsPrincipal? ValidarToken(string token)

@@ -12,12 +12,12 @@ public record RegistrarUsuarioCommand(RegistroDto Dto) : IRequest<RespuestaDto<A
 
 public class RegistrarUsuarioHandler : IRequestHandler<RegistrarUsuarioCommand, RespuestaDto<AuthResponseDto>>
 {
-    private readonly IUsuarioRepositorio _usuarios;
-    private readonly IJwtServicio        _jwt;
-    private readonly IAuditoriaServicio  _auditoria;
+    private readonly IUsuarioRepositorio   _usuarios;
+    private readonly IEmisorSesionServicio _emisor;
+    private readonly IAuditoriaServicio    _auditoria;
 
-    public RegistrarUsuarioHandler(IUsuarioRepositorio usuarios, IJwtServicio jwt, IAuditoriaServicio auditoria)
-    { _usuarios = usuarios; _jwt = jwt; _auditoria = auditoria; }
+    public RegistrarUsuarioHandler(IUsuarioRepositorio usuarios, IEmisorSesionServicio emisor, IAuditoriaServicio auditoria)
+    { _usuarios = usuarios; _emisor = emisor; _auditoria = auditoria; }
 
     public async Task<RespuestaDto<AuthResponseDto>> Handle(RegistrarUsuarioCommand req, CancellationToken ct)
     {
@@ -36,26 +36,11 @@ public class RegistrarUsuarioHandler : IRequestHandler<RegistrarUsuarioCommand, 
 
         await _usuarios.CrearAsync(usuario);
         var completo = await _usuarios.ObtenerPorIdAsync(usuario.Id);
-        var token    = _jwt.GenerarToken(completo!);
+        var auth     = await _emisor.EmitirAsync(completo!);
 
         await _auditoria.RegistrarAsync("REGISTRO", "Usuarios", usuario.Id.ToString(),
             datosNuevos: new { usuario.Email, usuario.Nombre });
 
-        return RespuestaDto<AuthResponseDto>.Ok(
-            new AuthResponseDto(
-                token,
-                _jwt.GenerarRefreshToken(),
-                new UsuarioAuthDto(
-                    completo!.Id,
-                    completo.Nombre,
-                    completo.Apellido,
-                    completo.Email,
-                    completo.Rol.Nombre
-                ),
-                DateTime.Now.AddHours(24),
-                false
-            ),
-            "Registro exitoso."
-        );
+        return RespuestaDto<AuthResponseDto>.Ok(auth, "Registro exitoso.");
     }
 }

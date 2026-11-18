@@ -1,7 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
+
+const RUTAS_AUTH_PUBLICAS = /\/auth\/(login|registro|refresh|recuperar-password)$/;
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
@@ -10,8 +12,20 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(conToken).pipe(
     catchError((error) => {
-      if (error?.status === 401) auth.manejarTokenInvalido();
-      return throwError(() => error);
+      const puedeRefrescar = error?.status === 401 && !RUTAS_AUTH_PUBLICAS.test(req.url) && auth.getRefreshToken();
+
+      if (!puedeRefrescar) {
+        if (error?.status === 401) auth.manejarTokenInvalido();
+        return throwError(() => error);
+      }
+
+      return auth.refrescarToken().pipe(
+        switchMap((nuevoToken) => {
+          if (!nuevoToken) return throwError(() => error);
+          const reintento = req.clone({ setHeaders: { Authorization: `Bearer ${nuevoToken}` } });
+          return next(reintento);
+        }),
+      );
     }),
   );
 };

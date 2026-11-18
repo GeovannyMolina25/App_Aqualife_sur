@@ -1,5 +1,6 @@
 import { Component, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
@@ -9,7 +10,7 @@ import { RegistroDto } from "../../../core/models/auth/registro.model";
 @Component({
   selector: "app-registro",
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, AlertComponent],
+  imports: [IconComponent, CommonModule, FormsModule, RouterLink, AlertComponent],
   templateUrl: "./registro.component.html",
   styleUrls: ["./registro.component.css"],
 })

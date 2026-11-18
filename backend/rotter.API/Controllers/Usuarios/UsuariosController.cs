@@ -24,6 +24,14 @@ public class UsuariosController : ControllerBase
         return Ok(r);
     }
 
+    [HttpPost("rapido")]
+    [Authorize(Roles = "Administrador,SuperAdministrador")]
+    public async Task<IActionResult> CrearRapido([FromBody] CrearUsuarioRapidoDto dto)
+    {
+        var r = await _mediator.Send(new CrearUsuarioRapidoCommand(dto));
+        return StatusCode(r.StatusCode, r);
+    }
+
     [HttpGet("perfil")]
     public async Task<IActionResult> ObtenerPerfil()
     {

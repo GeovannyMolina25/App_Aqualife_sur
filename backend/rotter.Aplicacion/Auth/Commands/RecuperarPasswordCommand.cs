@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using System.Security.Cryptography;
+using System.Text;
+using MediatR;
 using rotter.Dominio.DTOs.Comun;
 using rotter.Dominio.Interfaces.Repositorios;
 using rotter.Dominio.Interfaces.Servicios;
@@ -46,15 +48,13 @@ public class RecuperarPasswordHandler
             );
         }
 
-        // GENERAR NUEVA CONTRASEÑA
-        var nuevaPassword =
-            "Rotter" + Random.Shared.Next(1000, 9999) + "!";
+        var nuevaPassword = GenerarPasswordTemporal();
 
-        // ENCRIPTAR CONTRASEÑA
-        usuario.PasswordHash =
-            BCrypt.Net.BCrypt.HashPassword(nuevaPassword);
+        usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(nuevaPassword);
+        usuario.RequiereCambioPassword = true;
+        usuario.RefreshTokenHash = null;
+        usuario.RefreshTokenExpira = null;
 
-        // GUARDAR EN BASE DE DATOS
         await _usuarios.ActualizarAsync(usuario);
 
         // ENVIAR CORREO
@@ -122,5 +122,15 @@ public class RecuperarPasswordHandler
             true,
             "Correo enviado correctamente."
         );
+    }
+
+    private static string GenerarPasswordTemporal()
+    {
+        const string caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%";
+        var bytes = new byte[12];
+        RandomNumberGenerator.Fill(bytes);
+        var sb = new StringBuilder(bytes.Length);
+        foreach (var b in bytes) sb.Append(caracteres[b % caracteres.Length]);
+        return sb.ToString();
     }
 }

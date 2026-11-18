@@ -142,7 +142,8 @@
   color: var(--text-light);
 }
 .fc-icon {
-  font-size: 1.5rem;
+  display: inline-flex;
+  font-size: 21px;
 }
 .fc-1 {
   top: 8%;
@@ -210,9 +211,9 @@
   box-shadow: 0 16px 32px rgba(15, 84, 112, 0.12);
 }
 .valor-icon {
-  font-size: 2rem;
-  display: block;
-  margin-bottom: 12px;
+  display: inline-flex;
+  font-size: 29px;
+  margin-bottom: 14px;
 }
 .valor-card h3 {
   font-size: 1.05rem;
@@ -328,7 +329,8 @@
   transform: translateY(-4px);
 }
 .pago-icon {
-  font-size: 1.8rem;
+  display: inline-flex;
+  font-size: 27px;
 }
 
 /* ===== CONTACTO ===== */
@@ -352,7 +354,8 @@
   transform: translateY(-4px);
 }
 .contacto-icon {
-  font-size: 1.5rem;
+  display: inline-flex;
+  font-size: 25px;
 }
 .contacto-card strong {
   display: block;

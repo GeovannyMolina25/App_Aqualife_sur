@@ -11,5 +11,6 @@ public record UsuarioDto(
     string? Telefono,
     string Rol,
     bool Activo,
-    DateTime FechaCreacion
+    DateTime FechaCreacion,
+    bool TwoFactorHabilitado
 );

@@ -1,3 +1,5 @@
+export type TipoCategoria = "Producto" | "Servicio";
+
 export interface Producto {
   id: number;
   nombre: string;
@@ -6,6 +8,7 @@ export interface Producto {
   precio: number;
   stock: number;
   categoria: string;
+  categoriaTipo?: TipoCategoria;
   imagenUrl?: string;
   esPromocion: boolean;
   precioPromocion?: number;

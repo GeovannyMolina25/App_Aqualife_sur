@@ -1,5 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../icon/icon.component";
 export type AlertTipo = 
 | "error" 
 | "success" 
@@ -8,9 +9,15 @@ export type AlertTipo =
 @Component({
   selector: "app-alert",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   template: `@if (mensaje) {
   <div class="al" [class]="'al-' + tipo">
+    <app-icon
+      class="al-ic"
+      [name]="tipo === 'success' ? 'circle-check' : tipo === 'info' ? 'info' : 'circle-alert'"
+      size="18px"
+      tono="none"
+    />
 
     <div [innerHTML]="mensaje"></div>
 
@@ -23,6 +30,12 @@ export type AlertTipo =
         border-radius: 8px;
         font-size: 0.875rem;
         margin-bottom: 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .al-ic {
+        margin-top: 1px;
       }
       .al-error {
         background: rgba(224, 92, 92, 0.1);

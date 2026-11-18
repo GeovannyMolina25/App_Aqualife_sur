@@ -1,5 +1,6 @@
-import { Component, OnInit, signal } from "@angular/core";
+import { Component, OnInit, computed, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { IconComponent } from "../../shared/components/icon/icon.component";
 import { RouterLink } from "@angular/router";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { VentasService } from "../../core/services/ventas/ventas.service";
@@ -13,12 +14,22 @@ import { SaldoCaja } from "../../core/models/caja/caja.model";
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent],
+  imports: [IconComponent, CommonModule, RouterLink, SpinnerComponent],
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit {
   metricas = signal<Metricas | null>(null);
+  /** Valor máximo de cada ranking, para escalar las barras al 100%. */
+  maxUnidadesProducto = computed(() =>
+    Math.max(1, ...(this.metricas()?.topProductos ?? []).map((p) => p.unidades)),
+  );
+  maxUnidadesServicio = computed(() =>
+    Math.max(1, ...(this.metricas()?.topServicios ?? []).map((s) => s.unidades)),
+  );
+  maxGastoCliente = computed(() =>
+    Math.max(1, ...(this.metricas()?.topClientes ?? []).map((c) => c.totalGastado)),
+  );
   promociones = signal<Producto[]>([]);
   cargandoPromos = signal(false);
   saldoCaja = signal<SaldoCaja | null>(null);

@@ -47,6 +47,9 @@ public class CambiarPasswordHandler
             BCrypt.Net.BCrypt.HashPassword(
                 req.NuevaPassword
             );
+        usuario.RequiereCambioPassword = false;
+        usuario.RefreshTokenHash = null;
+        usuario.RefreshTokenExpira = null;
 
         await _usuarios.ActualizarAsync(usuario);
 

@@ -72,6 +72,40 @@
           {{ cambiandoPassword() ? "Cambiando..." : "Cambiar contraseña" }}
         </button>
       </div>
+
+      <div class="tarjeta">
+        <h2>Verificación en dos pasos (2FA)</h2>
+
+        <app-alert [mensaje]="mensaje2FA()" [tipo]="tipoMensaje2FA()" />
+
+        @if (perfil()?.twoFactorHabilitado) {
+          <p>La verificación en dos pasos está <strong>activada</strong> en tu cuenta.</p>
+          <div class="fg">
+            <label>Código de tu app autenticadora (para desactivar)</label>
+            <input [(ngModel)]="codigo2FA" name="codigo2FADesactivar" placeholder="123456" maxlength="6" inputmode="numeric" />
+          </div>
+          <button type="button" class="btn-primary" [disabled]="procesando2FA()" (click)="desactivar2FA()">
+            {{ procesando2FA() ? "Procesando..." : "Desactivar verificación en dos pasos" }}
+          </button>
+        } @else if (configurando2FA()) {
+          <p>Escanea este secreto con tu app autenticadora (Google Authenticator, Authy, etc.) o ingrésalo manualmente:</p>
+          <p class="secreto2fa">{{ secreto2FA() }}</p>
+          <p class="uri2fa">{{ uriConfiguracion2FA() }}</p>
+          <div class="fg">
+            <label>Código de confirmación</label>
+            <input [(ngModel)]="codigo2FA" name="codigo2FAConfirmar" placeholder="123456" maxlength="6" inputmode="numeric" />
+          </div>
+          <button type="button" class="btn-primary" [disabled]="procesando2FA()" (click)="confirmar2FA()">
+            {{ procesando2FA() ? "Confirmando..." : "Confirmar y activar" }}
+          </button>
+          <button type="button" class="btn-s" (click)="cancelarConfiguracion2FA()">Cancelar</button>
+        } @else {
+          <p>La verificación en dos pasos está <strong>desactivada</strong>.</p>
+          <button type="button" class="btn-primary" (click)="iniciar2FA()">
+            Activar verificación en dos pasos
+          </button>
+        }
+      </div>
     </div>
   }
 </div>

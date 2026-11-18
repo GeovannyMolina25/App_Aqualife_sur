@@ -1,7 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { Usuario, CambiarRolDto } from "../../models/usuarios/usuario.model";
+import {
+  Usuario,
+  CambiarRolDto,
+  CrearUsuarioRapidoDto,
+  UsuarioRapidoCreado,
+} from "../../models/usuarios/usuario.model";
 import { PagedResult, RespuestaDto } from "../../models/comun/respuesta.model";
 
 @Injectable({ providedIn: "root" })
@@ -19,5 +24,9 @@ export class UsuariosService {
 
   cambiarRol(id: number, dto: CambiarRolDto) {
     return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/rol`, dto);
+  }
+
+  crearRapido(dto: CrearUsuarioRapidoDto) {
+    return this.http.post<RespuestaDto<UsuarioRapidoCreado>>(`${this.url}/rapido`, dto);
   }
 }
