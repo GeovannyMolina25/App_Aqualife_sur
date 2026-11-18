@@ -33,7 +33,8 @@ public class SolicitarCotizacionHandler : IRequestHandler<SolicitarCotizacionCom
             return RespuestaDto<CotizacionServicioDto>.Fallo("Nombre, teléfono, dirección y tamaño del espacio son obligatorios.");
 
         var producto = await _productos.ObtenerPorIdAsync(dto.ProductoId);
-        if (producto is null) return RespuestaDto<CotizacionServicioDto>.Fallo("Servicio no encontrado.", 404);
+        if (producto is null || !producto.Activo || producto.Categoria?.Tipo != TiposCategoria.Servicio)
+            return RespuestaDto<CotizacionServicioDto>.Fallo("Servicio no encontrado.", 404);
 
         var cotizacion = new CotizacionServicio
         {

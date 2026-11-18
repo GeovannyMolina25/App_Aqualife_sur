@@ -18,8 +18,14 @@ public static class ConstructorDetallesVenta
         var detalles = new List<DetalleVenta>();
         decimal subtotal = 0;
 
+        if (items is null || items.Count == 0)
+            return new ResultadoConstruccionVenta(detalles, subtotal, "Agrega al menos un producto o servicio.", false);
+
         foreach (var item in items)
         {
+            if (item.Cantidad <= 0)
+                return new ResultadoConstruccionVenta(detalles, subtotal, "La cantidad de cada ítem debe ser mayor que cero.", false);
+
             var prod = await productos.ObtenerPorIdAsync(item.ProductoId);
             if (prod is null)
                 return new ResultadoConstruccionVenta(detalles, subtotal, $"Producto {item.ProductoId} no encontrado.", true);

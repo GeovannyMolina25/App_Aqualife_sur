@@ -10,6 +10,8 @@ using System.Reflection;
 
 
 var builder = WebApplication.CreateBuilder(args);
+// No anunciar el servidor web en las respuestas (cabecera "Server: Kestrel").
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
 
 builder.Services.AddScoped<
     IEmailServicio,

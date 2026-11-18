@@ -60,8 +60,10 @@ public class VentasController : ControllerBase
             "application/pdf",
             $"Factura_{id}.pdf");
     }
+    // Venta presencial: solo el personal. Un cliente compra por /checkout (a su propio nombre);
+    // permitirle este endpoint le dejaba registrar ventas a nombre de otros clientes.
     [HttpPost]
-    [Authorize(Roles = "Administrador,Colaborador,Cliente,SuperAdministrador")]
+    [Authorize(Roles = "Administrador,Colaborador,SuperAdministrador")]
     public async Task<IActionResult> Registrar([FromBody] CrearVentaDto dto)
     {
         var colaboradorId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

@@ -23,6 +23,9 @@ public class RegistrarVentaHandler : IRequestHandler<RegistrarVentaCommand, Resp
 
     public async Task<RespuestaDto<VentaDto>> Handle(RegistrarVentaCommand req, CancellationToken ct)
     {
+        if (await _usuarios.ObtenerPorIdAsync(req.Dto.ClienteId) is null)
+            return RespuestaDto<VentaDto>.Fallo("Selecciona un cliente válido.", 400);
+
         using var tx = await _db.Database.BeginTransactionAsync(ct);
 
         var numero = await _ventas.GenerarNumeroVentaAsync();
