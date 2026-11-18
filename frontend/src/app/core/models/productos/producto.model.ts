@@ -7,8 +7,9 @@ export interface Producto {
   caracteristicas?: string;
   precio: number;
   stock: number;
+  categoriaId: number;
   categoria: string;
-  categoriaTipo?: TipoCategoria;
+  categoriaTipo: TipoCategoria;
   imagenUrl?: string;
   esPromocion: boolean;
   precioPromocion?: number;
@@ -30,11 +31,6 @@ export interface CrearProductoDto {
 export interface Categoria {
   id: number;
   nombre: string;
+  descripcion?: string;
+  tipo: TipoCategoria;
 }
-export const CATEGORIAS: Categoria[] = [
-  { id: 1, nombre: "Agua Natural" },
-  { id: 2, nombre: "Agua con Gas" },
-  { id: 3, nombre: "Agua Purificada" },
-  { id: 4, nombre: "Bidón" },
-  { id: 5, nombre: "Promociones" },
-];

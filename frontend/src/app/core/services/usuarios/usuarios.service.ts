@@ -29,4 +29,8 @@ export class UsuariosService {
   crearRapido(dto: CrearUsuarioRapidoDto) {
     return this.http.post<RespuestaDto<UsuarioRapidoCreado>>(`${this.url}/rapido`, dto);
   }
+
+  entregarPremioBienvenida(id: number) {
+    return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/premio-bienvenida/entregar`, {});
+  }
 }

@@ -23,6 +23,13 @@ public class Usuario
     public DateTime? RefreshTokenExpira { get; set; }
     public bool TwoFactorHabilitado { get; set; }
     public string? TwoFactorSecretCifrado { get; set; }
+
+    // Promoción de bienvenida (ruleta + tarjeta de 7º botellón gratis)
+    public string? PremioBienvenida { get; set; }
+    public DateTime? FechaPremioBienvenida { get; set; }
+    public int RecargasParaSeptimo { get; set; } = 0;
+    public bool PremioBienvenidaEntregado { get; set; } = false;
+
     public Rol Rol { get; set; } = null!;
     public ICollection<Venta> VentasComoCliente { get; set; } = new List<Venta>();
     public ICollection<Venta> VentasComoColaborador { get; set; } = new List<Venta>();

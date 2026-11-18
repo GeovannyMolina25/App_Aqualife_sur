@@ -11,6 +11,7 @@ import {
   CrearUsuarioRapidoDto,
   UsuarioRapidoCreado,
 } from "../../core/models/usuarios/usuario.model";
+import { PREMIO_SEPTIMO_BOTELLON, nombrePremio } from "../../core/models/usuarios/promocion.model";
 import { AuthService } from "../../core/services/auth/auth.service";
 
 const TAMANO_PAGINA = 30;
@@ -113,6 +114,23 @@ export class UsuariosComponent implements OnInit {
   cambiarRol(id: number, nuevoRolId: number) {
     this.svc.cambiarRol(id, { nuevoRolId }).subscribe((r) => {
       if (r.exito) this.cargar();
+    });
+  }
+
+  nombrePremio(u: Usuario) {
+    return nombrePremio(u.premioBienvenida);
+  }
+
+  listoParaEntregar(u: Usuario): boolean {
+    if (!u.premioBienvenida || u.premioBienvenidaEntregado) return false;
+    return u.premioBienvenida !== PREMIO_SEPTIMO_BOTELLON || u.recargasParaSeptimo >= 7;
+  }
+
+  entregarPremio(u: Usuario) {
+    if (!this.listoParaEntregar(u)) return;
+    this.svc.entregarPremioBienvenida(u.id).subscribe((r) => {
+      if (r.exito) this.cargar();
+      else alert(r.mensaje);
     });
   }
 

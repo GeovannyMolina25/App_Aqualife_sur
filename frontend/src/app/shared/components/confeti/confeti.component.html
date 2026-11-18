@@ -1,0 +1,14 @@
+@if (promoSrv.mostrarConfeti()) {
+  <div class="confeti-contenedor" aria-hidden="true">
+    @for (p of piezas; track $index) {
+      <span
+        class="confeti-pieza"
+        [style.left]="p.left"
+        [style.background]="p.color"
+        [style.animation-delay]="p.delay"
+        [style.animation-duration]="p.duracion"
+        [style.--rot-inicial]="p.rotacionInicial"
+      ></span>
+    }
+  </div>
+}

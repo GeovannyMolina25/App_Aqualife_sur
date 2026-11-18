@@ -4,6 +4,7 @@ import { IconComponent } from "../icon/icon.component";
 import { Router, RouterLink } from "@angular/router";
 import { AuthService } from "../../../core/services/auth/auth.service";
 import { CarritoService } from "../../../core/services/carrito/carrito.service";
+import { PromocionBienvenidaService } from "../../../core/services/promocion-bienvenida/promocion-bienvenida.service";
 
 @Component({
   selector: "app-public-header",
@@ -20,6 +21,7 @@ export class PublicHeaderComponent {
   constructor(
     public auth: AuthService,
     public carrito: CarritoService,
+    public promoSrv: PromocionBienvenidaService,
     private router: Router,
   ) {}
 

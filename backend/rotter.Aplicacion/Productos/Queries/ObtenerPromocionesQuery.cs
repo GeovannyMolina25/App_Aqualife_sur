@@ -16,7 +16,7 @@ public class ObtenerPromocionesHandler : IRequestHandler<ObtenerPromocionesQuery
     {
         var lista = await _productos.ObtenerPromocionesAsync();
         var dtos  = lista.Select(p => new ProductoDto(p.Id, p.Nombre, p.Descripcion, p.Caracteristicas,
-            p.Precio, p.Stock, p.Categoria.Nombre, p.ImagenUrl, p.EsPromocion, p.PrecioPromocion,
+            p.Precio, p.Stock, p.CategoriaId, p.Categoria.Nombre, p.Categoria.Tipo, p.ImagenUrl, p.EsPromocion, p.PrecioPromocion,
             p.FechaInicioPromocion, p.FechaFinPromocion, p.Activo)).ToList();
 
         return RespuestaDto<List<ProductoDto>>.Ok(dtos);

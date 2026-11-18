@@ -14,10 +14,13 @@ public class ProductoRepositorio : IProductoRepositorio
         await _db.Productos.Include(p => p.Categoria).Include(p => p.CreadoPor)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-    public async Task<List<Producto>> ObtenerTodosAsync(int pagina, int tamano, bool soloActivos = true, string? busqueda = null)
+    public async Task<List<Producto>> ObtenerTodosAsync(int pagina, int tamano, bool soloActivos = true, string? busqueda = null,
+        int? categoriaId = null, string? tipo = null)
     {
         var q = _db.Productos.Include(p => p.Categoria).AsQueryable();
         if (soloActivos) q = q.Where(p => p.Activo);
+        if (categoriaId.HasValue) q = q.Where(p => p.CategoriaId == categoriaId.Value);
+        if (!string.IsNullOrWhiteSpace(tipo)) q = q.Where(p => p.Categoria.Tipo == tipo);
         q = FiltrarPorBusqueda(q, busqueda);
         return await q.OrderBy(p => p.Nombre).Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
     }
@@ -27,10 +30,12 @@ public class ProductoRepositorio : IProductoRepositorio
             .Where(p => p.EsPromocion && p.Activo && (!p.FechaFinPromocion.HasValue || p.FechaFinPromocion > DateTime.Now))
             .ToListAsync();
 
-    public async Task<int> TotalAsync(bool soloActivos = true, string? busqueda = null)
+    public async Task<int> TotalAsync(bool soloActivos = true, string? busqueda = null, int? categoriaId = null, string? tipo = null)
     {
-        var q = _db.Productos.AsQueryable();
+        var q = _db.Productos.Include(p => p.Categoria).AsQueryable();
         if (soloActivos) q = q.Where(p => p.Activo);
+        if (categoriaId.HasValue) q = q.Where(p => p.CategoriaId == categoriaId.Value);
+        if (!string.IsNullOrWhiteSpace(tipo)) q = q.Where(p => p.Categoria.Tipo == tipo);
         q = FiltrarPorBusqueda(q, busqueda);
         return await q.CountAsync();
     }

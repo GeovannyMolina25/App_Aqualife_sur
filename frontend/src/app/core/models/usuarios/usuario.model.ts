@@ -11,6 +11,9 @@ export interface Usuario {
   activo: boolean;
   fechaCreacion: string;
   twoFactorHabilitado: boolean;
+  premioBienvenida?: string;
+  recargasParaSeptimo: number;
+  premioBienvenidaEntregado: boolean;
 }
 export interface CambiarRolDto {
   nuevoRolId: number;

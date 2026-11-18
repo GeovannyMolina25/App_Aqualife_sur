@@ -4,13 +4,14 @@ import { IconComponent } from "../../shared/components/icon/icon.component";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { ProductosService } from "../../core/services/productos/productos.service";
+import { CategoriasService } from "../../core/services/categorias/categorias.service";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
 import { PaginationComponent } from "../../shared/components/pagination/pagination.component";
 import {
   Producto,
   CrearProductoDto,
-  CATEGORIAS,
+  Categoria,
 } from "../../core/models/productos/producto.model";
 
 @Component({
@@ -37,7 +38,7 @@ export class ProductosComponent implements OnInit {
   modal = signal(false);
   guardando = signal(false);
   errorModal = signal("");
-  categorias = CATEGORIAS;
+  categorias = signal<Categoria[]>([]);
   private debounceId?: ReturnType<typeof setTimeout>;
   nuevo: CrearProductoDto = {
     nombre: "",
@@ -50,9 +51,13 @@ export class ProductosComponent implements OnInit {
   constructor(
     public auth: AuthService,
     private svc: ProductosService,
+    private categoriasSvc: CategoriasService,
   ) {}
   ngOnInit() {
     this.cargar();
+    this.categoriasSvc.obtenerTodas().subscribe((r) => {
+      if (r.exito) this.categorias.set(r.datos);
+    });
   }
 
   cargar() {

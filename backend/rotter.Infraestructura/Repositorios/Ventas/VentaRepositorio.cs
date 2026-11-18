@@ -149,7 +149,7 @@ public class VentaRepositorio : IVentaRepositorio
 
     /// <summary>
     /// Productos (o servicios) ordenados por unidades vendidas, sin ventas anuladas.
-    /// Un ítem es servicio si su categoría se llama "Servicio…" (p. ej. "Servicios de Limpieza").
+    /// Un ítem es servicio si su categoría tiene Tipo = "Servicio".
     /// <paramref name="cantidad"/> null = todos; <paramref name="incluirSinVentas"/> agrega al final los activos que no se vendieron.
     /// </summary>
     public async Task<List<TopProductoData>> ObtenerTopProductosAsync(int? cantidad, bool servicios = false,
@@ -158,7 +158,7 @@ public class VentaRepositorio : IVentaRepositorio
         var ventas = VentasValidas(desde, hasta);
         var consulta = _db.DetalleVentas
             .Where(d => ventas.Any(v => v.Id == d.VentaId)
-                && d.Producto.Categoria.Nombre.Contains("Servicio") == servicios)
+                && (d.Producto.Categoria.Tipo == TiposCategoria.Servicio) == servicios)
             .GroupBy(d => new { d.ProductoId, d.Producto.Nombre, Categoria = d.Producto.Categoria.Nombre })
             .Select(g => new { g.Key.ProductoId, g.Key.Nombre, g.Key.Categoria, Unidades = g.Sum(d => d.Cantidad), Total = g.Sum(d => d.Subtotal) })
             .OrderByDescending(x => x.Unidades)
@@ -174,7 +174,7 @@ public class VentaRepositorio : IVentaRepositorio
         var vendidos = top.Select(t => t.ProductoId).ToList();
         var sinVentas = await _db.Productos
             .Where(p => p.Activo && !vendidos.Contains(p.Id)
-                && p.Categoria.Nombre.Contains("Servicio") == servicios)
+                && (p.Categoria.Tipo == TiposCategoria.Servicio) == servicios)
             .OrderBy(p => p.Nombre)
             .Select(p => new TopProductoData(p.Nombre, 0, 0m, p.Categoria.Nombre))
             .ToListAsync();

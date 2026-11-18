@@ -75,6 +75,8 @@ public class RegistrarPedidoWebHandler : IRequestHandler<RegistrarPedidoWebComma
         };
 
         await _ventas.CrearAsync(venta);
+        // Cada compra (presencial o web) cuenta como una recarga hacia el 7º botellón gratis.
+        await _usuarios.IncrementarRecargaSeptimoAsync(req.ClienteId);
         await tx.CommitAsync(ct);
 
         await _auditoria.RegistrarAsync("REGISTRAR_PEDIDO_WEB", "Ventas", venta.Id.ToString(),

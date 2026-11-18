@@ -58,7 +58,7 @@ export class VentasComponent implements OnInit {
   pestanaItems = signal<"productos" | "servicios">("productos");
   private cantidadesVersion = signal(0);
   private esServicio = (p: Producto) =>
-    p.categoriaTipo === "Servicio" || /servicio/i.test(p.categoria ?? "");
+    p.categoriaTipo === "Servicio";
   productosLista = computed(() => this.productosDisp().filter((p) => !this.esServicio(p)));
   serviciosLista = computed(() => this.productosDisp().filter((p) => this.esServicio(p)));
   itemsPestana = computed(() =>

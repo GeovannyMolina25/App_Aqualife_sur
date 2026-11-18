@@ -6,6 +6,7 @@ import { Router, RouterLink } from "@angular/router";
 import { CarritoService } from "../../core/services/carrito/carrito.service";
 import { VentasService } from "../../core/services/ventas/ventas.service";
 import { AuthService } from "../../core/services/auth/auth.service";
+import { PromocionBienvenidaService } from "../../core/services/promocion-bienvenida/promocion-bienvenida.service";
 import { Venta, MetodoPago, DATOS_BANCARIOS, WHATSAPP_PEDIDOS } from "../../core/models/ventas/venta.model";
 import { PublicHeaderComponent } from "../../shared/components/public-header/public-header.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
@@ -37,6 +38,7 @@ export class CheckoutComponent implements OnInit {
     public carrito: CarritoService,
     private ventasSrv: VentasService,
     private auth: AuthService,
+    private promoSrv: PromocionBienvenidaService,
     private router: Router,
   ) {}
 
@@ -113,6 +115,8 @@ export class CheckoutComponent implements OnInit {
         if (r.exito) {
           this.pedido.set(r.datos);
           this.carrito.vaciar();
+          // Se muestra un poco después de la confirmación para no encimar dos modales a la vez.
+          setTimeout(() => this.promoSrv.mostrarProgresoTrasCompra(), 700);
         } else {
           this.error.set(r.mensaje);
         }

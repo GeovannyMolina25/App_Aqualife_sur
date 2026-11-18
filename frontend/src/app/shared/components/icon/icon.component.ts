@@ -64,6 +64,9 @@ export const ICONOS: Record<string, [string, IconoTono?]> = {
   paperclip: ["paperclip", "blue"],
   receipt: ["receipt", "amber"],
   sparkles: ["broom", "violet"],
+  confetti: ["confetti", "pink"],
+  star: ["star", "amber"],
+  exclamation: ["exclamation-mark", "red"],
 };
 
 /** HTML del ícono, para usarlo fuera de plantillas (DOM directo). */

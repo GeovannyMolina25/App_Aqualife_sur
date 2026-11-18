@@ -12,5 +12,8 @@ public record UsuarioDto(
     string Rol,
     bool Activo,
     DateTime FechaCreacion,
-    bool TwoFactorHabilitado
+    bool TwoFactorHabilitado,
+    string? PremioBienvenida,
+    int RecargasParaSeptimo,
+    bool PremioBienvenidaEntregado
 );
