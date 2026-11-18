@@ -132,22 +132,6 @@
   color: #fff;
   font-weight: 600;
 }
-.btn-agregar-servicio {
-  width: 100%;
-  margin-top: 14px;
-  padding: 10px;
-  background: var(--sand-500);
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-agregar-servicio:hover {
-  background: #b8956a;
-}
 
 .servicios-contenido {
   min-width: 0;
@@ -368,9 +352,6 @@
 }
 
 /* ===== Precio, qué incluye y compra ===== */
-.servicio-card.oculto {
-  opacity: 0.6;
-}
 .tag {
   position: absolute;
   top: 12px;
@@ -384,11 +365,6 @@
 .tag-promo {
   right: 12px;
   background: #38a89a;
-  color: #fff;
-}
-.tag-oculto {
-  left: 12px;
-  background: #4a6572;
   color: #fff;
 }
 .servicio-cat {
@@ -439,16 +415,8 @@
   font-weight: 600;
   color: var(--sand-500);
 }
-.acciones {
-  display: flex;
-  gap: 8px;
-}
-.acciones .btn-cotizar {
-  margin-top: 0;
-  flex: 1;
-}
 .btn-comprar {
-  flex: 1.6;
+  margin-top: 6px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -473,109 +441,48 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-.btn-cotizar-sec {
-  background: transparent;
-  color: var(--sand-500);
-  border: 1.5px solid var(--cream-300);
-}
-.btn-cotizar-sec:hover {
-  background: var(--cream-100);
-  color: #9a7a52;
-}
 
-/* ===== Controles de administrador ===== */
-.admin-acciones {
+.servicio-footer {
   display: flex;
-  gap: 8px;
-  padding-top: 10px;
-  margin-top: 4px;
-  border-top: 1px dashed var(--cream-200);
-}
-.admin-acciones button {
-  flex: 1;
-  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 7px;
-  background: #fff;
-  border: 1px solid var(--cream-200);
-  border-radius: 8px;
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.78rem;
-  color: var(--text-mid);
-  cursor: pointer;
+  justify-content: space-between;
+  margin-top: 4px;
 }
-.admin-acciones button:hover:not(:disabled) {
-  background: var(--cream-100);
-}
-.admin-acciones button.peligro {
-  color: #c04040;
-}
-
-/* ===== Formulario agregar / editar ===== */
-.modal-ancho {
-  max-width: 560px;
-}
-.form-grid select {
-  padding: 9px 12px;
+.selector-cantidad {
+  display: flex;
+  align-items: center;
   border: 1.5px solid var(--cream-300);
-  border-radius: 9px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.selector-cantidad button {
+  width: 30px;
+  height: 30px;
+  background: var(--cream-100);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--aqua-800);
+}
+.selector-cantidad input {
+  width: 40px;
+  height: 30px;
+  border: none;
+  border-left: 1px solid var(--cream-300);
+  border-right: 1px solid var(--cream-300);
+  text-align: center;
   font-family: "DM Sans", sans-serif;
   font-size: 0.88rem;
-  background: #fff;
   outline: none;
+  -moz-appearance: textfield;
 }
-.ayuda {
-  font-size: 0.72rem;
-  font-weight: 400;
-  color: var(--text-light);
+.selector-cantidad input::-webkit-outer-spin-button,
+.selector-cantidad input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
-.promo-box {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px 12px;
-  background: var(--cream-100);
-  border-radius: 10px;
-}
-.promo-box .switch {
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-.promo-box .switch input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--aqua-700);
-}
-.descuento {
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: 20px;
-  background: #38a89a;
-  color: #fff;
-  font-size: 0.72rem;
+.servicio-subtotal {
   font-weight: 700;
-}
-.foto-campo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.foto-preview {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid var(--cream-200);
-}
-@media (max-width: 520px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-  .acciones {
-    flex-direction: column;
-  }
+  color: var(--text-dark);
+  font-size: 0.95rem;
 }

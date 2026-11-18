@@ -93,6 +93,15 @@ export const routes: Routes = [
       },
 
       {
+        path: "servicios",
+        canActivate: [adminGuard],
+        loadComponent: () =>
+          import("./features/servicios-admin/servicios-admin.component").then(
+            (m) => m.ServiciosAdminComponent,
+          ),
+      },
+
+      {
         path: "ventas",
         canActivate: [colaboradorGuard],
         loadComponent: () =>

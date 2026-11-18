@@ -29,6 +29,15 @@
         (click)="open.set(false)"
         ><app-icon name="package" tono="none" /> Productos</a
       >
+      @if (auth.esAdmin() || auth.esSuperAdmin()) {
+        <a
+          class="nl"
+          routerLink="/dashboard/servicios"
+          routerLinkActive="act"
+          (click)="open.set(false)"
+          ><app-icon name="sparkles" tono="none" /> Servicios</a
+        >
+      }
       @if (auth.esAdmin() || auth.esColaborador() || auth.esSuperAdmin()) {
         <p class="sec">Ventas</p>
         <a

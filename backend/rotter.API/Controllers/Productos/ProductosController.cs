@@ -92,6 +92,14 @@ public class ProductosController : ControllerBase
         var r = await _mediator.Send(new CambiarEstadoProductoCommand(id, dto.Activo));
         return StatusCode(r.StatusCode, r);
     }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Administrador,SuperAdministrador")]
+    public async Task<IActionResult> Eliminar(int id)
+    {
+        var r = await _mediator.Send(new EliminarProductoCommand(id));
+        return StatusCode(r.StatusCode, r);
+    }
 }
 
 public record CambiarEstadoProductoDto(bool Activo);

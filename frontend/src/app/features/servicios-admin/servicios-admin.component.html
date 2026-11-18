@@ -1,0 +1,174 @@
+<div class="wrap">
+  <div class="hr">
+    <div>
+      <h1>Catálogo de Servicios</h1>
+      <p>{{ total() }} servicios</p>
+    </div>
+    <button class="btn-p" (click)="abrirNuevo()">+ Nuevo Servicio</button>
+  </div>
+
+  <div class="sb">
+    <input
+      type="text"
+      class="si"
+      placeholder="Buscar por nombre o descripción..."
+      [ngModel]="busqueda()"
+      (ngModelChange)="buscar($event)"
+    />
+  </div>
+
+  <app-alert [mensaje]="aviso()" tipo="success" />
+
+  @if (cargando()) {
+    <app-spinner [full]="true" />
+  } @else {
+    <div class="grid">
+      @for (s of servicios(); track s.id) {
+        <div class="card" [class.oculto]="!s.activo">
+          <div class="ci">
+            @if (s.imagenUrl) {
+              <img [src]="imagenSrc(s.imagenUrl)" [alt]="s.nombre" />
+            } @else {
+              <span><app-icon name="sparkles" /></span>
+            }
+            @if (s.esPromocion && s.precioPromocion != null) {
+              <span class="pt">PROMO</span>
+            }
+            @if (!s.activo) {
+              <span class="pt pt-oculto">OCULTO</span>
+            }
+          </div>
+          <div class="cb">
+            <div class="cn">{{ s.nombre }}</div>
+            <div class="cc">{{ s.categoria }}</div>
+            @if (precioFinal(s) > 0) {
+              <div class="cp">${{ precioFinal(s) | number: "1.2-2" }}</div>
+              @if (s.esPromocion && s.precioPromocion != null) {
+                <div class="co">${{ s.precio | number: "1.2-2" }}</div>
+              }
+            } @else {
+              <div class="cp cp-convenir">Precio a convenir</div>
+            }
+            @if (s.descripcion) {
+              <div class="cch">{{ s.descripcion }}</div>
+            }
+            @if (incluye(s).length) {
+              <div class="cs">Incluye {{ incluye(s).length }} {{ incluye(s).length === 1 ? "ítem" : "ítems" }}</div>
+            }
+
+            <div class="acciones">
+              <button type="button" title="Editar" (click)="abrirEditar(s)">
+                <app-icon name="edit" /> Editar
+              </button>
+              <button
+                type="button"
+                [title]="s.activo ? 'Ocultar del catálogo' : 'Publicar en el catálogo'"
+                [disabled]="ocupadoId() === s.id"
+                (click)="cambiarEstado(s)"
+              >
+                <app-icon [name]="s.activo ? 'eye-off' : 'eye'" /> {{ s.activo ? "Ocultar" : "Publicar" }}
+              </button>
+              <button
+                type="button"
+                class="peligro"
+                title="Eliminar"
+                [disabled]="ocupadoId() === s.id"
+                (click)="eliminar(s)"
+              >
+                <app-icon name="x" tono="none" />
+              </button>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <p class="em">No hay servicios registrados.</p>
+      }
+    </div>
+    <app-pagination
+      [p]="pagina()"
+      [totalPaginas]="totalPaginas()"
+      (paginaCambiada)="cambiarPagina($event)"
+    />
+  }
+</div>
+
+@if (modal()) {
+  <div class="ov" (click)="cerrarModal()">
+    <div class="mo" (click)="$event.stopPropagation()">
+      <div class="mh">
+        <span>{{ editando() ? "Editar Servicio" : "Nuevo Servicio" }}</span>
+        <button (click)="cerrarModal()"><app-icon name="x" /></button>
+      </div>
+      <div class="mb">
+        <app-alert [mensaje]="errorModal()" tipo="error" />
+        <div class="g2">
+          <div class="fg">
+            <label>Nombre *</label>
+            <input [(ngModel)]="form.nombre" placeholder="Limpieza de alfombras" maxlength="150" />
+          </div>
+          <div class="fg">
+            <label>Categoría *</label>
+            <select [(ngModel)]="form.categoriaId">
+              @for (c of categorias(); track c.id) {
+                <option [ngValue]="c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Descripción</label>
+          <input [(ngModel)]="form.descripcion" placeholder="Qué es el servicio y para quién es" />
+        </div>
+        <div class="fg">
+          <label>Qué incluye</label>
+          <textarea
+            [(ngModel)]="form.caracteristicas"
+            rows="3"
+            placeholder="Una cosa por línea, por ejemplo:&#10;Aspirado profundo&#10;Productos incluidos&#10;Duración aprox. 3 horas"
+          ></textarea>
+        </div>
+        <div class="g2">
+          <div class="fg">
+            <label>Precio</label>
+            <input type="number" [(ngModel)]="form.precio" step="0.01" min="0" placeholder="0.00" />
+            <span class="ayuda">En 0 = "a convenir": el cliente solo podrá cotizarlo.</span>
+          </div>
+          <div class="fg">
+            <label>Foto</label>
+            <div class="foto">
+              @if (vistaPrevia(); as src) {
+                <img [src]="src" alt="Vista previa" />
+              }
+              <input type="file" accept="image/jpeg,image/png" (change)="onImagen($event)" />
+            </div>
+            @if (editando()) {
+              <span class="ayuda">Si no eliges otra, se conserva la actual.</span>
+            }
+          </div>
+        </div>
+        <div class="fg">
+          <label class="cl">
+            <input type="checkbox" [(ngModel)]="form.esPromocion" /><span>Es promoción</span>
+          </label>
+        </div>
+        @if (form.esPromocion) {
+          <div class="fg">
+            <label>
+              Precio promoción
+              @if (descuento(); as d) {
+                <span class="desc">{{ d }}% menos</span>
+              }
+            </label>
+            <input type="number" [(ngModel)]="form.precioPromocion" step="0.01" min="0" placeholder="0.00" />
+          </div>
+        }
+      </div>
+      <div class="mf">
+        <button class="btn-s" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-p" [disabled]="guardando()" (click)="guardar()">
+          {{ guardando() ? "Guardando..." : editando() ? "Guardar cambios" : "Crear Servicio" }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

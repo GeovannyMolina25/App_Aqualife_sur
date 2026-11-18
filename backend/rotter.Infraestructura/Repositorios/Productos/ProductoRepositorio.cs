@@ -55,6 +55,13 @@ public class ProductoRepositorio : IProductoRepositorio
     public async Task<Producto> ActualizarAsync(Producto producto)
     { producto.FechaModificacion = DateTime.Now; _db.Productos.Update(producto); await _db.SaveChangesAsync(); return producto; }
 
+    public async Task<bool> TieneHistorialAsync(int productoId) =>
+        await _db.DetalleVentas.AnyAsync(d => d.ProductoId == productoId)
+        || await _db.CotizacionesServicio.AnyAsync(c => c.ProductoId == productoId);
+
+    public async Task EliminarAsync(Producto producto)
+    { _db.Productos.Remove(producto); await _db.SaveChangesAsync(); }
+
     public async Task<bool> ActualizarStockAsync(int productoId, int cantidad)
     {
         var filas = await _db.Database.ExecuteSqlInterpolatedAsync(

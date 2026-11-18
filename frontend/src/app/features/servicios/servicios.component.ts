@@ -5,26 +5,17 @@ import { FormsModule } from "@angular/forms";
 import { environment } from "../../../environments/environment";
 import { Producto, Categoria } from "../../core/models/productos/producto.model";
 import { CrearCotizacionServicioDto } from "../../core/models/cotizaciones/cotizacion.model";
-import { ProductosService, DatosItemConImagen } from "../../core/services/productos/productos.service";
+import { ProductosService } from "../../core/services/productos/productos.service";
 import { CategoriasService } from "../../core/services/categorias/categorias.service";
 import { CotizacionesService } from "../../core/services/cotizaciones/cotizaciones.service";
-import { CarritoService } from "../../core/services/carrito/carrito.service";
+import { CarritoService, MAX_CANTIDAD_SERVICIO } from "../../core/services/carrito/carrito.service";
 import { AuthService } from "../../core/services/auth/auth.service";
 import { PublicHeaderComponent } from "../../shared/components/public-header/public-header.component";
 import { SpinnerComponent } from "../../shared/components/spinner/spinner.component";
 import { PaginationComponent } from "../../shared/components/pagination/pagination.component";
 import { AlertComponent } from "../../shared/components/alert/alert.component";
 
-interface FormServicio {
-  nombre: string;
-  descripcion: string;
-  caracteristicas: string;
-  categoriaId: number | null;
-  precio: number | null;
-  esPromocion: boolean;
-  precioPromocion: number | null;
-}
-
+/** Catálogo público de servicios: ver y comprar (la gestión está en el panel interno). */
 @Component({
   selector: "app-servicios",
   standalone: true,
@@ -42,25 +33,15 @@ export class ServiciosComponent implements OnInit {
   categorias = signal<Categoria[]>([]);
   categoriaSeleccionada = signal<number | null>(null);
 
-  /** Id del servicio recién agregado al carrito (para el estado "Agregado"). */
+  cantidades: Record<number, number> = {};
   agregadoId = signal<number | null>(null);
 
-  // Modal "Cotizar"
+  // Modal "Cotizar" (solo para servicios sin precio fijo)
   servicioCotizando = signal<Producto | null>(null);
   formCotizar: CrearCotizacionServicioDto = this.formCotizarVacio();
   enviandoCotizacion = signal(false);
   errorCotizacion = signal("");
   cotizacionEnviada = signal(false);
-
-  // Modal "Agregar / Editar servicio" (administrador)
-  mostrarModalServicio = signal(false);
-  servicioEditando = signal<Producto | null>(null);
-  formServicio: FormServicio = this.formServicioVacio();
-  imagenServicio: File | null = null;
-  vistaPreviaImagen = signal<string | null>(null);
-  guardandoServicio = signal(false);
-  errorServicio = signal("");
-  cambiandoEstadoId = signal<number | null>(null);
 
   constructor(
     private productosSrv: ProductosService,
@@ -78,21 +59,19 @@ export class ServiciosComponent implements OnInit {
     });
   }
 
-  /** Solo el administrador gestiona el catálogo de servicios. */
-  esAdmin(): boolean {
-    return this.auth.esAdmin() || this.auth.esSuperAdmin();
-  }
-
   cargar() {
     this.cargando.set(true);
     this.productosSrv
-      .obtenerTodos(this.pagina(), 12, this.busqueda, this.categoriaSeleccionada() ?? undefined, "Servicio", this.esAdmin())
+      .obtenerTodos(this.pagina(), 12, this.busqueda, this.categoriaSeleccionada() ?? undefined, "Servicio")
       .subscribe({
         next: (r) => {
           this.cargando.set(false);
           if (r.exito) {
             this.servicios.set(r.datos.items);
             this.totalPaginas.set(r.datos.totalPaginas);
+            r.datos.items.forEach((s) => {
+              if (!(s.id in this.cantidades)) this.cantidades[s.id] = 1;
+            });
           }
         },
         error: () => this.cargando.set(false),
@@ -122,18 +101,17 @@ export class ServiciosComponent implements OnInit {
     return `${environment.apiUrl.replace(/\/api\/?$/, "")}${url}`;
   }
 
-  // ===== Precio y compra =====
+  // ===== Precio y compra (igual que el catálogo de productos) =====
 
-  precioFinal(s: Producto): number {
+  precio(s: Producto): number {
     return s.esPromocion && s.precioPromocion != null ? s.precioPromocion : s.precio;
   }
 
-  /** Un servicio sin precio fijo ("a convenir") solo se puede cotizar. */
+  /** Un servicio sin precio fijo ("a convenir") no se compra directo: se cotiza. */
   tienePrecio(s: Producto): boolean {
-    return this.precioFinal(s) > 0;
+    return this.precio(s) > 0;
   }
 
-  /** "Qué incluye": una característica por línea (también acepta ";"). */
   incluye(s: Producto): string[] {
     return (s.caracteristicas ?? "")
       .split(/\r?\n|;/)
@@ -142,9 +120,26 @@ export class ServiciosComponent implements OnInit {
       .slice(0, 4);
   }
 
+  subtotal(s: Producto): number {
+    return this.precio(s) * (this.cantidades[s.id] ?? 1);
+  }
+
+  incrementar(s: Producto) {
+    this.cantidades[s.id] = Math.min((this.cantidades[s.id] ?? 1) + 1, MAX_CANTIDAD_SERVICIO);
+  }
+
+  decrementar(s: Producto) {
+    this.cantidades[s.id] = Math.max((this.cantidades[s.id] ?? 1) - 1, 1);
+  }
+
+  onCantidadInput(s: Producto, valor: string) {
+    const n = parseInt(valor, 10);
+    this.cantidades[s.id] = isNaN(n) ? 1 : Math.max(1, Math.min(n, MAX_CANTIDAD_SERVICIO));
+  }
+
   agregarAlCarrito(s: Producto) {
-    if (!s.activo || !this.tienePrecio(s)) return;
-    this.carrito.agregar(s, 1);
+    if (!this.tienePrecio(s)) return;
+    this.carrito.agregar(s, this.cantidades[s.id] ?? 1);
     this.agregadoId.set(s.id);
     setTimeout(() => {
       if (this.agregadoId() === s.id) this.agregadoId.set(null);
@@ -207,126 +202,6 @@ export class ServiciosComponent implements OnInit {
         this.enviandoCotizacion.set(false);
         this.errorCotizacion.set(e?.error?.mensaje ?? "No se pudo enviar la solicitud. Intenta de nuevo.");
       },
-    });
-  }
-
-  // ===== Agregar / editar servicio (administrador) =====
-
-  private formServicioVacio(): FormServicio {
-    return {
-      nombre: "",
-      descripcion: "",
-      caracteristicas: "",
-      categoriaId: this.categoriaSeleccionada() ?? this.categorias()[0]?.id ?? null,
-      precio: null,
-      esPromocion: false,
-      precioPromocion: null,
-    };
-  }
-
-  abrirCrearServicio() {
-    this.servicioEditando.set(null);
-    this.formServicio = this.formServicioVacio();
-    this.prepararModal(null);
-  }
-
-  abrirEditarServicio(s: Producto) {
-    this.servicioEditando.set(s);
-    this.formServicio = {
-      nombre: s.nombre,
-      descripcion: s.descripcion ?? "",
-      caracteristicas: s.caracteristicas ?? "",
-      categoriaId: s.categoriaId,
-      precio: s.precio,
-      esPromocion: s.esPromocion,
-      precioPromocion: s.precioPromocion ?? null,
-    };
-    this.prepararModal(s.imagenUrl ? this.imagenSrc(s.imagenUrl) : null);
-  }
-
-  private prepararModal(vistaPrevia: string | null) {
-    this.imagenServicio = null;
-    this.vistaPreviaImagen.set(vistaPrevia);
-    this.errorServicio.set("");
-    this.mostrarModalServicio.set(true);
-  }
-
-  cerrarModalServicio() {
-    this.mostrarModalServicio.set(false);
-  }
-
-  onImagenServicioSeleccionada(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.imagenServicio = input.files?.[0] ?? null;
-    if (this.imagenServicio) this.vistaPreviaImagen.set(URL.createObjectURL(this.imagenServicio));
-  }
-
-  /** Porcentaje de descuento de la promoción, para mostrarlo en el formulario. */
-  descuentoPromo(): number | null {
-    const { precio, precioPromocion, esPromocion } = this.formServicio;
-    if (!esPromocion || !precio || !precioPromocion || precioPromocion >= precio) return null;
-    return Math.round((1 - precioPromocion / precio) * 100);
-  }
-
-  guardarServicio() {
-    const f = this.formServicio;
-    const precio = Number(f.precio ?? 0);
-    const precioPromocion = f.precioPromocion != null ? Number(f.precioPromocion) : null;
-
-    if (!f.nombre.trim()) return this.errorServicio.set("El nombre del servicio es obligatorio.");
-    if (!f.categoriaId) return this.errorServicio.set("Selecciona una categoría.");
-    if (precio < 0) return this.errorServicio.set("El precio no puede ser negativo.");
-    if (f.esPromocion) {
-      if (precio <= 0) return this.errorServicio.set("Para poner una promoción, primero define el precio normal.");
-      if (!precioPromocion || precioPromocion <= 0) return this.errorServicio.set("Ingresa el precio promocional.");
-      if (precioPromocion >= precio) return this.errorServicio.set("El precio promocional debe ser menor que el precio normal.");
-    }
-
-    const datos: DatosItemConImagen = {
-      nombre: f.nombre.trim(),
-      descripcion: f.descripcion.trim(),
-      caracteristicas: f.caracteristicas.trim(),
-      categoriaId: f.categoriaId,
-      precio,
-      esPromocion: f.esPromocion,
-      precioPromocion: f.esPromocion ? precioPromocion : null,
-    };
-
-    const editando = this.servicioEditando();
-    const peticion = editando
-      ? this.productosSrv.actualizarConImagen(editando.id, datos, this.imagenServicio)
-      : this.productosSrv.crearConImagen(datos, this.imagenServicio);
-
-    this.guardandoServicio.set(true);
-    this.errorServicio.set("");
-    peticion.subscribe({
-      next: (r) => {
-        this.guardandoServicio.set(false);
-        if (r.exito) {
-          this.mostrarModalServicio.set(false);
-          this.cargar();
-        } else {
-          this.errorServicio.set(r.mensaje);
-        }
-      },
-      error: (e) => {
-        this.guardandoServicio.set(false);
-        this.errorServicio.set(e?.error?.mensaje ?? "No se pudo guardar el servicio.");
-      },
-    });
-  }
-
-  cambiarEstado(s: Producto) {
-    const activar = !s.activo;
-    if (!activar && !confirm(`¿Ocultar "${s.nombre}"? Los clientes dejarán de verlo, pero se conserva su historial.`)) return;
-    this.cambiandoEstadoId.set(s.id);
-    this.productosSrv.cambiarEstado(s.id, activar).subscribe({
-      next: (r) => {
-        this.cambiandoEstadoId.set(null);
-        if (r.exito) this.cargar();
-        else alert(r.mensaje);
-      },
-      error: () => this.cambiandoEstadoId.set(null),
     });
   }
 }

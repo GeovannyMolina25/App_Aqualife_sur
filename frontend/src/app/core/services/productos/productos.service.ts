@@ -41,6 +41,11 @@ export class ProductosService {
     return this.http.put<RespuestaDto<Producto>>(`${this.url}/${id}/con-imagen`, this.formulario(datos, imagen));
   }
 
+  /** `datos` = true si se borró; false si tenía historial y solo se ocultó. */
+  eliminar(id: number) {
+    return this.http.delete<RespuestaDto<boolean>>(`${this.url}/${id}`);
+  }
+
   cambiarEstado(id: number, activo: boolean) {
     return this.http.put<RespuestaDto<boolean>>(`${this.url}/${id}/estado`, { activo });
   }

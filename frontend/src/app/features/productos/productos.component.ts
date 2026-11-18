@@ -56,13 +56,13 @@ export class ProductosComponent implements OnInit {
   ngOnInit() {
     this.cargar();
     this.categoriasSvc.obtenerTodas().subscribe((r) => {
-      if (r.exito) this.categorias.set(r.datos);
+      if (r.exito) this.categorias.set(r.datos.filter((c) => c.tipo !== "Servicio"));
     });
   }
 
   cargar() {
     this.cargando.set(true);
-    this.svc.obtenerTodos(this.pagina(), 12, this.busqueda()).subscribe((r) => {
+    this.svc.obtenerTodos(this.pagina(), 12, this.busqueda(), undefined, "Producto").subscribe((r) => {
       this.cargando.set(false);
       if (r.exito) {
         this.productos.set(r.datos.items);
