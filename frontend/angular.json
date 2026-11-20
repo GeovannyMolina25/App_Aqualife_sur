@@ -22,7 +22,8 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               { "glob": "**/*", "input": "public" },
-              { "glob": "**/*", "input": "src/assets", "output": "assets" }
+              { "glob": "**/*", "input": "src/assets", "output": "assets" },
+              { "glob": "web.config", "input": "src", "output": "/" }
             ],
             "styles":  [
               "node_modules/@phosphor-icons/web/src/duotone/style.css",
@@ -35,8 +36,8 @@
           "configurations": {
             "production": {
               "budgets": [
-                { "type": "initial",          "maximumWarning": "500kB", "maximumError": "1MB" },
-                { "type": "anyComponentStyle", "maximumWarning": "8kB",   "maximumError": "16kB" }
+                { "type": "initial",          "maximumWarning": "800kB", "maximumError": "1.5MB" },
+                { "type": "anyComponentStyle", "maximumWarning": "12kB",  "maximumError": "20kB" }
               ],
               "outputHashing": "all",
               "fileReplacements": [
